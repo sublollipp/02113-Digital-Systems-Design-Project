@@ -1,0 +1,9 @@
+.idea/
+target/
+firrtl_black_box_resource_files.f
+RamInitSpWf.v
+RamSpWf.v
+Top.fir
+Top.v
+Top.anno.json
+vivado/*
