@@ -7,3 +7,9 @@ Top.fir
 Top.v
 Top.anno.json
 vivado/*
+.bloop/
+.DS_Store
+.metals/
+project/.bloop/
+project/metals.sbt
+project/project/metals.sbt
