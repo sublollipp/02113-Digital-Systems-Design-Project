@@ -89,6 +89,68 @@ class GameLogicTask1(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   // (you might need to change the initialization values above)
   /////////////////////////////////////////////////////////////////
 
+  val idle :: compute1 :: done :: Nil = Enum(3)
+  val stateReg = RegInit(idle)
+
+  //Two registers holding the sprite sprite X and Y with the sprite initial position
+  val sprite0XReg = RegInit(32.S(11.W))
+  val sprite0YReg = RegInit((360-32).S(10.W))
+  val gertXReg = RegInit(32.S(11.W))
+  val gertYReg = RegInit((360-128).S(10.W))
+
+  //A registers holding the sprite horizontal flip
+  val sprite0FlipHorizontalReg = RegInit(false.B)
+
+  //Making sprite 0 visible
+  io.spriteVisible(0) := true.B
+  io.spriteVisible(15) := true.B
+
+  //Connecting resiters to the graphic engine
+  io.spriteXPosition(0) := sprite0XReg
+  io.spriteYPosition(0) := sprite0YReg
+  io.spriteFlipHorizontal(0) := sprite0FlipHorizontalReg
+  io.spriteFlipVertical(15) := true.B
+
+  io.spriteXPosition(15) := gertXReg
+  io.spriteYPosition(15) := gertYReg
+
+  //FSMD switch
+  switch(stateReg) {
+    is(idle) {
+      when(io.newFrame) {
+        stateReg := compute1
+      }
+    }
+
+    is(compute1) {
+      when(io.btnD){
+        when(sprite0YReg < (480 - 32 - 24).S) {
+          sprite0YReg := sprite0YReg + 2.S
+        }
+      } .elsewhen(io.btnU){
+        when(sprite0YReg > (96).S) {
+          sprite0YReg := sprite0YReg - 2.S
+        }
+      }
+      when(io.btnR) {
+        when(sprite0XReg < (640 - 32 - 32).S) {
+          sprite0XReg := sprite0XReg + 2.S
+          sprite0FlipHorizontalReg := false.B
+        }
+      } .elsewhen(io.btnL){
+        when(sprite0XReg > 32.S) {
+          sprite0XReg := sprite0XReg - 2.S
+          sprite0FlipHorizontalReg := true.B
+        }
+      }
+      stateReg := done
+    }
+
+    is(done) {
+      io.frameUpdateDone := true.B
+      stateReg := idle
+    }
+  }
 
 }
 
