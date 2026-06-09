@@ -89,6 +89,38 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   // (you might need to change the initialization values above)
   /////////////////////////////////////////////////////////////////
 
+  val idle :: compute1 :: done :: Nil = Enum(3)
+  val stateReg = RegInit(idle)
+
+  val car = Module(new Car)
+
+  car.io.btnLeft := io.btnL
+  car.io.btnUp := io.btnU
+  car.io.btnRight := io.btnR
+  car.io.btnDown := io.btnD
+  io.spriteFlipHorizontal(0) := car.io.flipH
+  io.spriteFlipVertical(0) := car.io.flipH
+  io.spriteXPosition(0) := car.io.posX
+  io.spriteYPosition(0) := car.io.posY
+  io.spriteVisible(0) := true.B
+  car.io.update := false.B
+
+  switch (stateReg) {
+    is (idle) {
+      when (io.newFrame) {
+        stateReg := compute1
+      }
+    }
+    is (compute1) {
+      car.io.update := true.B
+      stateReg := done
+    }
+    is(done) {
+      io.frameUpdateDone := true.B
+      stateReg := idle
+    }
+  }
+
   // Just forwarding the newFrame into the frameUpdateDone with a 2 clock cycle delay
   // frameUpdateDone will need to be driven by your game logic FSMs
   io.frameUpdateDone := RegNext(RegNext(io.newFrame))
