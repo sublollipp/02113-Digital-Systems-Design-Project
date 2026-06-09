@@ -30,14 +30,140 @@ class GameLogicTester extends AnyFlatSpec with ChiselScalatestTester {
 
       dut.io.newFrame.poke(false.B)
       dut.clock.step(998)
-
       dut.io.newFrame.poke(true.B)
-      dut.io.btnR.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
       dut.clock.step(1)
 
       dut.io.newFrame.poke(false.B)
       dut.clock.step(998)
 
+      dut.io.newFrame.poke(true.B)
+      dut.io.btnR.poke(true.B)
+      dut.io.btnU.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
+      dut.io.newFrame.poke(true.B)
+      dut.clock.step(1)
+
+      dut.io.newFrame.poke(false.B)
+      dut.clock.step(998)
       dut.io.newFrame.poke(true.B)
       dut.clock.step(1)
 
