@@ -104,7 +104,7 @@ class Car extends Module{
       is (dd) {
         sprite := upSprite
         flipSpriteH := false.B
-        flipSpriteV := false.B
+        flipSpriteV := true.B
       }
       is (rr) {
         sprite := rightSprite

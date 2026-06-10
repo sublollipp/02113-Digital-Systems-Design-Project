@@ -93,10 +93,10 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val CAR_HEIGHT = 32.S(6.W)
 
   val desiredViewX =
-    car.io.posX + (CAR_WIDTH / 2.S) - (SCREEN_WIDTH / 2.S)
+  car.io.posX - (SCREEN_WIDTH / 2.S) + 16.S
 
   val desiredViewY =
-    car.io.posY + (CAR_HEIGHT / 2.S) - (SCREEN_HEIGHT / 2.S)
+  car.io.posY - (SCREEN_HEIGHT / 2.S) + 16.S
 
   when(desiredViewX < 0.S) {
     io.viewBoxX := 0.U
