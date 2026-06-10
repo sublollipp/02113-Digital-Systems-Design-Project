@@ -42,5 +42,4 @@ class CarVelocityController extends Module {
     xRemainder := accumX - ((accumX >> 7) << 7).asSInt
     yRemainder := accumY - ((accumY >> 7) << 7).asSInt
   }
-
 }
