@@ -17,29 +17,31 @@ class Car extends Module{
   val xPosReg = RegInit(60.S(11.W))
   val yPosReg = RegInit(170.S(10.W))
 
-  val xFramesPerPixel = RegInit(10.U(5.W)) // pt 10 = standstill
-  val yFramesPerPixel = RegInit(10.U(5.W)) // pt 10 = standstill
+  val speed = WireInit(0.S(9.W))
+  val angle = WireInit(0.U(6.W))
 
-  val xAbsFramesPerPixel = Reg(UInt(4.W))
-  val yAbsFramesPerPixel = Reg(UInt(4.W))
+  val speedControl = Module(new CarSpeedController(15.U, 150.S, 0.S))
+  speedControl.io.btnFwd := io.btnUp
+  speedControl.io.btnBckwd := io.btnDown
+  speedControl.io.frameUpdate := io.update
+  speed := speedControl.io.speed
 
-  val accelerationDividerCounter = RegInit(0.U(5.W))
+  val angleControl = Module(new CarAngleController(3.U))
+  angleControl.io.btnLeft := io.btnLeft
+  angleControl.io.btnRight := io.btnRight
+  angleControl.io.frameUpdate := io.update
+  angle := angleControl.io.angle
 
-  when (xFramesPerPixel < 10.U) {
-    xAbsFramesPerPixel := xFramesPerPixel
-  }.elsewhen(xFramesPerPixel > 10.U) {
-    xAbsFramesPerPixel := 20.U - xFramesPerPixel
-  }.otherwise {
-    xAbsFramesPerPixel := 0.U
-  }
+  val velControl = Module(new CarVelocityController)
+  velControl.io.oldXPos := xPosReg
+  velControl.io.oldYPos := yPosReg
+  velControl.io.ang := angle
+  velControl.io.speed := speed
+  velControl.io.frameUpdate := io.update
+  xPosReg := velControl.io.newXPos
+  yPosReg := velControl.io.newYPos
 
-  when (yFramesPerPixel < 10.U) {
-    yAbsFramesPerPixel := yFramesPerPixel
-  }.elsewhen(yFramesPerPixel > 10.U) {
-    yAbsFramesPerPixel := 20.U - yFramesPerPixel
-  }.otherwise {
-    yAbsFramesPerPixel := 0.U
-  }
+  val carAngle = RegInit(15.U(6.W)) // 1 = 6 degrees
 
   val xSpeedCounter = RegInit(0.U(4.W))
   val ySpeedCounter = RegInit(0.U(4.W))
@@ -53,60 +55,6 @@ class Car extends Module{
   val sprite = RegInit(upSprite)
 
   when (io.update) {
-
-    accelerationDividerCounter := Mux(accelerationDividerCounter === 20.U, 0.U, accelerationDividerCounter + 1.U)
-
-    when (accelerationDividerCounter === 0.U) {
-    // Inputs og acceleration
-    // X inputs
-    when (io.btnLeft && !io.btnRight) {
-      xFramesPerPixel := Mux(xFramesPerPixel === 1.U, 1.U, xFramesPerPixel - 1.U)
-    }.elsewhen (!io.btnLeft && io.btnRight) {
-      xFramesPerPixel := Mux(xFramesPerPixel === 19.U, 19.U, xFramesPerPixel + 1.U)
-    }.otherwise {
-      when(xFramesPerPixel > 10.U) {
-        xFramesPerPixel := xFramesPerPixel - 1.U
-      }.elsewhen(xFramesPerPixel < 10.U) {
-        xFramesPerPixel := xFramesPerPixel + 1.U
-      }
-    }
-    // Y inputs
-    when (io.btnUp && !io.btnDown) {
-      yFramesPerPixel := Mux(yFramesPerPixel === 1.U, 1.U, yFramesPerPixel - 1.U)
-    }.elsewhen (!io.btnUp && io.btnDown) {
-      yFramesPerPixel := Mux(yFramesPerPixel === 19.U, 19.U, yFramesPerPixel + 1.U)
-    }.otherwise {
-      when(yFramesPerPixel > 10.U) {
-        yFramesPerPixel := yFramesPerPixel - 1.U
-      }.elsewhen(yFramesPerPixel < 10.U) {
-        yFramesPerPixel := yFramesPerPixel + 1.U
-      }
-    }
-    }
-
-    // Velocity til position
-    // X
-    when (xSpeedCounter >= xAbsFramesPerPixel) {
-      xSpeedCounter := 0.U
-      when (xFramesPerPixel < 10.U && xPosReg > 0.S) {
-        xPosReg := xPosReg - 1.S
-      }.elsewhen(xFramesPerPixel > 10.U && xPosReg < 640.S) {
-        xPosReg := xPosReg + 1.S
-      }
-    }.otherwise {
-      xSpeedCounter := xSpeedCounter + 1.U
-    }
-    // y
-    when (ySpeedCounter >= yAbsFramesPerPixel) {
-      ySpeedCounter := 0.U
-      when (yFramesPerPixel < 10.U && yPosReg > 0.S) {
-        yPosReg := yPosReg - 1.S
-      }.elsewhen(yFramesPerPixel > 10.U && yPosReg < 360.S) {
-        yPosReg := yPosReg + 1.S
-      }
-    }.otherwise {
-      ySpeedCounter := ySpeedCounter + 1.U
-    }
 
     // Sprite
     switch(dirReg) {
