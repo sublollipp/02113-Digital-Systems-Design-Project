@@ -58,7 +58,6 @@ class Car extends Module{
   io.shownSprite := shownSprite
 
   when (io.update) {
-
     when ((61.U <= angle || angle >= 0.U) && angle <= 4.U) {
       dirReg := rr
     }.elsewhen(5.U <= angle && angle <= 12.U) {
