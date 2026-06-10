@@ -12,6 +12,7 @@ class Car extends Module{
     val posY = Output(SInt(10.W))
     val flipH = Output(Bool())
     val flipV = Output(Bool())
+    val shownSprite = Output(Vec(3, Bool()))
   })
 
   val xPosReg = RegInit(60.S(11.W))
@@ -54,7 +55,47 @@ class Car extends Module{
   val flipSpriteV = RegInit(false.B)
   val sprite = RegInit(upSprite)
 
+  val shownSprite = RegInit(VecInit(true.B, false.B, false.B))
+
+  io.shownSprite := shownSprite
+
   when (io.update) {
+
+    when (61.U <= angle && angle <= 4.U) {
+      sprite := rr
+    }.elsewhen(5.U <= angle && angle <= 12.U) {
+      sprite := dr
+    }.elsewhen(13.U <= angle && angle <= 20.U) {
+      sprite := dd
+    }.elsewhen(21.U <= angle && angle <= 28.U) {
+      sprite := dl
+    }.elsewhen(29.U <= angle && angle <= 36.U) {
+      sprite := ll
+    }.elsewhen(37.U <= angle && angle <= 44.U) {
+      sprite := ul
+    }.elsewhen(45.U <= angle && angle <= 52.U) {
+      sprite := uu
+    }.otherwise {
+      sprite := ur
+    }
+
+    switch(sprite) {
+      is(upSprite) {
+        shownSprite(0) := true.B
+        shownSprite(1) := false.B
+        shownSprite(2) := false.B
+      }
+      is(diagSprite) {
+        shownSprite(0) := false.B
+        shownSprite(1) := true.B
+        shownSprite(2) := false.B
+      }
+      is(rightSprite) {
+        shownSprite(0) := false.B
+        shownSprite(1) := false.B
+        shownSprite(2) := true.B
+      }
+    }
 
     // Sprite
     switch(dirReg) {
