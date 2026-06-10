@@ -15,7 +15,7 @@ class CarVelocityController extends Module {
   val sinTable = Reg(Vec(64, SInt(8.W)))
   val cosTable = Reg(Vec(64, SInt(8.W)))
 
-  val xRemainder = RegInit(0.S(10.W))
+  val xRemainder = RegInit(0.S(11.W))
   val yRemainder = RegInit(0.S(10.W))
 
   for(i <- 0 to 63) {

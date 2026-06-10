@@ -61,8 +61,9 @@ class Car extends Module{
 
   when (io.update) {
 
-    when (61.U <= angle && angle <= 4.U) {
+    when ((61.U <= angle || angle >= 0.U) && angle <= 4.U) {
       sprite := rr
+      xPosReg := 100.S
     }.elsewhen(5.U <= angle && angle <= 12.U) {
       sprite := dr
     }.elsewhen(13.U <= angle && angle <= 20.U) {
