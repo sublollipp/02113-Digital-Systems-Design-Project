@@ -58,7 +58,6 @@ class Car extends Module{
   io.shownSprite := shownSprite
 
   when (io.update) {
-
     when ((61.U <= angle || angle >= 0.U) && angle <= 4.U) {
       dirReg := rr
     }.elsewhen(5.U <= angle && angle <= 12.U) {
@@ -105,7 +104,7 @@ class Car extends Module{
       is (dd) {
         sprite := upSprite
         flipSpriteH := false.B
-        flipSpriteV := false.B
+        flipSpriteV := true.B
       }
       is (rr) {
         sprite := rightSprite
