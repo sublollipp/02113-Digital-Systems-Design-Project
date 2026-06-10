@@ -36,8 +36,24 @@ class CarVelocityController extends Module {
     val accumX = (highResSpeedX + xRemainder)
     val accumY = (highResSpeedY + yRemainder)
 
-    io.newXPos := io.oldXPos + (accumX >> 7).asSInt
-    io.newYPos := io.oldYPos + (accumY >> 7).asSInt
+    val nextX = io.oldXPos + (accumX >> 7).asSInt
+    val nextY = io.oldYPos + (accumY >> 7).asSInt
+
+    when(nextX < 0.S) {
+      io.newXPos := 0.S
+    }.elsewhen(nextX > 1248.S) { // 1280 - 32
+      io.newXPos := 1248.S
+    }.otherwise {
+      io.newXPos := nextX
+    }
+
+    when(nextY < 0.S) {
+      io.newYPos := 0.S
+    }.elsewhen(nextY > 928.S) { // 960 - 32
+      io.newYPos := 928.S
+    }.otherwise {
+      io.newYPos := nextY
+    }
 
     xRemainder := accumX - ((accumX >> 7) << 7).asSInt
     yRemainder := accumY - ((accumY >> 7) << 7).asSInt
