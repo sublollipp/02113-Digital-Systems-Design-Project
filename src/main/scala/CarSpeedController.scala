@@ -36,20 +36,20 @@ class CarSpeedController(framesPerAcceleration: UInt, maxSpeed: SInt, minSpeed: 
           when (speed <= minSpeed) {
             speed := minSpeed
           }.otherwise {
-            speed := speed - 2.S * frictionCoef
+            speed := speed - (2.S * frictionCoef)
           }
         }.otherwise {
           when (speed < 0.S) {
             when (speed + frictionCoef > 0.S) {
               speed := 0.S
             }.otherwise {
-              speed := speed + 1.S * frictionCoef
+              speed := speed + (1.S * frictionCoef)
             }
           }.elsewhen (speed > 0.S) {
             when (speed - frictionCoef < 0.S) {
               speed := 0.S
             }.otherwise {
-              speed := speed - 1.S * frictionCoef
+              speed := speed - (1.S * frictionCoef)
             }
           }.otherwise {
             speed := 0.S
