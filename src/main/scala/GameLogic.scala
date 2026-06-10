@@ -83,14 +83,20 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   // Camera Follow
 
-  val WORLD_WIDTH  = 1280.S
-  val WORLD_HEIGHT = 960.S
+  val WORLD_WIDTH  = 1280.S(12.W)
+  val WORLD_HEIGHT = 960.S(11.W)
 
-  val SCREEN_WIDTH  = 640.S
-  val SCREEN_HEIGHT = 480.S
+  val SCREEN_WIDTH  = 640.S(12.W)
+  val SCREEN_HEIGHT = 480.S(11.W)
 
-  val desiredViewX = car.io.posX - (SCREEN_WIDTH / 2.S)
-  val desiredViewY = car.io.posY - (SCREEN_HEIGHT / 2.S)
+  val CAR_WIDTH  = 32.S(6.W)
+  val CAR_HEIGHT = 32.S(6.W)
+
+  val desiredViewX =
+    car.io.posX + (CAR_WIDTH / 2.S) - (SCREEN_WIDTH / 2.S)
+
+  val desiredViewY =
+    car.io.posY + (CAR_HEIGHT / 2.S) - (SCREEN_HEIGHT / 2.S)
 
   when(desiredViewX < 0.S) {
     io.viewBoxX := 0.U
