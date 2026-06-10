@@ -6,17 +6,17 @@ class CarVelocityController extends Module {
     val speed = Input(SInt(10.W))
     val ang = Input(UInt(6.W))
     val frameUpdate = Input(Bool())
-    val oldXPos = Input(SInt(11.W))
-    val oldYPos = Input(SInt(10.W))
-    val newXPos = Output(SInt(11.W))
-    val newYPos = Output(SInt(10.W))
+    val oldXPos = Input(SInt(12.W))
+    val oldYPos = Input(SInt(11.W))
+    val newXPos = Output(SInt(12.W))
+    val newYPos = Output(SInt(11.W))
   })
 
   val sinTable = Reg(Vec(64, SInt(8.W)))
   val cosTable = Reg(Vec(64, SInt(8.W)))
 
-  val xRemainder = RegInit(0.S(11.W))
-  val yRemainder = RegInit(0.S(10.W))
+  val xRemainder = RegInit(0.S(12.W))
+  val yRemainder = RegInit(0.S(11.W))
 
   for(i <- 0 to 63) {
     sinTable(i) := (Math.sin((3.14159 / 180) * i * 5.625) * 64).round.S(8.W)

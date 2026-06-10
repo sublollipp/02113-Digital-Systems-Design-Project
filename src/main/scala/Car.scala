@@ -8,20 +8,20 @@ class Car extends Module{
     val btnLeft = Input(Bool())
     val btnRight = Input(Bool())
     val update = Input(Bool())
-    val posX = Output(SInt(11.W))
-    val posY = Output(SInt(10.W))
+    val posX = Output(SInt(12.W))
+    val posY = Output(SInt(11.W))
     val flipH = Output(Bool())
     val flipV = Output(Bool())
     val shownSprite = Output(Vec(3, Bool()))
   })
 
-  val xPosReg = RegInit(60.S(11.W))
-  val yPosReg = RegInit(170.S(10.W))
+  val xPosReg = RegInit(60.S(12.W))
+  val yPosReg = RegInit(170.S(11.W))
 
   val speed = WireInit(0.S(10.W))
   val angle = WireInit(0.U(6.W))
 
-  val speedControl = Module(new CarSpeedController(1.U, 300.S, -150.S, 3.S))
+  val speedControl = Module(new CarSpeedController(1.U, 2.S, 500.S, -150.S, 3.S))
   speedControl.io.btnFwd := io.btnUp
   speedControl.io.btnBckwd := io.btnDown
   speedControl.io.frameUpdate := io.update
