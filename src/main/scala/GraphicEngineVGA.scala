@@ -112,8 +112,8 @@ class GraphicEngineVGA(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val spriteVisibleReg = RegEnable(io.spriteVisible, VecInit(Seq.fill(SpriteNumber)(true.B)), io.newFrame)
   val spriteFlipHorizontalReg = RegEnable(io.spriteFlipHorizontal, VecInit(Seq.fill(SpriteNumber)(false.B)), io.newFrame)
   val spriteFlipVerticalReg = RegEnable(io.spriteFlipVertical, VecInit(Seq.fill(SpriteNumber)(false.B)), io.newFrame)
-  val viewBoxXReg = RegEnable(io.viewBoxX, 0.U(10.W), io.newFrame)
-  val viewBoxYReg = RegEnable(io.viewBoxY, 0.U(9.W), io.newFrame)
+  val viewBoxXReg = RegEnable(io.viewBoxX, 0.U(11.W), io.newFrame)
+  val viewBoxYReg = RegEnable(io.viewBoxY, 0.U(10.W), io.newFrame)
 
 
   //Errors
@@ -126,12 +126,12 @@ class GraphicEngineVGA(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
 
   //Shifted pixel coordinates for background
-  val viewBoxXClipped = Mux(viewBoxXReg >= 640.U, 640.U, viewBoxXReg)
-  val viewBoxYClipped = Mux(viewBoxYReg >= 480.U, 480.U, viewBoxYReg)
+  val viewBoxXClipped =Mux(viewBoxXReg >= 1280.U, 1280.U, viewBoxXReg)
+  val viewBoxYClipped =Mux(viewBoxYReg >= 960.U, 960.U, viewBoxYReg)
   val pixelXBack = pixelX +& viewBoxXClipped
   val pixelYBack = pixelY +& viewBoxYClipped
-  when(viewBoxXReg > 640.U || viewBoxYReg > 480.U){
-    viewBoxOutOfRangeErrorReg := true.B
+  when(viewBoxXReg > (1280 - 640).U || viewBoxYReg > (960 - 480).U){
+  viewBoxOutOfRangeErrorReg := true.B
   }
 
 
