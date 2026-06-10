@@ -11,7 +11,7 @@ class CarAngleController(framesPerAngleChange: UInt) extends Module{
 
   val angle = RegInit(0.U(6.W))
 
-  val clockDivReg = RegInit(0.U(log2Ceil(60).W))
+  val clockDivReg = RegInit(0.U(6.W))
 
   val idle :: changeAngle :: Nil = Enum(2)
   val state = RegInit(idle)
@@ -27,9 +27,6 @@ class CarAngleController(framesPerAngleChange: UInt) extends Module{
       is (changeAngle) {
         state := idle
         clockDivReg := 0.U
-        when (angle === 60.U) {
-          angle := 0.U
-        }
         when (io.btnLeft && !io.btnRight) {
           angle := angle - 1.U
         }.elsewhen(!io.btnLeft && io.btnRight) {
