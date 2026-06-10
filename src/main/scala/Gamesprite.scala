@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 
-class GameLogicTask1(SpriteNumber: Int, BackTileNumber: Int) extends Module {
+class sprite(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val io = IO(new Bundle {
     //Buttons
     val btnC = Input(Bool())
