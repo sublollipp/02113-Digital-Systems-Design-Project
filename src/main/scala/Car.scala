@@ -51,7 +51,7 @@ class Car extends Module{
   val dirReg = RegInit(uu)
   val flipSpriteH = RegInit(false.B)
   val flipSpriteV = RegInit(false.B)
-  val sprite = RegInit(upSprite)
+  val sprite = WireDefault(upSprite)
 
   val shownSprite = RegInit(VecInit(true.B, false.B, false.B))
 
@@ -60,21 +60,21 @@ class Car extends Module{
   when (io.update) {
 
     when ((61.U <= angle || angle >= 0.U) && angle <= 4.U) {
-      sprite := rr
+      dirReg := rr
     }.elsewhen(5.U <= angle && angle <= 12.U) {
-      sprite := dr
+      dirReg := dr
     }.elsewhen(13.U <= angle && angle <= 20.U) {
-      sprite := dd
+      dirReg := dd
     }.elsewhen(21.U <= angle && angle <= 28.U) {
-      sprite := dl
+      dirReg := dl
     }.elsewhen(29.U <= angle && angle <= 36.U) {
-      sprite := ll
+      dirReg := ll
     }.elsewhen(37.U <= angle && angle <= 44.U) {
-      sprite := ul
+      dirReg := ul
     }.elsewhen(45.U <= angle && angle <= 52.U) {
-      sprite := uu
+      dirReg := uu
     }.otherwise {
-      sprite := ur
+      dirReg := ur
     }
 
     switch(sprite) {
