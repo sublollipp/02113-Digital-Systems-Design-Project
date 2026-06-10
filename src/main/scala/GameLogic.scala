@@ -99,9 +99,17 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   car.io.btnRight := io.btnR
   car.io.btnDown := io.btnD
   io.spriteFlipHorizontal(0) := car.io.flipH
+  io.spriteFlipHorizontal(1) := car.io.flipH
+  io.spriteFlipHorizontal(2) := car.io.flipH
   io.spriteFlipVertical(0) := car.io.flipH
+  io.spriteFlipVertical(1) := car.io.flipH
+  io.spriteFlipVertical(2) := car.io.flipH
   io.spriteXPosition(0) := car.io.posX
+  io.spriteXPosition(1) := car.io.posX
+  io.spriteXPosition(2) := car.io.posX
   io.spriteYPosition(0) := car.io.posY
+  io.spriteYPosition(1) := car.io.posY
+  io.spriteYPosition(2) := car.io.posY
   io.spriteVisible(0) := true.B
   car.io.update := false.B
 
