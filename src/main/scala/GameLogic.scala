@@ -110,7 +110,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteYPosition(0) := car.io.posY
   io.spriteYPosition(1) := car.io.posY
   io.spriteYPosition(2) := car.io.posY
-  io.spriteVisible(0) := true.B
+  io.spriteVisible(0) := car.io.shownSprite(0)
+  io.spriteVisible(1) := car.io.shownSprite(1)
+  io.spriteVisible(2) := car.io.shownSprite(2)
   car.io.update := false.B
 
   switch (stateReg) {

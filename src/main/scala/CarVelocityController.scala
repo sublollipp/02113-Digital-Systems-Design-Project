@@ -26,8 +26,8 @@ class CarVelocityController extends Module {
   val sinOfAngle = sinTable(io.ang)
   val cosOfAngle = cosTable(io.ang)
 
-  val highResSpeedY = (sinOfAngle * io.speed)
-  val highResSpeedX = (cosOfAngle * io.speed)
+  val highResSpeedY = ((sinOfAngle * io.speed) >> 6).asSInt
+  val highResSpeedX = ((cosOfAngle * io.speed) >> 6).asSInt
 
   io.newXPos := io.oldXPos
   io.newYPos := io.oldYPos

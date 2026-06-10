@@ -55,9 +55,9 @@ class Car extends Module{
   val flipSpriteV = RegInit(false.B)
   val sprite = RegInit(upSprite)
 
-  io.shownSprite(0) := false.B
-  io.shownSprite(1) := false.B
-  io.shownSprite(2) := false.B
+  val shownSprite = RegInit(VecInit(true.B, false.B, false.B))
+
+  io.shownSprite := shownSprite
 
   when (io.update) {
 
@@ -81,13 +81,19 @@ class Car extends Module{
 
     switch(sprite) {
       is(upSprite) {
-        io.shownSprite(0) := true.B
+        shownSprite(0) := true.B
+        shownSprite(1) := false.B
+        shownSprite(2) := false.B
       }
       is(diagSprite) {
-        io.shownSprite(1) := true.B
+        shownSprite(0) := false.B
+        shownSprite(1) := true.B
+        shownSprite(2) := false.B
       }
       is(rightSprite) {
-        io.shownSprite(2) := true.B
+        shownSprite(0) := false.B
+        shownSprite(1) := false.B
+        shownSprite(2) := true.B
       }
     }
 
