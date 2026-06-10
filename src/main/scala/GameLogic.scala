@@ -12,8 +12,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     val sw = Input(Vec(8, Bool()))
     val led = Output(Vec(8, Bool()))
 
-    val spriteXPosition = Output(Vec(SpriteNumber, SInt(11.W)))
-    val spriteYPosition = Output(Vec(SpriteNumber, SInt(10.W)))
+    val spriteXPosition = Output(Vec(SpriteNumber, SInt(12.W)))
+    val spriteYPosition = Output(Vec(SpriteNumber, SInt(11.W)))
     val spriteVisible = Output(Vec(SpriteNumber, Bool()))
     val spriteFlipHorizontal = Output(Vec(SpriteNumber, Bool()))
     val spriteFlipVertical = Output(Vec(SpriteNumber, Bool()))
