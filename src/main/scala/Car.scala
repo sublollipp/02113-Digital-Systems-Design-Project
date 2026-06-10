@@ -18,7 +18,7 @@ class Car extends Module{
   val xPosReg = RegInit(60.S(11.W))
   val yPosReg = RegInit(170.S(10.W))
 
-  val speed = WireInit(0.S(9.W))
+  val speed = WireInit(0.S(10.W))
   val angle = WireInit(0.U(6.W))
 
   val speedControl = Module(new CarSpeedController(1.U, 300.S, -150.S, 3.S))
@@ -42,8 +42,6 @@ class Car extends Module{
   xPosReg := velControl.io.newXPos
   yPosReg := velControl.io.newYPos
 
-  val carAngle = RegInit(15.U(6.W)) // 1 = 6 degrees
-
   val xSpeedCounter = RegInit(0.U(4.W))
   val ySpeedCounter = RegInit(0.U(4.W))
 
@@ -63,7 +61,6 @@ class Car extends Module{
 
     when ((61.U <= angle || angle >= 0.U) && angle <= 4.U) {
       sprite := rr
-      xPosReg := 100.S
     }.elsewhen(5.U <= angle && angle <= 12.U) {
       sprite := dr
     }.elsewhen(13.U <= angle && angle <= 20.U) {
