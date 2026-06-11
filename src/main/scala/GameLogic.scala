@@ -52,11 +52,11 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val car = Module(new Car)
 
     // AI car position
-  val aiX = RegInit(224.S(12.W))
+  val aiX = RegInit(160.S(12.W))
   val aiY = RegInit(160.S(11.W))
 
   val checkpointX = VecInit(
-    224.S(12.W),
+    160.S(12.W),
     640.S(12.W),
     1056.S(12.W),
     1024.S(12.W),
@@ -77,10 +77,21 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     448.S(11.W)
   )
 
+
+
   val currentCheckpoint = RegInit(0.U(3.W))
 
-  val targetX = checkpointX(currentCheckpoint)
-  val targetY = checkpointY(currentCheckpoint)
+
+  val nextCheckpoint =
+  Mux(currentCheckpoint === 7.U, 0.U, currentCheckpoint + 1.U)
+
+  val targetX =
+    (checkpointX(currentCheckpoint) * 3.S +
+    checkpointX(nextCheckpoint)) >> 2
+
+  val targetY =
+    (checkpointY(currentCheckpoint) * 3.S +
+    checkpointY(nextCheckpoint)) >> 2
 
   io.led(0) := aiX > 300.S
 
@@ -169,21 +180,28 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       val dx = targetX - aiX
       val dy = targetY - aiY
 
-      when(dx > 0.S) {
-        aiX := aiX + 4.S
-      }.elsewhen(dx < 0.S) {
-        aiX := aiX - 4.S
+      val stepX = dx >> 4
+      val stepY = dy >> 4
+
+      when(stepX > 8.S) {
+        aiX := aiX + 8.S
+      }.elsewhen(stepX < (-8).S) {
+        aiX := aiX - 8.S
+      }.otherwise {
+        aiX := aiX + stepX
       }
 
-      when(dy > 0.S) {
-        aiY := aiY + 4.S
-      }.elsewhen(dy < 0.S) {
-        aiY := aiY - 4.S
+      when(stepY > 8.S) {
+        aiY := aiY + 8.S
+      }.elsewhen(stepY < (-8).S) {
+        aiY := aiY - 8.S
+      }.otherwise {
+        aiY := aiY + stepY
       }
 
       when(
-        (dx < 32.S && dx > (-32).S) &&
-        (dy < 32.S && dy > (-32).S)
+        (dx < 96.S && dx > (-96).S) &&
+        (dy < 96.S && dy > (-96).S)
       ) {
         when(currentCheckpoint === 7.U) {
           currentCheckpoint := 0.U
@@ -199,7 +217,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       io.frameUpdateDone := true.B
       stateReg := idle
     }
-  }
+}
 
 val runningSprite = Module(new RunningSprite)
 
