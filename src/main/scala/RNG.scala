@@ -8,8 +8,8 @@ class RNG(options: Int) extends Module {
     val idx = Output(UInt(width.W))
   })
 
-  val random = LFSR(width)
-  val index = random % options.U
+  val pseudoRandomNumber = LFSR(width)
+  val index = pseudoRandomNumber % options.U
 
   io.idx := index
 }
