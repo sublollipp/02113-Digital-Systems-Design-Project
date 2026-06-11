@@ -82,6 +82,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val targetX = checkpointX(currentCheckpoint)
   val targetY = checkpointY(currentCheckpoint)
 
+  io.led(0) := aiX > 300.S
+
   car.io.btnLeft := io.btnL
   car.io.btnUp := io.btnU
   car.io.btnRight := io.btnR
@@ -128,18 +130,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
 // AI sprite
 
-  io.spriteXPosition(3) := aiX - cameraX
-  io.spriteYPosition(3) := aiY - cameraY
+  io.spriteXPosition(0) := aiX - cameraX
+  io.spriteYPosition(0) := aiY - cameraY
 
-  io.spriteXPosition(4) := aiX - cameraX
-  io.spriteYPosition(4) := aiY - cameraY
+  io.spriteXPosition(1) := aiX - cameraX
+  io.spriteYPosition(1) := aiY - cameraY
 
-  io.spriteXPosition(5) := aiX - cameraX
-  io.spriteYPosition(5) := aiY - cameraY
+  io.spriteXPosition(2) := aiX - cameraX
+  io.spriteYPosition(2) := aiY - cameraY
 
-  io.spriteVisible(3) := true.B
-  io.spriteVisible(4) := false.B
-  io.spriteVisible(5) := false.B
+  io.spriteVisible(0) := true.B
+  io.spriteVisible(1) := false.B
+  io.spriteVisible(2) := false.B
 
   io.spriteFlipHorizontal(3) := false.B
   io.spriteFlipHorizontal(4) := false.B
