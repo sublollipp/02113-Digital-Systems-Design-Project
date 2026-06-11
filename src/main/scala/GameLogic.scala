@@ -82,16 +82,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val currentCheckpoint = RegInit(0.U(3.W))
 
 
-  val nextCheckpoint =
-  Mux(currentCheckpoint === 7.U, 0.U, currentCheckpoint + 1.U)
-
-  val targetX =
-    (checkpointX(currentCheckpoint) * 3.S +
-    checkpointX(nextCheckpoint)) >> 2
-
-  val targetY =
-    (checkpointY(currentCheckpoint) * 3.S +
-    checkpointY(nextCheckpoint)) >> 2
+  val targetX = checkpointX(currentCheckpoint)
+  val targetY = checkpointY(currentCheckpoint)
 
   io.led(0) := aiX > 300.S
 
@@ -200,8 +192,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       }
 
       when(
-        (dx < 96.S && dx > (-96).S) &&
-        (dy < 96.S && dy > (-96).S)
+        (dx < 32.S && dx > (-32).S) &&
+        (dy < 32.S && dy > (-32).S)
       ) {
         when(currentCheckpoint === 7.U) {
           currentCheckpoint := 0.U
