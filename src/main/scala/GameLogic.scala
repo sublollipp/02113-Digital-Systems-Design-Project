@@ -200,4 +200,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       stateReg := idle
     }
   }
+
+val runningSprite = Module(new RunningSprite)
+
+io.spriteXPosition(3) := runningSprite.io.posX - cameraX
+io.spriteYPosition(3) := runningSprite.io.posY - cameraY
+io.spriteFlipHorizontal(3) := runningSprite.io.flipH
+io.spriteFlipVertical(3) := runningSprite.io.flipV
+io.spriteVisible(3) := runningSprite.io.shownSprite(2)
 }
