@@ -205,8 +205,6 @@ class GameLogicTask7(SpriteNumber: Int, BackTileNumber: Int) extends Module {
         collided := false.B
       }
 
-
-
       when(io.btnD){
         when(sprite0YReg < (480 - 32 - 24).S) {
           sprite0YReg := sprite0YReg + 2.S

@@ -6,8 +6,9 @@ class PowerUps extends Module {
     val frameUpdate = Input(Bool())
     val carX = Input(Bool())
     val carY = Input(Bool())
-    val mushroomSprite = Output(Bool())
     })
+
+  val mysteryBox = RegInit(0.U(10.W))
 
 
 

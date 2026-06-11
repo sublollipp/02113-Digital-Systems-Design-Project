@@ -27,5 +27,4 @@ class Camera extends Module{
   }.otherwise {
     io.camY := desiredCameraY
   }
-
 }
