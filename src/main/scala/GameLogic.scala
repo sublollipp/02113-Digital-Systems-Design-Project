@@ -130,18 +130,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
 // AI sprite
 
-  io.spriteXPosition(4) := aiX - cameraX
-  io.spriteYPosition(4) := aiY - cameraY
+  io.spriteXPosition(0) := aiX - cameraX
+  io.spriteYPosition(0) := aiY - cameraY
 
-  io.spriteXPosition(6) := aiX - cameraX
-  io.spriteYPosition(6) := aiY - cameraY
+  io.spriteXPosition(1) := aiX - cameraX
+  io.spriteYPosition(1) := aiY - cameraY
 
-  io.spriteXPosition(7) := aiX - cameraX
-  io.spriteYPosition(7) := aiY - cameraY
+  io.spriteXPosition(2) := aiX - cameraX
+  io.spriteYPosition(2) := aiY - cameraY
 
-  io.spriteVisible(4) := true.B
-  io.spriteVisible(6) := false.B
-  io.spriteVisible(7) := false.B
+  io.spriteVisible(0) := true.B
+  io.spriteVisible(1) := false.B
+  io.spriteVisible(2) := false.B
 
   io.spriteFlipHorizontal(3) := false.B
   io.spriteFlipHorizontal(4) := false.B
