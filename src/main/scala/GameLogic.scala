@@ -101,24 +101,11 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val cameraX = Wire(SInt(11.W))
   val cameraY = Wire(SInt(10.W))
 
-  val desiredCameraX = car.io.posX - 304.S
-  val desiredCameraY = car.io.posY - 224.S
-
-  when(desiredCameraX < 0.S) {
-    cameraX := 0.S
-  }.elsewhen(desiredCameraX > 640.S) {
-    cameraX := 640.S
-  }.otherwise {
-    cameraX := desiredCameraX
-  }
-
-  when(desiredCameraY < 0.S) {
-    cameraY := 0.S
-  }.elsewhen(desiredCameraY > 480.S) {
-    cameraY := 480.S
-  }.otherwise {
-    cameraY := desiredCameraY
-  }
+  val camera = Module(new Camera)
+  camera.io.carX := car.io.posX
+  camera.io.carY := car.io.posY
+  cameraX := camera.io.camX
+  cameraY := camera.io.camY
 
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
