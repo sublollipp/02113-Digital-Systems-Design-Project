@@ -56,30 +56,126 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiY = RegInit(160.S(11.W))
 
   val checkpointX = VecInit(
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+
+    240.S(12.W),
+    320.S(12.W),
+    400.S(12.W),
+    480.S(12.W),
+    560.S(12.W),
+    640.S(12.W),
+    720.S(12.W),
+    800.S(12.W),
+    880.S(12.W),
+    960.S(12.W),
+    1040.S(12.W),
+    1120.S(12.W),
+
+    1120.S(12.W),
+    1120.S(12.W),
+    1120.S(12.W),
+    1120.S(12.W),
+    1120.S(12.W),
+
+    1080.S(12.W),
+    1040.S(12.W),
+    1000.S(12.W),
+    960.S(12.W),
+    920.S(12.W),
+    880.S(12.W),
+    860.S(12.W),
+
+    860.S(12.W),
+    860.S(12.W),
+    860.S(12.W),
+    860.S(12.W),
+    860.S(12.W),
+
+    760.S(12.W),
+    660.S(12.W),
+    560.S(12.W),
+    460.S(12.W),
+    360.S(12.W),
     260.S(12.W),
-    1340.S(12.W),
-    1300.S(12.W),
-    1160.S(12.W),
-    1060.S(12.W),
-    864.S(12.W),
-    180.S(12.W),
+    160.S(12.W),
+
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
+    160.S(12.W),
     160.S(12.W)
   )
 
   val checkpointY = VecInit(
-    195.S(11.W),
+    760.S(11.W),
+    680.S(11.W),
+    600.S(11.W),
+    520.S(11.W),
+    420.S(11.W),
+    300.S(11.W),
+
+    200.S(11.W),
+    180.S(11.W),
+    170.S(11.W),
     165.S(11.W),
-    435.S(11.W),
-    450.S(11.W),
-    735.S(11.W),
-    768.S(11.W),
-    705.S(11.W),
-    448.S(11.W)
+    160.S(11.W),
+    160.S(11.W),
+    160.S(11.W),
+    160.S(11.W),
+    160.S(11.W),
+    160.S(11.W),
+    160.S(11.W),
+    160.S(11.W),
+
+    220.S(11.W),
+    300.S(11.W),
+    380.S(11.W),
+    460.S(11.W),
+    520.S(11.W),
+
+    520.S(11.W),
+    540.S(11.W),
+    580.S(11.W),
+    640.S(11.W),
+    700.S(11.W),
+    760.S(11.W),
+    820.S(11.W),
+
+    820.S(11.W),
+    760.S(11.W),
+    680.S(11.W),
+    600.S(11.W),
+    520.S(11.W),
+
+    520.S(11.W),
+    520.S(11.W),
+    520.S(11.W),
+    520.S(11.W),
+    520.S(11.W),
+    520.S(11.W),
+    520.S(11.W),
+
+    600.S(11.W),
+    680.S(11.W),
+    740.S(11.W),
+    780.S(11.W),
+    810.S(11.W),
+    830.S(11.W),
+    790.S(11.W),
+    760.S(11.W)
   )
 
 
 
-  val currentCheckpoint = RegInit(0.U(3.W))
+  val currentCheckpoint = RegInit(0.U(6.W))
 
 
   val targetX = checkpointX(currentCheckpoint)
@@ -195,12 +291,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
         (dx < 32.S && dx > (-32).S) &&
         (dy < 32.S && dy > (-32).S)
       ) {
-        when(currentCheckpoint === 7.U) {
-          currentCheckpoint := 0.U
-        }.otherwise {
-          currentCheckpoint := currentCheckpoint + 1.U
-        }
+      when(currentCheckpoint === 49.U) {
+        currentCheckpoint := 0.U
+      }.otherwise {
+        currentCheckpoint := currentCheckpoint + 1.U
       }
+    }
 
       stateReg := done
     }
