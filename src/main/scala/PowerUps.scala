@@ -8,8 +8,6 @@ class PowerUps extends Module {
     val carY = Input(Bool())
     })
 
-  val mysteryBox = RegInit(0.U(10.W))
-
 
 
 }
