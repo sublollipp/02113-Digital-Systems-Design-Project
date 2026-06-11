@@ -51,10 +51,42 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val car = Module(new Car)
 
+    // AI car position
+  val aiX = RegInit(224.S(12.W))
+  val aiY = RegInit(160.S(11.W))
+
+  val checkpointX = VecInit(
+    224.S(12.W),
+    640.S(12.W),
+    1056.S(12.W),
+    1024.S(12.W),
+    928.S(12.W),
+    864.S(12.W),
+    192.S(12.W),
+    160.S(12.W)
+  )
+
+  val checkpointY = VecInit(
+    160.S(11.W),
+    160.S(11.W),
+    192.S(11.W),
+    448.S(11.W),
+    512.S(11.W),
+    768.S(11.W),
+    736.S(11.W),
+    448.S(11.W)
+  )
+
+  val currentCheckpoint = RegInit(0.U(3.W))
+
+  val targetX = checkpointX(currentCheckpoint)
+  val targetY = checkpointY(currentCheckpoint)
+
   car.io.btnLeft := io.btnL
   car.io.btnUp := io.btnU
   car.io.btnRight := io.btnR
   car.io.btnDown := io.btnD
+
 
   io.spriteFlipHorizontal(0) := car.io.flipH
   io.spriteFlipHorizontal(1) := car.io.flipH
@@ -103,6 +135,33 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteVisible(1) := car.io.shownSprite(1)
   io.spriteVisible(2) := car.io.shownSprite(2)
 
+  
+
+  // AI sprite
+
+// AI sprite
+
+  io.spriteXPosition(3) := aiX - cameraX
+  io.spriteYPosition(3) := aiY - cameraY
+
+  io.spriteXPosition(4) := aiX - cameraX
+  io.spriteYPosition(4) := aiY - cameraY
+
+  io.spriteXPosition(5) := aiX - cameraX
+  io.spriteYPosition(5) := aiY - cameraY
+
+  io.spriteVisible(3) := true.B
+  io.spriteVisible(4) := false.B
+  io.spriteVisible(5) := false.B
+
+  io.spriteFlipHorizontal(3) := false.B
+  io.spriteFlipHorizontal(4) := false.B
+  io.spriteFlipHorizontal(5) := false.B
+
+  io.spriteFlipVertical(3) := false.B
+  io.spriteFlipVertical(4) := false.B
+  io.spriteFlipVertical(5) := false.B
+
   car.io.update := false.B
 
   // FSM
@@ -115,7 +174,35 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     }
 
     is(compute1) {
+
       car.io.update := true.B
+
+      val dx = targetX - aiX
+      val dy = targetY - aiY
+
+      when(dx > 0.S) {
+        aiX := aiX + 4.S
+      }.elsewhen(dx < 0.S) {
+        aiX := aiX - 4.S
+      }
+
+      when(dy > 0.S) {
+        aiY := aiY + 4.S
+      }.elsewhen(dy < 0.S) {
+        aiY := aiY - 4.S
+      }
+
+      when(
+        (dx < 32.S && dx > (-32).S) &&
+        (dy < 32.S && dy > (-32).S)
+      ) {
+        when(currentCheckpoint === 7.U) {
+          currentCheckpoint := 0.U
+        }.otherwise {
+          currentCheckpoint := currentCheckpoint + 1.U
+        }
+      }
+
       stateReg := done
     }
 
