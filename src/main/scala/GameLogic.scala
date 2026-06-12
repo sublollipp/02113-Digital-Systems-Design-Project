@@ -64,10 +64,10 @@ val desiredAngle = WireDefault(aiAngle)
   val checkpointX = VecInit(
     80.S(12.W),
     90.S(12.W),
+    100.S(12.W),
+    110.S(12.W),
     120.S(12.W),
-    160.S(12.W),
-    180.S(12.W),
-    190.S(12.W),
+    140.S(12.W),
 
     230.S(12.W),
     320.S(12.W),
@@ -88,11 +88,11 @@ val desiredAngle = WireDefault(aiAngle)
     1120.S(12.W),
     1120.S(12.W),
 
-    1080.S(12.W),
-    1040.S(12.W),
+    1050.S(12.W),
     1000.S(12.W),
-    960.S(12.W),
-    920.S(12.W),
+    950.S(12.W),
+    930.S(12.W),
+    900.S(12.W),
     880.S(12.W),
     860.S(12.W),
 
@@ -149,11 +149,11 @@ val desiredAngle = WireDefault(aiAngle)
 
     520.S(11.W),
     540.S(11.W),
-    580.S(11.W),
+    560.S(11.W),
+    600.S(11.W),
     640.S(11.W),
     700.S(11.W),
     760.S(11.W),
-    820.S(11.W),
 
     820.S(11.W),
     820.S(11.W),
