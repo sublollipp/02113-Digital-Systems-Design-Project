@@ -62,14 +62,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 val desiredAngle = WireDefault(aiAngle)
 
   val checkpointX = VecInit(
+    80.S(12.W),
+    90.S(12.W),
     120.S(12.W),
-    140.S(12.W),
     160.S(12.W),
     180.S(12.W),
-    200.S(12.W),
-    220.S(12.W),
+    190.S(12.W),
 
-    240.S(12.W),
+    230.S(12.W),
     320.S(12.W),
     400.S(12.W),
     480.S(12.W),
@@ -110,14 +110,14 @@ val desiredAngle = WireDefault(aiAngle)
     260.S(12.W),
     160.S(12.W),
 
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    150.S(12.W),
     140.S(12.W),
-    120.S(12.W)
+    140.S(12.W),
+    130.S(12.W),
+    130.S(12.W),
+    120.S(12.W),
+    120.S(12.W),
+    130.S(12.W),
+    140.S(12.W)
   )
 
   val checkpointY = VecInit(
@@ -143,9 +143,9 @@ val desiredAngle = WireDefault(aiAngle)
 
     220.S(11.W),
     300.S(11.W),
+    340.S(11.W),
     380.S(11.W),
-    460.S(11.W),
-    520.S(11.W),
+    430.S(11.W),
 
     520.S(11.W),
     540.S(11.W),
@@ -175,8 +175,8 @@ val desiredAngle = WireDefault(aiAngle)
     780.S(11.W),
     810.S(11.W),
     830.S(11.W),
-    790.S(11.W),
-    760.S(11.W)
+    830.S(11.W),
+    830.S(11.W)
   )
 
 
