@@ -42,7 +42,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.backBufferWriteEnable := false.B
 
   io.frameUpdateDone := false.B
-
+  val frameUpdateReg = RegNext(io.newFrame, false.B)
 
 
   // Game Logic
@@ -222,7 +222,7 @@ val desiredAngle = WireDefault(aiAngle)
   aiVel.io.oldYPos := aiY
   aiVel.io.ang := aiAngle
   aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := false.B
+  aiVel.io.frameUpdate := frameUpdateReg
 
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
@@ -336,7 +336,6 @@ val desiredAngle = WireDefault(aiAngle)
     }
 
     // Flyt bilen
-    aiVel.io.frameUpdate := io.newFrame
     aiX := aiVel.io.newXPos
     aiY := aiVel.io.newYPos
 
@@ -377,5 +376,5 @@ io.spriteYPosition(3) := runningSprite.io.posY - cameraY
 io.spriteFlipHorizontal(3) := runningSprite.io.flipH
 io.spriteFlipVertical(3) := runningSprite.io.flipV
 io.spriteVisible(3) := runningSprite.io.shownSprite(2)
-runningSprite.io.update := io.newFrame
+runningSprite.io.update := frameUpdateReg
 }
