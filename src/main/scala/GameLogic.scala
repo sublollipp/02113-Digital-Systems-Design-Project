@@ -275,61 +275,69 @@ val desiredAngle = WireDefault(aiAngle)
       }
     }
 
-    is(compute1) {
+  is(compute1) {
 
-      car.io.update := true.B
+    car.io.update := true.B
 
-  val dx = targetX - aiX
-  val dy = targetY - aiY
+    val dx = targetX - aiX
+    val dy = targetY - aiY
 
-  when(dx > 40.S && dy < 40.S && dy > (-40).S) {
-    desiredAngle := 0.U
-  }.elsewhen(dx > 0.S && dy > 0.S) {
-    desiredAngle := 8.U
-  }.elsewhen(dx < 40.S && dx > (-40).S && dy > 0.S) {
-    desiredAngle := 16.U
-  }.elsewhen(dx < 0.S && dy > 0.S) {
-    desiredAngle := 24.U
-  }.elsewhen(dx < 0.S && dy < 40.S && dy > (-40).S) {
-    desiredAngle := 32.U
-  }.elsewhen(dx < 0.S && dy < 0.S) {
-    desiredAngle := 40.U
-  }.elsewhen(dx < 40.S && dx > (-40).S && dy < 0.S) {
-    desiredAngle := 48.U
-  }.otherwise {
-    desiredAngle := 56.U
-  }
+    // Beregn ønsket retning
 
-  when(aiAngle =/= desiredAngle) {
-    when((desiredAngle - aiAngle)(5) === 0.U) {
-      aiAngle := aiAngle + 1.U
+    when(dx > 40.S && dy < 40.S && dy > (-40).S) {
+      desiredAngle := 0.U
+    }.elsewhen(dx > 0.S && dy > 0.S) {
+      desiredAngle := 8.U
+    }.elsewhen(dx < 40.S && dx > (-40).S && dy > 0.S) {
+      desiredAngle := 16.U
+    }.elsewhen(dx < 0.S && dy > 0.S) {
+      desiredAngle := 24.U
+    }.elsewhen(dx < 0.S && dy < 40.S && dy > (-40).S) {
+      desiredAngle := 32.U
+    }.elsewhen(dx < 0.S && dy < 0.S) {
+      desiredAngle := 40.U
+    }.elsewhen(dx < 40.S && dx > (-40).S && dy < 0.S) {
+      desiredAngle := 48.U
     }.otherwise {
-      aiAngle := aiAngle - 1.U
+      desiredAngle := 56.U
     }
-  }
 
+    // Drej gradvist mod målet
 
-  // Accelerér Ai Bilen
+    when(aiAngle =/= desiredAngle) {
+      when((desiredAngle - aiAngle)(5) === 0.U) {
+        aiAngle := aiAngle + 1.U
+      }.otherwise {
+        aiAngle := aiAngle - 1.U
+      }
+    }
 
-  when(aiSpeed < 200.S) {
-    aiSpeed := 500.S
-  }
+    // Accelerér
 
-      when(
-        (dx < 64.S && dx > (-64).S) && (dy < 64.S && dy > (-64).S)
-) {
+    when(aiSpeed < 60.S) {
+      aiSpeed := aiSpeed + 1.S
+    }
+
+    // Flyt bilen
+
+    aiX := aiVel.io.newXPos
+    aiY := aiVel.io.newYPos
+
+    // Skift waypoint
+
+    when(
+      (dx < 64.S && dx > (-64).S) &&
+      (dy < 64.S && dy > (-64).S)
+    ) {
       when(currentCheckpoint === 49.U) {
         currentCheckpoint := 0.U
       }.otherwise {
         currentCheckpoint := currentCheckpoint + 1.U
       }
     }
-      // aiX := aiVel.io.newXPos
-      // aiY := aiVel.io.newYPos
 
-      aiX := aiX + 2.S
-      stateReg := done
-    }
+    stateReg := done
+  }
 
     is(done) {
       io.frameUpdateDone := true.B
