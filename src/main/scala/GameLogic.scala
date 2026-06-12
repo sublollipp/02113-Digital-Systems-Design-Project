@@ -59,7 +59,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
-  
+
   val racingOffset = RegInit(0.S(8.W))
 
 val desiredAngle = WireDefault(aiAngle)
@@ -264,7 +264,7 @@ val currentCheckpoint = RegInit(0.U(6.W))
 
     // Accelerér
 
-    when(aiSpeed < 250.S) {
+    when(aiSpeed < 275.S) {
       aiSpeed := aiSpeed + 4.S
     }
 
