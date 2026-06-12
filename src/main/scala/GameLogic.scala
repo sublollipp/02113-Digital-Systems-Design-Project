@@ -53,39 +53,62 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val car = Module(new Car)
 
     // AI car position
+
   val aiX = RegInit(160.S(12.W))
   val aiY = RegInit(800.S(11.W))
 
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
 
+  val racingOffset = RegInit(0.S(8.W))
+
 val desiredAngle = WireDefault(aiAngle)
 
- val checkpointX = VecInit(
-  130.S, 160.S, 160.S, 160.S,
-  320.S, 480.S, 640.S, 800.S, 960.S, 1056.S,
-  1056.S, 1056.S, 1056.S,
-  960.S, 912.S,
-  912.S, 912.S, 912.S,
-  800.S, 640.S, 480.S, 320.S, 160.S,
-  140.S, 120.S
+val checkpointX = VecInit(
+  140.S, 140.S, 145.S, 150.S, 155.S, 160.S,
+
+  180.S, 240.S, 320.S, 400.S, 480.S, 560.S,
+  640.S, 720.S, 800.S, 880.S, 960.S, 1020.S, 1060.S,
+
+  1080.S, 1085.S, 1090.S, 1090.S, 1090.S,
+
+  1080.S, 1060.S, 1040.S, 1020.S, 1000.S,
+
+  980.S, 960.S, 940.S, 920.S, 900.S,
+
+  890.S, 885.S, 880.S, 875.S,
+
+  860.S, 820.S, 760.S, 680.S, 600.S,
+  520.S, 440.S, 360.S, 280.S, 220.S,
+
+  180.S, 160.S, 145.S
 )
 
 val checkpointY = VecInit(
-  800.S, 600.S, 400.S, 160.S,
-  160.S, 140.S, 140.S, 140.S, 160.S, 193.S,
-  300.S, 400.S, 496.S,
-  496.S, 496.S,
-  600.S, 700.S, 800.S,
-  800.S, 800.S, 800.S, 800.S, 800.S,
-  800.S, 800.S
-) 
+  800.S, 720.S, 580.S, 460.S, 340.S, 280.S,
+
+  240.S, 220.S, 160.S, 140.S, 140.S, 130.S,
+  120.S, 120.S, 130.S, 140.S, 160.S, 185.S, 195.S,
+
+  240.S, 300.S, 360.S, 420.S, 480.S,
+
+  500.S, 500.S, 500.S, 500.S, 500.S,
+
+  520.S, 560.S, 620.S, 680.S, 740.S,
+
+  790.S, 810.S, 825.S, 835.S,
+
+  840.S, 840.S, 840.S, 840.S, 840.S,
+  840.S, 840.S, 840.S, 835.S, 825.S,
+
+  810.S, 800.S, 800.S
+)
 
 
-val currentCheckpoint = RegInit(0.U(5.W))
+val currentCheckpoint = RegInit(0.U(6.W))
 
 
-  val lookAhead = Mux(currentCheckpoint >= 23.U, currentCheckpoint + 2.U - 25.U, currentCheckpoint + 2.U)
+  val lookAhead = Mux(currentCheckpoint >= 47.U, currentCheckpoint + 4.U - 52.U, currentCheckpoint + 4.U)
 
   val targetX = checkpointX(lookAhead)
   val targetY = checkpointY(lookAhead)
@@ -185,14 +208,29 @@ val currentCheckpoint = RegInit(0.U(5.W))
     val dx = targetX - aiX
     val dy = targetY - aiY
 
-    // Beregn ønsket retning
 
-    val absDx = Mux(dx < 0.S, -dx, dx)
-    val absDy = Mux(dy < 0.S, -dy, dy)
+
+    val racingOffset = WireDefault(0.S(8.W))
+
+    when(currentCheckpoint === 0.U) {
+      racingOffset := 20.S
+    }.elsewhen(currentCheckpoint === 6.U) {
+      racingOffset := (-15).S
+    }.elsewhen(currentCheckpoint === 12.U) {
+      racingOffset := 25.S
+    }.elsewhen(currentCheckpoint === 18.U) {
+      racingOffset := (-20).S
+    }
+
+    val adjustedDx = (targetX + racingOffset) - aiX
+    val adjustedDy = targetY - aiY
+
+    val absDx = Mux(adjustedDx < 0.S, -adjustedDx, adjustedDx)
+    val absDy = Mux(adjustedDy < 0.S, -adjustedDy, adjustedDy)
 
     when(absDx > (absDy << 1)) {
 
-      when(dx > 0.S) {
+      when(adjustedDx > 0.S) {
         desiredAngle := 0.U
       }.otherwise {
         desiredAngle := 32.U
@@ -200,7 +238,7 @@ val currentCheckpoint = RegInit(0.U(5.W))
 
     }.elsewhen(absDy > (absDx << 1)) {
 
-      when(dy > 0.S) {
+      when(adjustedDy > 0.S) {
         desiredAngle := 16.U
       }.otherwise {
         desiredAngle := 48.U
@@ -208,11 +246,11 @@ val currentCheckpoint = RegInit(0.U(5.W))
 
     }.otherwise {
 
-      when(dx > 0.S && dy > 0.S) {
+      when(adjustedDx > 0.S && adjustedDy > 0.S) {
         desiredAngle := 8.U
-      }.elsewhen(dx < 0.S && dy > 0.S) {
+      }.elsewhen(adjustedDx < 0.S && adjustedDy > 0.S) {
         desiredAngle := 24.U
-      }.elsewhen(dx < 0.S && dy < 0.S) {
+      }.elsewhen(adjustedDx < 0.S && adjustedDy < 0.S) {
         desiredAngle := 40.U
       }.otherwise {
         desiredAngle := 56.U
@@ -226,7 +264,7 @@ val currentCheckpoint = RegInit(0.U(5.W))
 
     // Accelerér
 
-    when(aiSpeed < 250.S) {
+    when(aiSpeed < 275.S) {
       aiSpeed := aiSpeed + 4.S
     }
 
@@ -237,10 +275,10 @@ val currentCheckpoint = RegInit(0.U(5.W))
     // Skift waypoint
 
     when(
-      (dx < 48.S && dx > (-48).S) &&
-      (dy < 48.S && dy > (-48).S)
+      (adjustedDx < 48.S && adjustedDx > (-48).S) &&
+      (adjustedDy < 48.S && adjustedDy > (-48).S)
     ) {
-      when(currentCheckpoint === 24.U) {
+      when(currentCheckpoint === 51.U) {
         currentCheckpoint := 0.U
       }.otherwise {
         currentCheckpoint := currentCheckpoint + 1.U
