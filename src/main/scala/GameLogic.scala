@@ -284,31 +284,46 @@ val desiredAngle = WireDefault(aiAngle)
 
     // Beregn ønsket retning
 
-    when(dx > 40.S && dy < 40.S && dy > (-40).S) {
-      desiredAngle := 0.U
-    }.elsewhen(dx > 0.S && dy > 0.S) {
-      desiredAngle := 8.U
-    }.elsewhen(dx < 40.S && dx > (-40).S && dy > 0.S) {
-      desiredAngle := 16.U
-    }.elsewhen(dx < 0.S && dy > 0.S) {
-      desiredAngle := 24.U
-    }.elsewhen(dx < 0.S && dy < 40.S && dy > (-40).S) {
-      desiredAngle := 32.U
-    }.elsewhen(dx < 0.S && dy < 0.S) {
-      desiredAngle := 40.U
-    }.elsewhen(dx < 40.S && dx > (-40).S && dy < 0.S) {
-      desiredAngle := 48.U
+    val absDx = Mux(dx < 0.S, -dx, dx)
+    val absDy = Mux(dy < 0.S, -dy, dy)
+
+    when(absDx > (absDy << 1)) {
+
+      when(dx > 0.S) {
+        desiredAngle := 0.U
+      }.otherwise {
+        desiredAngle := 32.U
+      }
+
+    }.elsewhen(absDy > (absDx << 1)) {
+
+      when(dy > 0.S) {
+        desiredAngle := 16.U
+      }.otherwise {
+        desiredAngle := 48.U
+      }
+
     }.otherwise {
-      desiredAngle := 56.U
+
+      when(dx > 0.S && dy > 0.S) {
+        desiredAngle := 8.U
+      }.elsewhen(dx < 0.S && dy > 0.S) {
+        desiredAngle := 24.U
+      }.elsewhen(dx < 0.S && dy < 0.S) {
+        desiredAngle := 40.U
+      }.otherwise {
+        desiredAngle := 56.U
+      }
+
     }
 
     // Drej gradvist mod målet
 
     when(aiAngle =/= desiredAngle) {
       when((desiredAngle - aiAngle)(5) === 0.U) {
-        aiAngle := aiAngle + 1.U
+        aiAngle := aiAngle + 2.U
       }.otherwise {
-        aiAngle := aiAngle - 1.U
+        aiAngle := aiAngle - 2.U
       }
     }
 
@@ -326,9 +341,9 @@ val desiredAngle = WireDefault(aiAngle)
     // Skift waypoint
 
     when(
-      (dx < 64.S && dx > (-64).S) &&
-      (dy < 64.S && dy > (-64).S)
-    ) {
+      (dx < 96.S && dx > (-96).S) &&
+      (dy < 96.S && dy > (-96).S)
+    ){
       when(currentCheckpoint === 49.U) {
         currentCheckpoint := 0.U
       }.otherwise {
