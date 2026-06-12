@@ -74,7 +74,7 @@ val desiredAngle = WireDefault(aiAngle)
 val checkpointX = VecInit(
   140.S, 140.S, 145.S, 150.S, 155.S, 160.S,
 
-  180.S, 240.S, 320.S, 400.S, 480.S, 560.S,
+  170.S, 220.S, 320.S, 400.S, 480.S, 560.S,
   640.S, 720.S, 800.S, 880.S, 960.S, 1020.S, 1060.S,
 
   1080.S, 1085.S, 1090.S, 1090.S, 1090.S,
@@ -92,7 +92,7 @@ val checkpointX = VecInit(
 )
 
 val checkpointY = VecInit(
-  800.S, 720.S, 580.S, 460.S, 340.S, 240.S,
+  800.S, 720.S, 580.S, 360.S, 240.S, 200.S,
 
   200.S, 180.S, 140.S, 130.S, 120.S, 110.S,
   100.S, 120.S, 130.S, 140.S, 160.S, 185.S, 195.S,
@@ -267,43 +267,47 @@ val currentCheckpoint = RegInit(0.U(6.W))
 
     }
 
-      when ((61.U <= aiAngle || aiAngle >= 0.U) && aiAngle <= 4.U) {
+      // Use desiredAngle for immediate sprite selection so visual
+      // orientation reflects the computed target direction in the
+      // same frame (aiAngle is updated as a register and changes
+      // only take effect next clock).
+      when ((61.U <= desiredAngle || desiredAngle >= 0.U) && desiredAngle <= 4.U) {
 
         aiSprite := aiRightSprite
         aiFlipH := false.B
         aiFlipV := false.B
 
-      }.elsewhen(5.U <= aiAngle && aiAngle <= 12.U) {
+      }.elsewhen(5.U <= desiredAngle && desiredAngle <= 12.U) {
 
         aiSprite := aiDiagSprite
         aiFlipH := false.B
         aiFlipV := true.B
 
-      }.elsewhen(13.U <= aiAngle && aiAngle <= 20.U) {
+      }.elsewhen(13.U <= desiredAngle && desiredAngle <= 20.U) {
 
         aiSprite := aiUpSprite
         aiFlipH := false.B
         aiFlipV := true.B
 
-      }.elsewhen(21.U <= aiAngle && aiAngle <= 28.U) {
+      }.elsewhen(21.U <= desiredAngle && desiredAngle <= 28.U) {
 
         aiSprite := aiDiagSprite
         aiFlipH := true.B
         aiFlipV := true.B
 
-      }.elsewhen(29.U <= aiAngle && aiAngle <= 36.U) {
+      }.elsewhen(29.U <= desiredAngle && desiredAngle <= 36.U) {
 
         aiSprite := aiRightSprite
         aiFlipH := true.B
         aiFlipV := false.B
 
-      }.elsewhen(37.U <= aiAngle && aiAngle <= 44.U) {
+      }.elsewhen(37.U <= desiredAngle && desiredAngle <= 44.U) {
 
         aiSprite := aiDiagSprite
         aiFlipH := true.B
         aiFlipV := false.B
 
-      }.elsewhen(45.U <= aiAngle && aiAngle <= 52.U) {
+      }.elsewhen(45.U <= desiredAngle && desiredAngle <= 52.U) {
 
         aiSprite := aiUpSprite
         aiFlipH := false.B
