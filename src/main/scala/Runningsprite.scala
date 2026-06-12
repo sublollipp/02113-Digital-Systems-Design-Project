@@ -16,16 +16,28 @@ class RunningSprite extends Module {
 
   val xPosReg = RegInit(startX)
   val yPosReg = RegInit(170.S(11.W))
+  val movingRight = RegInit(true.B)
 
-  // Move right by 1 pixel each frame update
-  when(io.update && xPosReg < targetX) {
-    xPosReg := xPosReg + 1.S
+  when(io.update) {
+    when(movingRight) {
+      when(xPosReg < targetX) {
+        xPosReg := xPosReg + 1.S
+      }.otherwise {
+        movingRight := false.B
+      }
+    }.otherwise {
+      when(xPosReg > startX) {
+        xPosReg := xPosReg - 1.S
+      }.otherwise {
+        movingRight := true.B
+      }
+    }
   }
 
   io.posX := xPosReg
   io.posY := yPosReg
 
-  io.flipH := false.B
+  io.flipH := !movingRight
   io.flipV := false.B
 
   io.shownSprite := VecInit(
