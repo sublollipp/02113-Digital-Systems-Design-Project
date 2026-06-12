@@ -3,6 +3,7 @@ import chisel3.util._
 
 class RunningSprite extends Module {
   val io = IO(new Bundle {
+    val update = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val flipH = Output(Bool())
@@ -16,8 +17,8 @@ class RunningSprite extends Module {
   val xPosReg = RegInit(startX)
   val yPosReg = RegInit(170.S(11.W))
 
-  // Move right by 1 pixel each clock cycle
-  when(xPosReg < targetX) {
+  // Move right by 1 pixel each frame update
+  when(io.update && xPosReg < targetX) {
     xPosReg := xPosReg + 1.S
   }
 
