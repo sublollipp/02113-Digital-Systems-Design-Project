@@ -4,6 +4,7 @@ import chisel3.util._
 class RunningSprite extends Module {
   val io = IO(new Bundle {
     val update = Input(Bool())
+    val hit = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val hitboxX = Output(SInt(12.W))
@@ -12,7 +13,7 @@ class RunningSprite extends Module {
     val hitboxHeight = Output(UInt(6.W))
     val flipH = Output(Bool())
     val flipV = Output(Bool())
-    val shownSprite = Output(Vec(3, Bool()))
+    val shownSprite = Output(Vec(4, Bool()))
   })
 
   val startX = 60.S(12.W)
@@ -21,8 +22,13 @@ class RunningSprite extends Module {
   val xPosReg = RegInit(startX)
   val yPosReg = RegInit(170.S(11.W))
   val movingRight = RegInit(true.B)
+  val hitReg = RegInit(false.B)
 
   when(io.update) {
+    when(io.hit) {
+      hitReg := true.B
+    }
+
     when(movingRight) {
       when(xPosReg < targetX) {
         xPosReg := xPosReg + 1.S
@@ -40,23 +46,21 @@ class RunningSprite extends Module {
 
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
-  val hitboxWidth = 24.U(6.W)
-  val hitboxHeight = 24.U(6.W)
+  val hitboxWidthValue = 24.U(6.W)
+  val hitboxHeightValue = 24.U(6.W)
 
   io.posX := xPosReg
   io.posY := yPosReg
   io.hitboxX := xPosReg + hitboxOffsetX
   io.hitboxY := yPosReg + hitboxOffsetY
-  io.hitboxWidth := hitboxWidth
-  io.hitboxHeight := hitboxHeight
+  io.hitboxWidth := hitboxWidthValue
+  io.hitboxHeight := hitboxHeightValue
 
   io.flipH := !movingRight
   io.flipV := false.B
 
-  io.shownSprite := VecInit(
-    false.B,
-    false.B,
-    true.B
+  io.shownSprite := Mux(hitReg,
+    VecInit(false.B, false.B, false.B, true.B),
+    VecInit(false.B, false.B, true.B, false.B)
   )
-
 }

@@ -256,13 +256,29 @@ val currentCheckpoint = RegInit(0.U(5.W))
     }
 }
 
-//runningsprite
+// running sprite and hit-sprite wiring
 val runningSprite = Module(new RunningSprite)
+runningSprite.io.update := frameUpdateReg
+
+val carWidth = 32.S(12.W)
+val carHeight = 32.S(11.W)
+val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
+                 (car.io.posX + carWidth > runningSprite.io.hitboxX) &&
+                 (car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
+                 (car.io.posY + carHeight > runningSprite.io.hitboxY)
+
+runningSprite.io.hit := runningHit
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
 io.spriteYPosition(3) := runningSprite.io.posY - cameraY
 io.spriteFlipHorizontal(3) := runningSprite.io.flipH
 io.spriteFlipVertical(3) := runningSprite.io.flipV
 io.spriteVisible(3) := runningSprite.io.shownSprite(2)
-runningSprite.io.update := frameUpdateReg
+
+// slot 5 shows the hit version of the running sprite
+io.spriteXPosition(5) := runningSprite.io.posX - cameraX
+io.spriteYPosition(5) := runningSprite.io.posY - cameraY
+io.spriteFlipHorizontal(5) := runningSprite.io.flipH
+io.spriteFlipVertical(5) := runningSprite.io.flipV
+io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 }
