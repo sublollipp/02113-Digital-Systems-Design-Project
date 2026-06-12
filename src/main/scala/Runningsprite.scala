@@ -10,22 +10,26 @@ class RunningSprite extends Module {
     val shownSprite = Output(Vec(3, Bool()))
   })
 
-  // Fixed position
-  val xPosReg = RegInit(60.S(12.W))
+  val startX = 60.S(12.W)
+  val targetX = (60 + 32 * 8).S(12.W) // 32 tiles right
+
+  val xPosReg = RegInit(startX)
   val yPosReg = RegInit(170.S(11.W))
 
-  // Output position
+  // Move right by 1 pixel each clock cycle
+  when(xPosReg < targetX) {
+    xPosReg := xPosReg + 1.S
+  }
+
   io.posX := xPosReg
   io.posY := yPosReg
 
-  // No flipping
   io.flipH := false.B
   io.flipV := false.B
 
-  // Select sprite_init_3.mem
   io.shownSprite := VecInit(
-    false.B,  // sprite_init_1.mem
-    false.B,  // sprite_init_2.mem
-    true.B    // sprite_init_3.mem
+    false.B,
+    false.B,
+    true.B
   )
 }
