@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 
-class CarAngleController(framesPerAngleChange: UInt) extends Module{
+class CarAngleController(framesPerAngleChange: Int) extends Module{
   val io = IO(new Bundle {
     val btnLeft = Input(Bool())
     val btnRight = Input(Bool())
@@ -20,7 +20,7 @@ class CarAngleController(framesPerAngleChange: UInt) extends Module{
     switch (state) {
       is (idle) {
         clockDivReg := clockDivReg + 1.U
-        when (clockDivReg === framesPerAngleChange) {
+        when (clockDivReg === framesPerAngleChange.U) {
           state := changeAngle
         }
       }

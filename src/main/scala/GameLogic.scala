@@ -61,67 +61,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     // AI car position
 
-  val aiX = RegInit(160.S(12.W))
-  val aiY = RegInit(800.S(11.W))
-
-  val aiAngle = RegInit(48.U(6.W))
-  val aiSpeed = RegInit(0.S(10.W))
-
-  val racingOffset = RegInit(0.S(8.W))
-
-val desiredAngle = WireDefault(aiAngle)
-
-val checkpointX = VecInit(
-  140.S, 140.S, 145.S, 150.S, 155.S, 160.S,
-
-  170.S, 220.S, 320.S, 400.S, 480.S, 560.S,
-  640.S, 720.S, 800.S, 880.S, 960.S, 1020.S, 1060.S,
-
-  1080.S, 1085.S, 1090.S, 1090.S, 1090.S,
-
-  1080.S, 1060.S, 1040.S, 1020.S, 1000.S,
-
-  980.S, 960.S, 940.S, 920.S, 900.S,
-
-  890.S, 885.S, 880.S, 875.S,
-
-  860.S, 820.S, 760.S, 680.S, 600.S,
-  520.S, 440.S, 360.S, 280.S, 220.S,
-
-  180.S, 160.S, 145.S
-)
-
-val checkpointY = VecInit(
-  800.S, 720.S, 580.S, 360.S, 240.S, 200.S,
-
-  200.S, 180.S, 140.S, 130.S, 120.S, 110.S,
-  100.S, 120.S, 130.S, 140.S, 160.S, 185.S, 195.S,
-
-  240.S, 300.S, 360.S, 420.S, 480.S,
-
-  500.S, 500.S, 500.S, 500.S, 500.S,
-
-  520.S, 560.S, 620.S, 680.S, 740.S,
-
-  790.S, 810.S, 825.S, 835.S,
-
-  840.S, 840.S, 840.S, 840.S, 840.S,
-  840.S, 840.S, 840.S, 835.S, 825.S,
-
-  810.S, 800.S, 800.S
-)
-
-
-val currentCheckpoint = RegInit(0.U(6.W))
-
-
-  val lookAhead = Mux(currentCheckpoint >= 47.U, currentCheckpoint + 4.U - 52.U, currentCheckpoint + 4.U)
-
-  val targetX = checkpointX(lookAhead)
-  val targetY = checkpointY(lookAhead)
-
-  io.led(0) := aiX > 300.S
-
   car.io.btnLeft := io.btnL
   car.io.btnUp := io.btnU
   car.io.btnRight := io.btnR
@@ -147,17 +86,36 @@ val currentCheckpoint = RegInit(0.U(6.W))
   cameraX := camera.io.camX
   cameraY := camera.io.camY
 
-  val aiVel = Module(new CarVelocityController)
+  // AI-car
 
-  aiVel.io.oldXPos := aiX
-  aiVel.io.oldYPos := aiY
-  aiVel.io.ang := aiAngle
-  aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := frameUpdateReg
+  val aiCar = Module(new AiCar)
 
+  io.spriteXPosition(4) := aiCar.io.posX - cameraX
+  io.spriteYPosition(4) := aiCar.io.posY - cameraY
+
+  io.spriteXPosition(6) := aiCar.io.posX - cameraX
+  io.spriteYPosition(6) := aiCar.io.posY - cameraY
+
+  io.spriteXPosition(7) := aiCar.io.posX - cameraX
+  io.spriteYPosition(7) := aiCar.io.posY - cameraY
+
+  io.spriteVisible(4) := aiCar.io.spriteOH_UDR(0)
+  io.spriteVisible(6) := aiCar.io.spriteOH_UDR(1)
+  io.spriteVisible(7) := aiCar.io.spriteOH_UDR(2)
+
+  io.spriteFlipHorizontal(4) := aiFlipH
+  io.spriteFlipHorizontal(6) := aiFlipH
+  io.spriteFlipHorizontal(7) := aiFlipH
+
+  io.spriteFlipVertical(4) := aiFlipV
+  io.spriteFlipVertical(6) := aiFlipV
+  io.spriteFlipVertical(7) := aiFlipV
+
+  // Viewbox
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
 
+  // Car
   io.spriteXPosition(0) := car.io.posX - cameraX
   io.spriteXPosition(1) := car.io.posX - cameraX
   io.spriteXPosition(2) := car.io.posX - cameraX
@@ -170,31 +128,7 @@ val currentCheckpoint = RegInit(0.U(6.W))
   io.spriteVisible(1) := car.io.shownSprite(1)
   io.spriteVisible(2) := car.io.shownSprite(2)
 
-  
-  io.spriteXPosition(4) := aiX - cameraX
-  io.spriteYPosition(4) := aiY - cameraY
-
-  io.spriteXPosition(6) := aiX - cameraX
-  io.spriteYPosition(6) := aiY - cameraY
-
-  io.spriteXPosition(7) := aiX - cameraX
-  io.spriteYPosition(7) := aiY - cameraY
-
-  io.spriteVisible(4) := (aiSprite === aiUpSprite)
-  io.spriteVisible(6) := (aiSprite === aiDiagSprite)
-  io.spriteVisible(7) := (aiSprite === aiRightSprite)
-
-  io.spriteFlipHorizontal(4) := aiFlipH
-  io.spriteFlipHorizontal(6) := aiFlipH
-  io.spriteFlipHorizontal(7) := aiFlipH
-
-  io.spriteFlipVertical(4) := aiFlipV
-  io.spriteFlipVertical(6) := aiFlipV
-  io.spriteFlipVertical(7) := aiFlipV
-
   car.io.update := false.B
-
-  // FSM
 
   switch(stateReg) {
     is(idle) {
@@ -204,158 +138,16 @@ val currentCheckpoint = RegInit(0.U(6.W))
     }
 
   is(compute1) {
-
     car.io.update := true.B
-
-    val dx = targetX - aiX
-    val dy = targetY - aiY
-
-
-
-    val racingOffset = WireDefault(0.S(8.W))
-
-    val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
-
-    val aiSprite = WireDefault(aiUpSprite)
-
-    val aiFlipH = WireDefault(false.B)
-    val aiFlipV = WireDefault(false.B)
-
-    when(currentCheckpoint === 0.U) {
-      racingOffset := 20.S
-    }.elsewhen(currentCheckpoint === 6.U) {
-      racingOffset := (-15).S
-    }.elsewhen(currentCheckpoint === 12.U) {
-      racingOffset := 25.S
-    }.elsewhen(currentCheckpoint === 18.U) {
-      racingOffset := (-20).S
-    }
-
-    val adjustedDx = (targetX + racingOffset) - aiX
-    val adjustedDy = targetY - aiY
-
-    val absDx = Mux(adjustedDx < 0.S, -adjustedDx, adjustedDx)
-    val absDy = Mux(adjustedDy < 0.S, -adjustedDy, adjustedDy)
-
-    when(absDx > (absDy << 1)) {
-
-      when(adjustedDx > 0.S) {
-        desiredAngle := 0.U
-      }.otherwise {
-        desiredAngle := 32.U
-      }
-
-    }.elsewhen(absDy > (absDx << 1)) {
-
-      when(adjustedDy > 0.S) {
-        desiredAngle := 16.U
-      }.otherwise {
-        desiredAngle := 48.U
-      }
-
-    }.otherwise {
-
-      when(adjustedDx > 0.S && adjustedDy > 0.S) {
-        desiredAngle := 8.U
-      }.elsewhen(adjustedDx < 0.S && adjustedDy > 0.S) {
-        desiredAngle := 24.U
-      }.elsewhen(adjustedDx < 0.S && adjustedDy < 0.S) {
-        desiredAngle := 40.U
-      }.otherwise {
-        desiredAngle := 56.U
-      }
-
-    }
-
-      // Use desiredAngle for immediate sprite selection so visual
-      // orientation reflects the computed target direction in the
-      // same frame (aiAngle is updated as a register and changes
-      // only take effect next clock).
-      when ((61.U <= desiredAngle || desiredAngle >= 0.U) && desiredAngle <= 4.U) {
-
-        aiSprite := aiRightSprite
-        aiFlipH := false.B
-        aiFlipV := false.B
-
-      }.elsewhen(5.U <= desiredAngle && desiredAngle <= 12.U) {
-
-        aiSprite := aiDiagSprite
-        aiFlipH := false.B
-        aiFlipV := true.B
-
-      }.elsewhen(13.U <= desiredAngle && desiredAngle <= 20.U) {
-
-        aiSprite := aiUpSprite
-        aiFlipH := false.B
-        aiFlipV := true.B
-
-      }.elsewhen(21.U <= desiredAngle && desiredAngle <= 28.U) {
-
-        aiSprite := aiDiagSprite
-        aiFlipH := true.B
-        aiFlipV := true.B
-
-      }.elsewhen(29.U <= desiredAngle && desiredAngle <= 36.U) {
-
-        aiSprite := aiRightSprite
-        aiFlipH := true.B
-        aiFlipV := false.B
-
-      }.elsewhen(37.U <= desiredAngle && desiredAngle <= 44.U) {
-
-        aiSprite := aiDiagSprite
-        aiFlipH := true.B
-        aiFlipV := false.B
-
-      }.elsewhen(45.U <= desiredAngle && desiredAngle <= 52.U) {
-
-        aiSprite := aiUpSprite
-        aiFlipH := false.B
-        aiFlipV := false.B
-
-      }.otherwise {
-
-        aiSprite := aiDiagSprite
-        aiFlipH := false.B
-        aiFlipV := false.B
-
-      }
-
-    // Drej gradvist mod målet
-
-    aiAngle := desiredAngle
-
-    // Accelerér
-
-    when(aiSpeed < 275.S) {
-      aiSpeed := aiSpeed + 4.S
-    }
-
-    // Flyt bilen
-    aiX := aiVel.io.newXPos
-    aiY := aiVel.io.newYPos
-
-    // Skift waypoint
-
-    when(
-      (adjustedDx < 48.S && adjustedDx > (-48).S) &&
-      (adjustedDy < 48.S && adjustedDy > (-48).S)
-    ) {
-      when(currentCheckpoint === 51.U) {
-        currentCheckpoint := 0.U
-      }.otherwise {
-        currentCheckpoint := currentCheckpoint + 1.U
-      }
-    }
+}
 
     stateReg := done
   }
 
-    is(done) {
-      io.frameUpdateDone := true.B
-      stateReg := idle
-    }
-}
+  is(done) {
+    io.frameUpdateDone := true.B
+    stateReg := idle
+  }
 
 // running sprite and hit-sprite wiring
 val runningSprite = Module(new RunningSprite)
@@ -382,4 +174,4 @@ io.spriteYPosition(5) := runningSprite.io.posY - cameraY
 io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
-}
+} // # todo - er det meningen, alt dette defineres i switch statement?
