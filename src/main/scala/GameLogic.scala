@@ -58,17 +58,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
 
-val desiredAngle = Wire(UInt(6.W))
-
-  // beregn Angle
-
-  when(aiAngle =/= desiredAngle) {
-    when((desiredAngle - aiAngle)(5) === 0.U) {
-      aiAngle := aiAngle + 1.U
-    }.otherwise {
-      aiAngle := aiAngle - 1.U
-    }
-  }
+val desiredAngle = WireDefault(aiAngle)
 
   val checkpointX = VecInit(
     120.S(12.W),
@@ -229,7 +219,7 @@ val desiredAngle = Wire(UInt(6.W))
   aiVel.io.oldYPos := aiY
   aiVel.io.ang := aiAngle
   aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := true.B
+  aiVel.io.frameUpdate := io.newFrame
 
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
@@ -309,9 +299,18 @@ val desiredAngle = Wire(UInt(6.W))
     desiredAngle := 56.U
   }
 
+  when(aiAngle =/= desiredAngle) {
+    when((desiredAngle - aiAngle)(5) === 0.U) {
+      aiAngle := aiAngle + 1.U
+    }.otherwise {
+      aiAngle := aiAngle - 1.U
+    }
+  }
+
+
   // Accelerér Ai Bilen
 
-  when(aiSpeed < 80.S) {
+  when(aiSpeed < 60.S) {
     aiSpeed := aiSpeed + 1.S
   }
 
