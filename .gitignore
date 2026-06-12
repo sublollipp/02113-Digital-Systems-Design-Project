@@ -13,3 +13,4 @@ vivado/*
 project/.bloop/
 project/metals.sbt
 project/project/metals.sbt
+/test_run_dir
