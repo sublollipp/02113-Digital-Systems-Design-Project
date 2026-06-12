@@ -220,7 +220,7 @@ val desiredAngle = WireDefault(aiAngle)
   aiVel.io.oldYPos := aiY
   aiVel.io.ang := aiAngle
   aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := io.newFrame
+  aiVel.io.frameUpdate := true.B
 
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
@@ -312,7 +312,7 @@ val desiredAngle = WireDefault(aiAngle)
   // Accelerér Ai Bilen
 
   when(aiSpeed < 200.S) {
-    aiSpeed := aiSpeed + 4.S
+    aiSpeed := 500.S
   }
 
       when(
@@ -339,7 +339,7 @@ val desiredAngle = WireDefault(aiAngle)
 io.led(0) := aiX > 300.S
 io.led(1) := aiSpeed > 0.S
 io.led(2) := aiVel.io.newXPos =/= aiX
-io.led(3) := currentCheckpoint =/= 0.U
+io.led(3) := aiVel.io.newYPos =/= aiY
 
 
 //runningsprite
