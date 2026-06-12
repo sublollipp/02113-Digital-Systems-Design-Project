@@ -6,6 +6,10 @@ class RunningSprite extends Module {
     val update = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
+    val hitboxX = Output(SInt(12.W))
+    val hitboxY = Output(SInt(11.W))
+    val hitboxWidth = Output(UInt(6.W))
+    val hitboxHeight = Output(UInt(6.W))
     val flipH = Output(Bool())
     val flipV = Output(Bool())
     val shownSprite = Output(Vec(3, Bool()))
@@ -34,8 +38,17 @@ class RunningSprite extends Module {
     }
   }
 
+  val hitboxOffsetX = 4.S(12.W)
+  val hitboxOffsetY = 4.S(11.W)
+  val hitboxWidth = 24.U(6.W)
+  val hitboxHeight = 24.U(6.W)
+
   io.posX := xPosReg
   io.posY := yPosReg
+  io.hitboxX := xPosReg + hitboxOffsetX
+  io.hitboxY := yPosReg + hitboxOffsetY
+  io.hitboxWidth := hitboxWidth
+  io.hitboxHeight := hitboxHeight
 
   io.flipH := !movingRight
   io.flipV := false.B
@@ -45,4 +58,5 @@ class RunningSprite extends Module {
     false.B,
     true.B
   )
+
 }
