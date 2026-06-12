@@ -52,6 +52,13 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val car = Module(new Car)
 
+  val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
+
+  val aiSprite = WireDefault(aiUpSprite)
+
+  val aiFlipH = WireDefault(false.B)
+  val aiFlipV = WireDefault(false.B)
+
     // AI car position
 
   val aiX = RegInit(160.S(12.W))
@@ -164,11 +171,6 @@ val currentCheckpoint = RegInit(0.U(6.W))
   io.spriteVisible(2) := car.io.shownSprite(2)
 
   
-
-  // AI sprite
-
-// AI sprite
-
   io.spriteXPosition(4) := aiX - cameraX
   io.spriteYPosition(4) := aiY - cameraY
 
@@ -178,17 +180,17 @@ val currentCheckpoint = RegInit(0.U(6.W))
   io.spriteXPosition(7) := aiX - cameraX
   io.spriteYPosition(7) := aiY - cameraY
 
-  io.spriteVisible(4) := true.B
-  io.spriteVisible(6) := false.B
-  io.spriteVisible(7) := false.B
+  io.spriteVisible(4) := (aiSprite === aiUpSprite)
+  io.spriteVisible(6) := (aiSprite === aiDiagSprite)
+  io.spriteVisible(7) := (aiSprite === aiRightSprite)
 
-  io.spriteFlipHorizontal(3) := false.B
-  io.spriteFlipHorizontal(4) := false.B
-  io.spriteFlipHorizontal(5) := false.B
+  io.spriteFlipHorizontal(4) := aiFlipH
+  io.spriteFlipHorizontal(6) := aiFlipH
+  io.spriteFlipHorizontal(7) := aiFlipH
 
-  io.spriteFlipVertical(3) := false.B
-  io.spriteFlipVertical(4) := false.B
-  io.spriteFlipVertical(5) := false.B
+  io.spriteFlipVertical(4) := aiFlipV
+  io.spriteFlipVertical(6) := aiFlipV
+  io.spriteFlipVertical(7) := aiFlipV
 
   car.io.update := false.B
 
@@ -211,6 +213,13 @@ val currentCheckpoint = RegInit(0.U(6.W))
 
 
     val racingOffset = WireDefault(0.S(8.W))
+
+    val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
+
+    val aiSprite = WireDefault(aiUpSprite)
+
+    val aiFlipH = WireDefault(false.B)
+    val aiFlipV = WireDefault(false.B)
 
     when(currentCheckpoint === 0.U) {
       racingOffset := 20.S
@@ -257,6 +266,56 @@ val currentCheckpoint = RegInit(0.U(6.W))
       }
 
     }
+
+      when ((61.U <= aiAngle || aiAngle >= 0.U) && aiAngle <= 4.U) {
+
+        aiSprite := aiRightSprite
+        aiFlipH := false.B
+        aiFlipV := false.B
+
+      }.elsewhen(5.U <= aiAngle && aiAngle <= 12.U) {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := false.B
+        aiFlipV := true.B
+
+      }.elsewhen(13.U <= aiAngle && aiAngle <= 20.U) {
+
+        aiSprite := aiUpSprite
+        aiFlipH := false.B
+        aiFlipV := true.B
+
+      }.elsewhen(21.U <= aiAngle && aiAngle <= 28.U) {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := true.B
+        aiFlipV := true.B
+
+      }.elsewhen(29.U <= aiAngle && aiAngle <= 36.U) {
+
+        aiSprite := aiRightSprite
+        aiFlipH := true.B
+        aiFlipV := false.B
+
+      }.elsewhen(37.U <= aiAngle && aiAngle <= 44.U) {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := true.B
+        aiFlipV := false.B
+
+      }.elsewhen(45.U <= aiAngle && aiAngle <= 52.U) {
+
+        aiSprite := aiUpSprite
+        aiFlipH := false.B
+        aiFlipV := false.B
+
+      }.otherwise {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := false.B
+        aiFlipV := false.B
+
+      }
 
     // Drej gradvist mod målet
 
