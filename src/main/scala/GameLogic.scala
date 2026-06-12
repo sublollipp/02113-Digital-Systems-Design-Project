@@ -331,8 +331,8 @@ val desiredAngle = WireDefault(aiAngle)
 
     // Accelerér
 
-    when(aiSpeed < 100.S) {
-      aiSpeed := aiSpeed + 2.S
+    when(aiSpeed < 200.S) {
+      aiSpeed := aiSpeed + 3.S
     }
 
     // Flyt bilen
