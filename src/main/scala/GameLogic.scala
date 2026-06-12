@@ -54,7 +54,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     // AI car position
   val aiX = RegInit(160.S(12.W))
-  val aiY = RegInit(160.S(11.W))
+  val aiY = RegInit(600.S(11.W))
 
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
@@ -184,8 +184,10 @@ val desiredAngle = WireDefault(aiAngle)
   val currentCheckpoint = RegInit(0.U(6.W))
 
 
-  val targetX = checkpointX(currentCheckpoint)
-  val targetY = checkpointY(currentCheckpoint)
+  val lookAhead =Mux(currentCheckpoint >= 47.U, currentCheckpoint + 2.U - 50.U, currentCheckpoint + 2.U)
+
+  val targetX = checkpointX(lookAhead)
+  val targetY = checkpointY(lookAhead)
 
   io.led(0) := aiX > 300.S
 
@@ -321,9 +323,9 @@ val desiredAngle = WireDefault(aiAngle)
 
     when(aiAngle =/= desiredAngle) {
       when((desiredAngle - aiAngle)(5) === 0.U) {
-        aiAngle := aiAngle + 2.U
+        aiAngle := aiAngle + 4.U
       }.otherwise {
-        aiAngle := aiAngle - 2.U
+        aiAngle := aiAngle - 4.U
       }
     }
 
@@ -335,14 +337,12 @@ val desiredAngle = WireDefault(aiAngle)
 
     // Flyt bilen
 
-    aiX := aiVel.io.newXPos
-    aiY := aiVel.io.newYPos
+      aiVel.io.frameUpdate := io.newFrame
 
     // Skift waypoint
 
     when(
-      (dx < 96.S && dx > (-96).S) &&
-      (dy < 96.S && dy > (-96).S)
+      (dx < 32.S && dx > (-32).S) && (dy < 32.S && dy > (-32).S)
     ){
       when(currentCheckpoint === 49.U) {
         currentCheckpoint := 0.U
@@ -364,6 +364,8 @@ io.led(0) := aiX > 300.S
 io.led(1) := aiSpeed > 0.S
 io.led(2) := aiVel.io.newXPos =/= aiX
 io.led(3) := aiVel.io.newYPos =/= aiY
+io.led(4) := currentCheckpoint > 0.U
+io.led(5) := desiredAngle =/= aiAngle
 
 
 //runningsprite
