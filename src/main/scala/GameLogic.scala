@@ -52,6 +52,13 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val car = Module(new Car)
 
+  val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
+
+  val aiSprite = WireDefault(aiUpSprite)
+
+  val aiFlipH = WireDefault(false.B)
+  val aiFlipV = WireDefault(false.B)
+
     // AI car position
 
   val aiX = RegInit(160.S(12.W))
@@ -67,7 +74,7 @@ val desiredAngle = WireDefault(aiAngle)
 val checkpointX = VecInit(
   140.S, 140.S, 145.S, 150.S, 155.S, 160.S,
 
-  180.S, 240.S, 320.S, 400.S, 480.S, 560.S,
+  170.S, 220.S, 320.S, 400.S, 480.S, 560.S,
   640.S, 720.S, 800.S, 880.S, 960.S, 1020.S, 1060.S,
 
   1080.S, 1085.S, 1090.S, 1090.S, 1090.S,
@@ -85,10 +92,10 @@ val checkpointX = VecInit(
 )
 
 val checkpointY = VecInit(
-  800.S, 720.S, 580.S, 460.S, 340.S, 280.S,
+  800.S, 720.S, 580.S, 360.S, 240.S, 200.S,
 
-  240.S, 220.S, 160.S, 140.S, 140.S, 130.S,
-  120.S, 120.S, 130.S, 140.S, 160.S, 185.S, 195.S,
+  200.S, 180.S, 140.S, 130.S, 120.S, 110.S,
+  100.S, 120.S, 130.S, 140.S, 160.S, 185.S, 195.S,
 
   240.S, 300.S, 360.S, 420.S, 480.S,
 
@@ -164,11 +171,6 @@ val currentCheckpoint = RegInit(0.U(6.W))
   io.spriteVisible(2) := car.io.shownSprite(2)
 
   
-
-  // AI sprite
-
-// AI sprite
-
   io.spriteXPosition(4) := aiX - cameraX
   io.spriteYPosition(4) := aiY - cameraY
 
@@ -178,17 +180,17 @@ val currentCheckpoint = RegInit(0.U(6.W))
   io.spriteXPosition(7) := aiX - cameraX
   io.spriteYPosition(7) := aiY - cameraY
 
-  io.spriteVisible(4) := true.B
-  io.spriteVisible(6) := false.B
-  io.spriteVisible(7) := false.B
+  io.spriteVisible(4) := (aiSprite === aiUpSprite)
+  io.spriteVisible(6) := (aiSprite === aiDiagSprite)
+  io.spriteVisible(7) := (aiSprite === aiRightSprite)
 
-  io.spriteFlipHorizontal(3) := false.B
-  io.spriteFlipHorizontal(4) := false.B
-  io.spriteFlipHorizontal(5) := false.B
+  io.spriteFlipHorizontal(4) := aiFlipH
+  io.spriteFlipHorizontal(6) := aiFlipH
+  io.spriteFlipHorizontal(7) := aiFlipH
 
-  io.spriteFlipVertical(3) := false.B
-  io.spriteFlipVertical(4) := false.B
-  io.spriteFlipVertical(5) := false.B
+  io.spriteFlipVertical(4) := aiFlipV
+  io.spriteFlipVertical(6) := aiFlipV
+  io.spriteFlipVertical(7) := aiFlipV
 
   car.io.update := false.B
 
@@ -211,6 +213,13 @@ val currentCheckpoint = RegInit(0.U(6.W))
 
 
     val racingOffset = WireDefault(0.S(8.W))
+
+    val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
+
+    val aiSprite = WireDefault(aiUpSprite)
+
+    val aiFlipH = WireDefault(false.B)
+    val aiFlipV = WireDefault(false.B)
 
     when(currentCheckpoint === 0.U) {
       racingOffset := 20.S
@@ -257,6 +266,60 @@ val currentCheckpoint = RegInit(0.U(6.W))
       }
 
     }
+
+      // Use desiredAngle for immediate sprite selection so visual
+      // orientation reflects the computed target direction in the
+      // same frame (aiAngle is updated as a register and changes
+      // only take effect next clock).
+      when ((61.U <= desiredAngle || desiredAngle >= 0.U) && desiredAngle <= 4.U) {
+
+        aiSprite := aiRightSprite
+        aiFlipH := false.B
+        aiFlipV := false.B
+
+      }.elsewhen(5.U <= desiredAngle && desiredAngle <= 12.U) {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := false.B
+        aiFlipV := true.B
+
+      }.elsewhen(13.U <= desiredAngle && desiredAngle <= 20.U) {
+
+        aiSprite := aiUpSprite
+        aiFlipH := false.B
+        aiFlipV := true.B
+
+      }.elsewhen(21.U <= desiredAngle && desiredAngle <= 28.U) {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := true.B
+        aiFlipV := true.B
+
+      }.elsewhen(29.U <= desiredAngle && desiredAngle <= 36.U) {
+
+        aiSprite := aiRightSprite
+        aiFlipH := true.B
+        aiFlipV := false.B
+
+      }.elsewhen(37.U <= desiredAngle && desiredAngle <= 44.U) {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := true.B
+        aiFlipV := false.B
+
+      }.elsewhen(45.U <= desiredAngle && desiredAngle <= 52.U) {
+
+        aiSprite := aiUpSprite
+        aiFlipH := false.B
+        aiFlipV := false.B
+
+      }.otherwise {
+
+        aiSprite := aiDiagSprite
+        aiFlipH := false.B
+        aiFlipV := false.B
+
+      }
 
     // Drej gradvist mod målet
 
