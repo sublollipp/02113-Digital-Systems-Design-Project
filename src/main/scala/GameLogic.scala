@@ -123,7 +123,7 @@ val currentCheckpoint = RegInit(0.U(5.W))
   aiVel.io.oldYPos := aiY
   aiVel.io.ang := aiAngle
   aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := io.newFrame
+  aiVel.io.frameUpdate := frameUpdateReg
 
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
