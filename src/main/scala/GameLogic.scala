@@ -222,7 +222,7 @@ val desiredAngle = WireDefault(aiAngle)
   aiVel.io.oldYPos := aiY
   aiVel.io.ang := aiAngle
   aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := true.B
+  aiVel.io.frameUpdate := false.B
 
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
@@ -336,8 +336,9 @@ val desiredAngle = WireDefault(aiAngle)
     }
 
     // Flyt bilen
-
-      aiVel.io.frameUpdate := io.newFrame
+    aiVel.io.frameUpdate := io.newFrame
+    aiX := aiVel.io.newXPos
+    aiY := aiVel.io.newYPos
 
     // Skift waypoint
 
