@@ -59,12 +59,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiSpeed = RegInit(0.S(10.W))
 
   val checkpointX = VecInit(
+    120.S(12.W),
+    140.S(12.W),
     160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
+    180.S(12.W),
+    200.S(12.W),
+    220.S(12.W),
 
     240.S(12.W),
     320.S(12.W),
@@ -112,9 +112,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     160.S(12.W),
     160.S(12.W),
     160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W)
+    150.S(12.W),
+    140.S(12.W),
+    120.S(12.W)
   )
 
   val checkpointY = VecInit(
@@ -315,7 +315,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     }
       aiX := aiVel.io.newXPos
       aiY := aiVel.io.newYPos
-      
+
       stateReg := done
     }
 
