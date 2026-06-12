@@ -44,6 +44,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.frameUpdateDone := false.B
 
 
+
   // Game Logic
 
   val idle :: compute1 :: done :: Nil = Enum(3)
@@ -334,6 +335,12 @@ val desiredAngle = WireDefault(aiAngle)
       stateReg := idle
     }
 }
+
+io.led(0) := aiX > 300.S
+io.led(1) := aiSpeed > 0.S
+io.led(2) := aiVel.io.newXPos =/= aiX
+io.led(3) := currentCheckpoint =/= 0.U
+
 
 //runningsprite
 val runningSprite = Module(new RunningSprite)
