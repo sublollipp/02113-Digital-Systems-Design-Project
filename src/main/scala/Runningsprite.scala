@@ -12,7 +12,7 @@ class RunningSprite extends Module {
   })
 
   val startX = 60.S(12.W)
-  val targetX = (60 + 32 * 8).S(12.W) // 32 tiles right
+  val targetX = (60 + 32 * 32).S(12.W) // 32 tiles right
 
   val xPosReg = RegInit(startX)
   val yPosReg = RegInit(170.S(11.W))
