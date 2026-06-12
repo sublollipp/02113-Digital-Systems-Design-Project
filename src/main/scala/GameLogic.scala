@@ -310,8 +310,8 @@ val desiredAngle = WireDefault(aiAngle)
 
   // Accelerér Ai Bilen
 
-  when(aiSpeed < 60.S) {
-    aiSpeed := aiSpeed + 1.S
+  when(aiSpeed < 200.S) {
+    aiSpeed := aiSpeed + 4.S
   }
 
       when(
