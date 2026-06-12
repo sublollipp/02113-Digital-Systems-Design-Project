@@ -54,137 +54,38 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     // AI car position
   val aiX = RegInit(160.S(12.W))
-  val aiY = RegInit(600.S(11.W))
+  val aiY = RegInit(800.S(11.W))
 
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
 
 val desiredAngle = WireDefault(aiAngle)
 
-  val checkpointX = VecInit(
-    80.S(12.W),
-    90.S(12.W),
-    100.S(12.W),
-    110.S(12.W),
-    120.S(12.W),
-    140.S(12.W),
+ val checkpointX = VecInit(
+  160.S, 160.S, 160.S, 160.S,
+  320.S, 480.S, 640.S, 800.S, 960.S, 1056.S,
+  1056.S, 1056.S, 1056.S,
+  960.S, 912.S,
+  912.S, 912.S, 912.S,
+  800.S, 640.S, 480.S, 320.S, 160.S,
+  160.S, 160.S
+)
 
-    160.S(12.W),
-    220.S(12.W),
-    300.S(12.W),
-    480.S(12.W),
-    560.S(12.W),
-    640.S(12.W),
-    720.S(12.W),
-    800.S(12.W),
-    880.S(12.W),
-    960.S(12.W),
-    1040.S(12.W),
-    1120.S(12.W),
-
-    1120.S(12.W),
-    1120.S(12.W),
-    1120.S(12.W),
-    1120.S(12.W),
-    1120.S(12.W),
-
-    1050.S(12.W),
-    1000.S(12.W),
-    950.S(12.W),
-    930.S(12.W),
-    900.S(12.W),
-    880.S(12.W),
-    860.S(12.W),
-
-    860.S(12.W),
-    860.S(12.W),
-    860.S(12.W),
-    860.S(12.W),
-    860.S(12.W),
-
-    760.S(12.W),
-    660.S(12.W),
-    560.S(12.W),
-    460.S(12.W),
-    360.S(12.W),
-    260.S(12.W),
-    160.S(12.W),
-
-    140.S(12.W),
-    140.S(12.W),
-    130.S(12.W),
-    130.S(12.W),
-    120.S(12.W),
-    120.S(12.W),
-    130.S(12.W),
-    140.S(12.W)
-  )
-
-  val checkpointY = VecInit(
-    760.S(11.W),
-    680.S(11.W),
-    600.S(11.W),
-    520.S(11.W),
-    370.S(11.W),
-    300.S(11.W),
-
-    200.S(11.W),
-    180.S(11.W),
-    170.S(11.W),
-    165.S(11.W),
-    160.S(11.W),
-    160.S(11.W),
-    165.S(11.W),
-    165.S(11.W),
-    170.S(11.W),
-    180.S(11.W),
-    180.S(11.W),
-    190.S(11.W),
-
-    220.S(11.W),
-    300.S(11.W),
-    340.S(11.W),
-    360.S(11.W),
-    380.S(11.W),
-
-    480.S(11.W),
-    540.S(11.W),
-    560.S(11.W),
-    600.S(11.W),
-    640.S(11.W),
-    700.S(11.W),
-    760.S(11.W),
-
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W),
-    820.S(11.W)
-  )
+val checkpointY = VecInit(
+  800.S, 600.S, 400.S, 193.S,
+  193.S, 193.S, 193.S, 193.S, 193.S, 193.S,
+  300.S, 400.S, 496.S,
+  496.S, 496.S,
+  600.S, 700.S, 800.S,
+  800.S, 800.S, 800.S, 800.S, 800.S,
+  700.S, 600.S
+) 
 
 
+val currentCheckpoint = RegInit(0.U(5.W))
 
-  val currentCheckpoint = RegInit(0.U(6.W))
 
-
-  val lookAhead =Mux(currentCheckpoint >= 47.U, currentCheckpoint + 2.U - 50.U, currentCheckpoint + 2.U)
+  val lookAhead = Mux(currentCheckpoint >= 23.U, currentCheckpoint + 2.U - 25.U, currentCheckpoint + 2.U)
 
   val targetX = checkpointX(lookAhead)
   val targetY = checkpointY(lookAhead)
@@ -222,7 +123,7 @@ val desiredAngle = WireDefault(aiAngle)
   aiVel.io.oldYPos := aiY
   aiVel.io.ang := aiAngle
   aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := frameUpdateReg
+  aiVel.io.frameUpdate := io.newFrame
 
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
@@ -321,13 +222,7 @@ val desiredAngle = WireDefault(aiAngle)
 
     // Drej gradvist mod målet
 
-    when(aiAngle =/= desiredAngle) {
-      when((desiredAngle - aiAngle)(5) === 0.U) {
-        aiAngle := aiAngle + 4.U
-      }.otherwise {
-        aiAngle := aiAngle - 4.U
-      }
-    }
+    aiAngle := desiredAngle
 
     // Accelerér
 
@@ -342,9 +237,10 @@ val desiredAngle = WireDefault(aiAngle)
     // Skift waypoint
 
     when(
-      (dx < 32.S && dx > (-32).S) && (dy < 32.S && dy > (-32).S)
-    ){
-      when(currentCheckpoint === 49.U) {
+      (dx < 48.S && dx > (-48).S) &&
+      (dy < 48.S && dy > (-48).S)
+    ) {
+      when(currentCheckpoint === 24.U) {
         currentCheckpoint := 0.U
       }.otherwise {
         currentCheckpoint := currentCheckpoint + 1.U
@@ -359,14 +255,6 @@ val desiredAngle = WireDefault(aiAngle)
       stateReg := idle
     }
 }
-
-io.led(0) := aiX > 300.S
-io.led(1) := aiSpeed > 0.S
-io.led(2) := aiVel.io.newXPos =/= aiX
-io.led(3) := aiVel.io.newYPos =/= aiY
-io.led(4) := currentCheckpoint > 0.U
-io.led(5) := desiredAngle =/= aiAngle
-
 
 //runningsprite
 val runningSprite = Module(new RunningSprite)
