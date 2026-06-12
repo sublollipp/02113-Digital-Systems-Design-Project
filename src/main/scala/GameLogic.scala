@@ -55,6 +55,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiX = RegInit(160.S(12.W))
   val aiY = RegInit(160.S(11.W))
 
+  val aiAngle = RegInit(48.U(6.W))
+  val aiSpeed = RegInit(0.S(10.W))
+
   val checkpointX = VecInit(
     160.S(12.W),
     160.S(12.W),
@@ -208,6 +211,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   cameraX := camera.io.camX
   cameraY := camera.io.camY
 
+  val aiVel = Module(new CarVelocityController)
+
+  aiVel.io.oldXPos := aiX
+  aiVel.io.oldYPos := aiY
+  aiVel.io.ang := aiAngle
+  aiVel.io.speed := aiSpeed
+  aiVel.io.frameUpdate := true.B
+
   io.viewBoxX := cameraX.asUInt
   io.viewBoxY := cameraY.asUInt
 
@@ -265,27 +276,32 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
       car.io.update := true.B
 
-      val dx = targetX - aiX
-      val dy = targetY - aiY
+  val dx = targetX - aiX
+  val dy = targetY - aiY
 
-      val stepX = dx >> 4
-      val stepY = dy >> 4
+  when(dx > 40.S && dy < 40.S && dy > (-40).S) {
+    aiAngle := 0.U
+  }.elsewhen(dx > 0.S && dy > 0.S) {
+    aiAngle := 8.U
+  }.elsewhen(dx < 40.S && dx > (-40).S && dy > 0.S) {
+    aiAngle := 16.U
+  }.elsewhen(dx < 0.S && dy > 0.S) {
+    aiAngle := 24.U
+  }.elsewhen(dx < 0.S && dy < 40.S && dy > (-40).S) {
+    aiAngle := 32.U
+  }.elsewhen(dx < 0.S && dy < 0.S) {
+    aiAngle := 40.U
+  }.elsewhen(dx < 40.S && dx > (-40).S && dy < 0.S) {
+    aiAngle := 48.U
+  }.otherwise {
+    aiAngle := 56.U
+  }
 
-      when(stepX > 8.S) {
-        aiX := aiX + 8.S
-      }.elsewhen(stepX < (-8).S) {
-        aiX := aiX - 8.S
-      }.otherwise {
-        aiX := aiX + stepX
-      }
+  // Accelerér Ai Bilen
 
-      when(stepY > 8.S) {
-        aiY := aiY + 8.S
-      }.elsewhen(stepY < (-8).S) {
-        aiY := aiY - 8.S
-      }.otherwise {
-        aiY := aiY + stepY
-      }
+  when(aiSpeed < 120.S) {
+    aiSpeed := aiSpeed + 2.S
+  }
 
       when(
         (dx < 32.S && dx > (-32).S) &&
@@ -297,7 +313,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
         currentCheckpoint := currentCheckpoint + 1.U
       }
     }
-
+      aiX := aiVel.io.newXPos
+      aiY := aiVel.io.newYPos
+      
       stateReg := done
     }
 
