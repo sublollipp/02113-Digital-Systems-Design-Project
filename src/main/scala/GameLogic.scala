@@ -58,6 +58,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
 
+val desiredAngle = Wire(UInt(6.W))
+
+  // beregn Angle
+
+  when(aiAngle =/= desiredAngle) {
+    when((desiredAngle - aiAngle)(5) === 0.U) {
+      aiAngle := aiAngle + 1.U
+    }.otherwise {
+      aiAngle := aiAngle - 1.U
+    }
+  }
+
   val checkpointX = VecInit(
     120.S(12.W),
     140.S(12.W),
@@ -280,33 +292,32 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val dy = targetY - aiY
 
   when(dx > 40.S && dy < 40.S && dy > (-40).S) {
-    aiAngle := 0.U
+    desiredAngle := 0.U
   }.elsewhen(dx > 0.S && dy > 0.S) {
-    aiAngle := 8.U
+    desiredAngle := 8.U
   }.elsewhen(dx < 40.S && dx > (-40).S && dy > 0.S) {
-    aiAngle := 16.U
+    desiredAngle := 16.U
   }.elsewhen(dx < 0.S && dy > 0.S) {
-    aiAngle := 24.U
+    desiredAngle := 24.U
   }.elsewhen(dx < 0.S && dy < 40.S && dy > (-40).S) {
-    aiAngle := 32.U
+    desiredAngle := 32.U
   }.elsewhen(dx < 0.S && dy < 0.S) {
-    aiAngle := 40.U
+    desiredAngle := 40.U
   }.elsewhen(dx < 40.S && dx > (-40).S && dy < 0.S) {
-    aiAngle := 48.U
+    desiredAngle := 48.U
   }.otherwise {
-    aiAngle := 56.U
+    desiredAngle := 56.U
   }
 
   // Accelerér Ai Bilen
 
-  when(aiSpeed < 120.S) {
-    aiSpeed := aiSpeed + 2.S
+  when(aiSpeed < 80.S) {
+    aiSpeed := aiSpeed + 1.S
   }
 
       when(
-        (dx < 32.S && dx > (-32).S) &&
-        (dy < 32.S && dy > (-32).S)
-      ) {
+        (dx < 64.S && dx > (-64).S) && (dy < 64.S && dy > (-64).S)
+) {
       when(currentCheckpoint === 49.U) {
         currentCheckpoint := 0.U
       }.otherwise {
