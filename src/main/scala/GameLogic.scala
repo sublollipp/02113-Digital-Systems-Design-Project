@@ -324,9 +324,10 @@ val desiredAngle = WireDefault(aiAngle)
         currentCheckpoint := currentCheckpoint + 1.U
       }
     }
-      aiX := aiVel.io.newXPos
-      aiY := aiVel.io.newYPos
+      // aiX := aiVel.io.newXPos
+      // aiY := aiVel.io.newYPos
 
+      aiX := aiX + 2.S
       stateReg := done
     }
 
