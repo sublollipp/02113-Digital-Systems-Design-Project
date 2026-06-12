@@ -62,16 +62,16 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 val desiredAngle = WireDefault(aiAngle)
 
   val checkpointX = VecInit(
+    80.S(12.W),
+    90.S(12.W),
+    100.S(12.W),
+    110.S(12.W),
     120.S(12.W),
     140.S(12.W),
-    160.S(12.W),
-    180.S(12.W),
-    200.S(12.W),
-    220.S(12.W),
 
-    240.S(12.W),
-    320.S(12.W),
-    400.S(12.W),
+    160.S(12.W),
+    220.S(12.W),
+    300.S(12.W),
     480.S(12.W),
     560.S(12.W),
     640.S(12.W),
@@ -88,11 +88,11 @@ val desiredAngle = WireDefault(aiAngle)
     1120.S(12.W),
     1120.S(12.W),
 
-    1080.S(12.W),
-    1040.S(12.W),
+    1050.S(12.W),
     1000.S(12.W),
-    960.S(12.W),
-    920.S(12.W),
+    950.S(12.W),
+    930.S(12.W),
+    900.S(12.W),
     880.S(12.W),
     860.S(12.W),
 
@@ -110,14 +110,14 @@ val desiredAngle = WireDefault(aiAngle)
     260.S(12.W),
     160.S(12.W),
 
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    160.S(12.W),
-    150.S(12.W),
     140.S(12.W),
-    120.S(12.W)
+    140.S(12.W),
+    130.S(12.W),
+    130.S(12.W),
+    120.S(12.W),
+    120.S(12.W),
+    130.S(12.W),
+    140.S(12.W)
   )
 
   val checkpointY = VecInit(
@@ -134,26 +134,26 @@ val desiredAngle = WireDefault(aiAngle)
     165.S(11.W),
     160.S(11.W),
     160.S(11.W),
-    160.S(11.W),
-    160.S(11.W),
-    160.S(11.W),
-    160.S(11.W),
-    160.S(11.W),
-    160.S(11.W),
+    165.S(11.W),
+    165.S(11.W),
+    170.S(11.W),
+    180.S(11.W),
+    180.S(11.W),
+    190.S(11.W),
 
     220.S(11.W),
     300.S(11.W),
+    340.S(11.W),
+    360.S(11.W),
     380.S(11.W),
-    460.S(11.W),
-    520.S(11.W),
 
-    520.S(11.W),
+    480.S(11.W),
     540.S(11.W),
-    580.S(11.W),
+    560.S(11.W),
+    600.S(11.W),
     640.S(11.W),
     700.S(11.W),
     760.S(11.W),
-    820.S(11.W),
 
     820.S(11.W),
     820.S(11.W),
@@ -169,14 +169,14 @@ val desiredAngle = WireDefault(aiAngle)
     820.S(11.W),
     820.S(11.W),
 
-    600.S(11.W),
-    680.S(11.W),
-    740.S(11.W),
-    780.S(11.W),
-    810.S(11.W),
-    830.S(11.W),
-    790.S(11.W),
-    760.S(11.W)
+    820.S(11.W),
+    820.S(11.W),
+    820.S(11.W),
+    820.S(11.W),
+    820.S(11.W),
+    820.S(11.W),
+    820.S(11.W),
+    820.S(11.W)
   )
 
 
@@ -331,8 +331,8 @@ val desiredAngle = WireDefault(aiAngle)
 
     // Accelerér
 
-    when(aiSpeed < 60.S) {
-      aiSpeed := aiSpeed + 1.S
+    when(aiSpeed < 250.S) {
+      aiSpeed := aiSpeed + 4.S
     }
 
     // Flyt bilen
