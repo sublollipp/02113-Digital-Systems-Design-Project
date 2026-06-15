@@ -175,13 +175,14 @@ io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
-  /*
-  // Mystery Box
-  val mysteryBox = Module(new MysteryBox)
-  io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
-  io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
-  io.spriteVisible(14) := mysteryBox.io.shownSprite
-   */
-
+// Mystery Box
+val mysteryBox = Module(new MysteryBox)
+mysteryBox.io.box := false.B
+mysteryBox.io.hit := false.B
+io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
+io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
+io.spriteFlipHorizontal(14) := false.B
+io.spriteFlipVertical(14) := false.B
+io.spriteVisible(14) := true.B
 
 } // # todo - er det meningen, alt dette defineres i switch statement?
