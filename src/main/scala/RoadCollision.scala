@@ -29,7 +29,7 @@ class RoadCollision extends Module {
 
   val road4 =
     io.x >= 832.S &&
-    io.x <= 992.S &&
+    io.x <= 1024.S &&
     io.y >= 416.S &&
     io.y <= 704.S
 
