@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 
-class RotatingSpriteController extends Module {
+class RotatingSpriteController(steps: Array[Int] = Array(61, 0, 4, 12, 20, 28, 36, 44, 52)) extends Module {
   val io = IO(new Bundle {
     val angle = Input(UInt(6.W))
     val spriteOH_UDR = Output(Vec(3, Bool()))
@@ -20,41 +20,24 @@ class RotatingSpriteController extends Module {
   val sprite = WireDefault(upSprite)
   val shownSprite = WireDefault(VecInit(true.B, false.B, false.B))
 
-  when ((61.U <= angle || angle >= 0.U) && angle <= 4.U) {
+  when ((steps(0).U <= angle || angle >= steps(1).U) && angle <= steps(2).U) {
     dir := rr
-  }.elsewhen(5.U <= angle && angle <= 12.U) {
+  }.elsewhen(steps(2).U < angle && angle <= steps(3).U) {
     dir := dr
-  }.elsewhen(13.U <= angle && angle <= 20.U) {
+  }.elsewhen(steps(3).U < angle && angle <= steps(4).U) {
     dir := dd
-  }.elsewhen(21.U <= angle && angle <= 28.U) {
+  }.elsewhen(steps(4).U < angle && angle <= steps(5).U) {
     dir := dl
-  }.elsewhen(29.U <= angle && angle <= 36.U) {
+  }.elsewhen(steps(5).U < angle && angle <= steps(6).U) {
     dir := ll
-  }.elsewhen(37.U <= angle && angle <= 44.U) {
+  }.elsewhen(steps(6).U < angle && angle <= steps(7).U) {
     dir := ul
-  }.elsewhen(45.U <= angle && angle <= 52.U) {
+  }.elsewhen(steps(7).U < angle && angle <= steps(8).U) {
     dir := uu
   }.otherwise {
     dir := ur
   }
 
-  switch(sprite) {
-    is(upSprite) {
-      shownSprite(0) := true.B
-      shownSprite(1) := false.B
-      shownSprite(2) := false.B
-    }
-    is(diagSprite) {
-      shownSprite(0) := false.B
-      shownSprite(1) := true.B
-      shownSprite(2) := false.B
-    }
-    is(rightSprite) {
-      shownSprite(0) := false.B
-      shownSprite(1) := false.B
-      shownSprite(2) := true.B
-    }
-  }
 
   // Sprite
   switch(dir) {
@@ -99,6 +82,25 @@ class RotatingSpriteController extends Module {
       flipSpriteV := false.B
     }
   }
+
+  switch(sprite) {
+    is(upSprite) {
+      shownSprite(0) := true.B
+      shownSprite(1) := false.B
+      shownSprite(2) := false.B
+    }
+    is(diagSprite) {
+      shownSprite(0) := false.B
+      shownSprite(1) := true.B
+      shownSprite(2) := false.B
+    }
+    is(rightSprite) {
+      shownSprite(0) := false.B
+      shownSprite(1) := false.B
+      shownSprite(2) := true.B
+    }
+  }
+
 
   io.spriteOH_UDR := shownSprite
   io.flipH := flipSpriteH
