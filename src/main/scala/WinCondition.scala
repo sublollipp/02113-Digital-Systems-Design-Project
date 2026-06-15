@@ -17,7 +17,7 @@ val io = IO(new Bundle {
 })
   // Checkpoint for goal-line
 
-  val checkpointPassed = RegInit(false.B)
+  val checkpointTaken = RegInit(false.B)
   val lapCounter = RegInit(0.U(3.W))
 
   val checkpointArea =
@@ -26,35 +26,37 @@ val io = IO(new Bundle {
     io.carY >= 576.S &&
     io.carY <= 608.S
 
-    val checkpointPrev = RegNext(checkpointArea, false.B)
+  val checkpointOnEdge = checkpointArea && !RegNext(checkpointArea, false.B)
 
-    when(checkpointArea && !checkpointPrev) {
-    checkpointPassed := true.B
-    }
+  when(checkpointOnEdge) {
+    checkpointTaken := true.B
+  }
 
   // Goal-Line
 
   val finishLine =
-    io.carX >= 96.S && 
+    io.carX >= 96.S &&
     io.carX <= 224.S &&
     io.carY >= 224.S &&
     io.carY <= 240.S
 
-    val finishLinePrev = RegNext(finishLine, false.B)
+  val finishLineOnEdge = finishLine && !RegNext(finishLine, false.B)
 
-    when(finishLine && !finishLinePrev && checkpointPassed) {
-    checkpointPassed := false.B
-
-    when(lapCounter =/= 3.U) {
+  when(finishLineOnEdge) {
+    when(checkpointTaken) {
+      when(lapCounter =/= 3.U) {
         lapCounter := lapCounter + 1.U
+      }
+      checkpointTaken := false.B
     }
-    }
-    io.gameWon := (lapCounter === 3.U)
+  }
 
-io.checkpointHit := checkpointPassed
-io.finishHit := finishLine
+  io.gameWon := (lapCounter === 3.U)
 
-io.lap1 := lapCounter >= 1.U
-io.lap2 := lapCounter >= 2.U
-io.lap3 := lapCounter >= 3.U
+  io.checkpointHit := checkpointTaken
+  io.finishHit := finishLine
+
+  io.lap1 := lapCounter >= 1.U
+  io.lap2 := lapCounter >= 2.U
+  io.lap3 := lapCounter >= 3.U
 }
