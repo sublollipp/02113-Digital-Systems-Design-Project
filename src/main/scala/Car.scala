@@ -21,7 +21,7 @@ class Car extends Module{
   val speed = WireInit(0.S(10.W))
   val angle = WireInit(0.U(6.W))
 
-  val speedControl = Module(new CarSpeedController(1, 2, 500, -150, 3))
+  val speedControl = Module(new CarSpeedController(1, 2, 500, -150, 125, 3))
   speedControl.io.btnFwd := io.btnUp
   speedControl.io.btnBckwd := io.btnDown
   speedControl.io.frameUpdate := io.update
@@ -29,6 +29,8 @@ class Car extends Module{
 
   val roadCollision = Module(new RoadCollision)
   val offRoadController = Module(new OffRoadSpeedController)
+
+  speedControl.io.offRoad := !roadCollision.io.onRoad
 
   roadCollision.io.x := xPosReg
   roadCollision.io.y := yPosReg

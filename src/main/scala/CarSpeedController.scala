@@ -1,11 +1,12 @@
 import chisel3._
 import chisel3.util._
 
-class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int, maxSpeed: Int, minSpeed: Int, frictionCoef: Int) extends Module {
+class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int, maxSpeed: Int, minSpeed: Int, offRoadMaxSpeed: Int, frictionCoef: Int) extends Module {
   val io = IO(new Bundle {
     val btnFwd = Input(Bool())
     val btnBckwd = Input(Bool())
     val frameUpdate = Input(Bool())
+    val offRoad = Input(Bool())
     val speed = Output(SInt(10.W))
   })
 
@@ -29,10 +30,10 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
         state := idle
         clockDivCounter := 0.U
         when(io.btnFwd && !io.btnBckwd) {
-          when (speed < maxSpeed.S) {
+          when ((speed < maxSpeed.S && !io.offRoad) || (speed < offRoadMaxSpeed.S && io.offRoad)) {
             speed := speed + 1.S * accelerationMultiplier.S
           }.otherwise {
-            speed := maxSpeed.S
+            speed := Mux(io.offRoad, offRoadMaxSpeed.S, maxSpeed.S)
           }
         }.elsewhen(!io.btnFwd && io.btnBckwd) {
           when (speed <= minSpeed.S) {
