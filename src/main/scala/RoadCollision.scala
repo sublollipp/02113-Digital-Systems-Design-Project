@@ -39,10 +39,18 @@ class RoadCollision extends Module {
     io.y >= 704.S &&
     io.y <= 832.S
 
+  val road6 = 
+    io.x >= 832.S &&
+    io.x <= 1120.S &&
+    io.y >= 416.S &&
+    io.y <= 576.S
+
+
   io.onRoad :=
     road1 ||
     road2 ||
     road3 ||
     road4 ||
-    road5
+    road5 ||
+    road6
 }
