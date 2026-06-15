@@ -38,23 +38,6 @@ class RotatingSpriteController(steps: Array[Int] = Array(61, 0, 4, 12, 20, 28, 3
     dir := ur
   }
 
-  switch(sprite) {
-    is(upSprite) {
-      shownSprite(0) := true.B
-      shownSprite(1) := false.B
-      shownSprite(2) := false.B
-    }
-    is(diagSprite) {
-      shownSprite(0) := false.B
-      shownSprite(1) := true.B
-      shownSprite(2) := false.B
-    }
-    is(rightSprite) {
-      shownSprite(0) := false.B
-      shownSprite(1) := false.B
-      shownSprite(2) := true.B
-    }
-  }
 
   // Sprite
   switch(dir) {
@@ -99,6 +82,25 @@ class RotatingSpriteController(steps: Array[Int] = Array(61, 0, 4, 12, 20, 28, 3
       flipSpriteV := false.B
     }
   }
+
+  switch(sprite) {
+    is(upSprite) {
+      shownSprite(0) := true.B
+      shownSprite(1) := false.B
+      shownSprite(2) := false.B
+    }
+    is(diagSprite) {
+      shownSprite(0) := false.B
+      shownSprite(1) := true.B
+      shownSprite(2) := false.B
+    }
+    is(rightSprite) {
+      shownSprite(0) := false.B
+      shownSprite(1) := false.B
+      shownSprite(2) := true.B
+    }
+  }
+
 
   io.spriteOH_UDR := shownSprite
   io.flipH := flipSpriteH

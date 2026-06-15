@@ -75,10 +75,6 @@ class AiCar extends Module{
 
   val desiredAngle = WireDefault(aiAngle)
 
-  val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
-
-  val aiSprite = WireDefault(aiUpSprite)
-
   val aiFlipH = WireDefault(false.B)
   val aiFlipV = WireDefault(false.B)
 
@@ -97,7 +93,7 @@ class AiCar extends Module{
   aiVel.io.frameUpdate := io.update
 
   val spriteController = Module(new RotatingSpriteController(Array(63, 0, 1, 15, 17, 31, 33, 47, 49)))
-  spriteController.angle := desiredAngle
+  spriteController.io.angle := desiredAngle
   io.flipV := spriteController.io.flipV
   io.flipH := spriteController.io.flipH
 
