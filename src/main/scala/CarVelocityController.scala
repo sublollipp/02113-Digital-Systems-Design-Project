@@ -31,36 +31,52 @@ class CarVelocityController extends Module {
   val sinOfAngle = sinTable(io.ang)
   val cosOfAngle = cosTable(io.ang)
 
-  val highResSpeedY = ((sinOfAngle * io.speed) >> 6).asSInt
-  val highResSpeedX = ((cosOfAngle * io.speed) >> 6).asSInt
+  val highResSpeedX = Reg(SInt(10.W))
+  val highResSpeedY = Reg(SInt(10.W))
 
   io.newXPos := io.oldXPos
   io.newYPos := io.oldYPos
 
-  when (io.frameUpdate) {
-    val accumX = (highResSpeedX + xRemainder)
-    val accumY = (highResSpeedY + yRemainder)
+  val idle :: computeSpeed :: computePos :: Nil = Enum(3)
+  val state = RegInit(idle)
 
-    val nextX = io.oldXPos + (accumX >> 7).asSInt
-    val nextY = io.oldYPos + (accumY >> 7).asSInt
+  val accumX = (highResSpeedX + xRemainder)
+  val accumY = (highResSpeedY + yRemainder)
 
-    when(nextX < 0.S) {
-      io.newXPos := 0.S
-    }.elsewhen(nextX > 1248.S) { // 1280 - 32
-      io.newXPos := 1248.S
-    }.otherwise {
-      io.newXPos := nextX
+  val nextX = io.oldXPos + (accumX >> 7).asSInt
+  val nextY = io.oldYPos + (accumY >> 7).asSInt
+
+  switch (state) {
+    is (idle) {
+      when (io.frameUpdate) {
+        state := computeSpeed
+      }
     }
-
-    when(nextY < 0.S) {
-      io.newYPos := 0.S
-    }.elsewhen(nextY > 928.S) { // 960 - 32
-      io.newYPos := 928.S
-    }.otherwise {
-      io.newYPos := nextY
+    is (computeSpeed) {
+      state := computePos
+      highResSpeedY := ((sinOfAngle * io.speed) >> 6).asSInt
+      highResSpeedX := ((cosOfAngle * io.speed) >> 6).asSInt
     }
+    is (computePos) {
+      state := idle
+      when(nextX < 0.S) {
+        io.newXPos := 0.S
+      }.elsewhen(nextX > 1248.S) { // 1280 - 32
+        io.newXPos := 1248.S
+      }.otherwise {
+        io.newXPos := nextX
+      }
 
-    xRemainder := accumX - ((accumX >> 7) << 7).asSInt
-    yRemainder := accumY - ((accumY >> 7) << 7).asSInt
+      when(nextY < 0.S) {
+        io.newYPos := 0.S
+      }.elsewhen(nextY > 928.S) { // 960 - 32
+        io.newYPos := 928.S
+      }.otherwise {
+        io.newYPos := nextY
+      }
+
+      xRemainder := accumX - ((accumX >> 7) << 7).asSInt
+      yRemainder := accumY - ((accumY >> 7) << 7).asSInt
+    }
   }
 }

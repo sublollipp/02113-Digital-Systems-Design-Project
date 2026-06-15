@@ -73,10 +73,13 @@ class AiCar extends Module{
 
   val racingOffset = WireDefault(0.S(8.W))
 
-  val desiredAngle = WireDefault(aiAngle)
-
   val aiFlipH = WireDefault(false.B)
   val aiFlipV = WireDefault(false.B)
+
+  // Compute a raw desired angle based on target direction, then apply
+  // a 3-sample majority vote to avoid rapid sprite changes when turning.
+  val newDesiredRaw = Wire(UInt(6.W))
+  newDesiredRaw := aiAngle
 
   val aiVel = Module(new CarVelocityController)
 
@@ -93,7 +96,28 @@ class AiCar extends Module{
   aiVel.io.frameUpdate := io.update
 
   val spriteController = Module(new RotatingSpriteController(Array(63, 0, 1, 15, 17, 31, 33, 47, 49)))
-  spriteController.io.angle := desiredAngle
+
+  // History of last 3 requested angles (most recent at index 0)
+  val angleHist = RegInit(VecInit(Seq.fill(3)(48.U(6.W))))
+
+  // Shift history on frame update so we sample once per frame
+  when(io.update) {
+    angleHist(2) := angleHist(1)
+    angleHist(1) := angleHist(0)
+    angleHist(0) := newDesiredRaw
+  }
+
+  // Majority vote among the three history entries. If no majority, keep previous angle.
+  val votedAngle = Wire(UInt(6.W))
+  when(angleHist(0) === angleHist(1) || angleHist(0) === angleHist(2)) {
+    votedAngle := angleHist(0)
+  }.elsewhen(angleHist(1) === angleHist(2)) {
+    votedAngle := angleHist(1)
+  }.otherwise {
+    votedAngle := aiAngle
+  }
+
+  spriteController.io.angle := votedAngle
   io.flipV := spriteController.io.flipV
   io.flipH := spriteController.io.flipH
 
@@ -111,41 +135,38 @@ class AiCar extends Module{
 
   // Drej gradvist mod målet
 
-  aiAngle := desiredAngle
+  // Update aiAngle from votedAngle
+  aiAngle := votedAngle
 
+  // Determine raw desired angle based on direction to the target
   when(absDx > (absDy << 1).asSInt) {
-
     when(adjustedDx > 0.S) {
-      desiredAngle := 0.U
+      newDesiredRaw := 0.U
     }.otherwise {
-      desiredAngle := 32.U
+      newDesiredRaw := 32.U
     }
-
   }.elsewhen(absDy > (absDx << 1).asSInt) {
-
     when(adjustedDy > 0.S) {
-      desiredAngle := 16.U
+      newDesiredRaw := 16.U
     }.otherwise {
-      desiredAngle := 48.U
+      newDesiredRaw := 48.U
     }
-
   }.otherwise {
-
     when(adjustedDx > 0.S && adjustedDy > 0.S) {
-      desiredAngle := 8.U
+      newDesiredRaw := 8.U
     }.elsewhen(adjustedDx < 0.S && adjustedDy > 0.S) {
-      desiredAngle := 24.U
+      newDesiredRaw := 24.U
     }.elsewhen(adjustedDx < 0.S && adjustedDy < 0.S) {
-      desiredAngle := 40.U
+      newDesiredRaw := 40.U
     }.otherwise {
-      desiredAngle := 56.U
+      newDesiredRaw := 56.U
     }
   }
 
   // Accelerér
 
-  when(aiSpeed < 275.S) {
-    aiSpeed := aiSpeed + 4.S
+  when(aiSpeed < 325.S) {
+    aiSpeed := aiSpeed + 5.S
   }
 
   // Flyt bilen
