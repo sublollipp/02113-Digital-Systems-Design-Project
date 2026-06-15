@@ -31,6 +31,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.led := Seq.fill(8)(false.B)
 
+  io.led(0) := checkpointPassed
+  io.led(1) := finishLine
+  io.led(2) := (lapCounter === 1.U)
+  io.led(3) := (lapCounter === 2.U)
+  io.led(4) := (lapCounter === 3.U)
+
   io.spriteXPosition := Seq.fill(SpriteNumber)(0.S)
   io.spriteYPosition := Seq.fill(SpriteNumber)(0.S)
   io.spriteVisible := Seq.fill(SpriteNumber)(false.B)
