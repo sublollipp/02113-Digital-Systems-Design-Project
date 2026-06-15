@@ -15,8 +15,8 @@ class Car extends Module{
     val shownSprite = Output(Vec(3, Bool()))
   })
 
-  val xPosReg = RegInit(60.S(12.W))
-  val yPosReg = RegInit(170.S(11.W))
+  val xPosReg = RegInit(160.S(12.W))
+  val yPosReg = RegInit(420.S(11.W))
 
   val speed = WireInit(0.S(10.W))
   val angle = WireInit(0.U(6.W))

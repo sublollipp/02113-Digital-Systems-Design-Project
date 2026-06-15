@@ -16,7 +16,7 @@ class MysteryBox extends Module {
   })
 
   val xPosReg = RegInit(160.S(12.W))
-  val yPosReg = RegInit(420.S(11.W))
+  val yPosReg = RegInit(460.S(11.W))
   val hitReg = RegInit(false.B)
 
   when(io.hit) {
