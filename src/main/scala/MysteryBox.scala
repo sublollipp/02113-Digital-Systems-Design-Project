@@ -17,6 +17,8 @@ class MysteryBox extends Module {
   val xPosReg = RegInit(160.S(12.W))
   val yPosReg = RegInit(420.S(11.W))
 
+  
+
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
   val hitboxWidthValue = 24.U(6.W)
