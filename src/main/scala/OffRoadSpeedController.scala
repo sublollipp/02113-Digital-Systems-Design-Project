@@ -5,18 +5,28 @@ class OffRoadSpeedController extends Module {
   val io = IO(new Bundle {
     val speedIn = Input(SInt(10.W))
     val onRoad = Input(Bool())
+    val frameUpdate = Input(Bool())
     val speedOut = Output(SInt(10.W))
   })
 
-when(io.onRoad) {
-  io.speedOut := io.speedIn
-}.otherwise {
-  when(io.speedIn > 125.S) {
-    io.speedOut := 125.S
-  }.elsewhen(io.speedIn < -40.S) {
-    io.speedOut := -40.S
-  }.otherwise {
-    io.speedOut := io.speedIn
+  val speedReg = RegInit(0.S(10.W))
+
+  when(io.frameUpdate) {
+
+    when(io.onRoad) {
+      speedReg := io.speedIn
+    }.otherwise {
+
+      when(io.speedIn > 0.S) {
+        speedReg := io.speedIn - (io.speedIn >> 5).asSInt
+      }.elsewhen(io.speedIn < 0.S) {
+        speedReg := io.speedIn - (io.speedIn >> 5).asSInt
+      }.otherwise {
+        speedReg := 0.S
+      }
+
+    }
   }
-}
+
+  io.speedOut := speedReg
 }
