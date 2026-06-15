@@ -87,6 +87,17 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val aiCar = Module(new AiCar)
 
+  val winCondition = Module(new WinCondition)
+
+  winCondition.io.carX := car.io.posX
+  winCondition.io.carY := car.io.posY
+
+  val gameWonReg = RegInit(false.B)
+
+  when(winCondition.io.gameWon) {
+    gameWonReg := true.B
+  }
+
   aiCar.io.update := false.B
 
   io.spriteXPosition(4) := aiCar.io.posX - cameraX
@@ -136,11 +147,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       }
     }
 
-    is(compute1) {
+  is(compute1) {
+
+    when(!gameWonReg) {
       car.io.update := true.B
       aiCar.io.update := true.B
-      stateReg := done
+    }.otherwise {
+      car.io.update := false.B
+      aiCar.io.update := false.B
     }
+
+    stateReg := done
+  }
 
 
   is(done) {
@@ -152,6 +170,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 // running sprite and hit-sprite wiring
 val runningSprite = Module(new RunningSprite)
 runningSprite.io.update := frameUpdateReg
+
 
 val carWidth = 32.S(12.W)
 val carHeight = 32.S(11.W)
