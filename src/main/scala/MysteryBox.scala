@@ -14,8 +14,8 @@ class MysteryBox extends Module {
     val shownSprite = Output(Bool())
   })
 
-  val xPosReg = RegInit(260.S(12.W))
-  val yPosReg = RegInit(190.S(11.W))
+  val xPosReg = RegInit(360.S(12.W))
+  val yPosReg = RegInit(420.S(11.W))
 
 
   val hitboxOffsetX = 4.S(12.W)
