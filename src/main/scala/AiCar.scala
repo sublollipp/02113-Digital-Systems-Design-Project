@@ -75,10 +75,6 @@ class AiCar extends Module{
 
   val desiredAngle = WireDefault(aiAngle)
 
-  val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
-
-  val aiSprite = WireDefault(aiUpSprite)
-
   val aiFlipH = WireDefault(false.B)
   val aiFlipV = WireDefault(false.B)
 
@@ -97,13 +93,14 @@ class AiCar extends Module{
   aiVel.io.frameUpdate := io.update
 
   val spriteController = Module(new RotatingSpriteController)
-  spriteController.angle := desiredAngle
-  io.flipV := spriteController.io.flipV
-  io.flipH := spriteController.io.flipH
 
-  io.spriteOH_UDR(0) := (aiSprite === aiUpSprite)
-  io.spriteOH_UDR(1) := (aiSprite === aiDiagSprite)
-  io.spriteOH_UDR(2) := (aiSprite === aiRightSprite)
+  spriteController.io.angle := desiredAngle
+
+  io.flipH := spriteController.io.flipH
+  io.flipV := spriteController.io.flipV
+  io.spriteOH_UDR := spriteController.io.spriteOH_UDR
+
+  io.spriteOH_UDR := spriteController.io.spriteOH_UDR
 
   when(currentCheckpoint === 0.U) {
     racingOffset := 20.S

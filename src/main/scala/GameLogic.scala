@@ -56,9 +56,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val aiSprite = WireDefault(aiUpSprite)
 
-  val aiFlipH = WireDefault(false.B)
-  val aiFlipV = WireDefault(false.B)
-
   // AI car position
 
   car.io.btnLeft := io.btnL
@@ -105,13 +102,13 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteVisible(6) := aiCar.io.spriteOH_UDR(1)
   io.spriteVisible(7) := aiCar.io.spriteOH_UDR(2)
 
-  io.spriteFlipHorizontal(4) := aiFlipH
-  io.spriteFlipHorizontal(6) := aiFlipH
-  io.spriteFlipHorizontal(7) := aiFlipH
+  io.spriteFlipHorizontal(4) := aiCar.io.flipH
+  io.spriteFlipHorizontal(6) := aiCar.io.flipH
+  io.spriteFlipHorizontal(7) := aiCar.io.flipH
 
-  io.spriteFlipVertical(4) := aiFlipV
-  io.spriteFlipVertical(6) := aiFlipV
-  io.spriteFlipVertical(7) := aiFlipV
+  io.spriteFlipVertical(4) := aiCar.io.flipV
+  io.spriteFlipVertical(6) := aiCar.io.flipV
+  io.spriteFlipVertical(7) := aiCar.io.flipV
 
   // Viewbox
   io.viewBoxX := cameraX.asUInt
