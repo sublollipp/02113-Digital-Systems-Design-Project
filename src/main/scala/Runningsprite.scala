@@ -27,7 +27,6 @@ class RunningSprite extends Module {
   when(io.update) {
     when(io.hit) {
       hitReg := true.B
-      movingRight := false.B
     }
 
     when(movingRight) {
