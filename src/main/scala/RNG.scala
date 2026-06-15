@@ -9,7 +9,7 @@ class RNG(options: Int) extends Module {
   })
 
   val pseudoRandomNumber = LFSR(width)
-  val index = (pseudoRandomNumber % options.U) - 1.U
+  val index = pseudoRandomNumber % options.U
 
   io.idx := index
 }

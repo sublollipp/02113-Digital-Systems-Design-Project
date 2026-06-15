@@ -3,8 +3,9 @@ import chisel3.util._
 
 class MysteryBox extends Module {
   val io = IO(new Bundle {
-    val update = Input(Bool())
+    val box = Input(Bool())
     val hit = Input(Bool())
+    val rand = Input(UInt(2.W))
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val hitboxX = Output(SInt(12.W))
@@ -18,10 +19,8 @@ class MysteryBox extends Module {
   val yPosReg = RegInit(420.S(11.W))
   val hitReg = RegInit(false.B)
 
-  when(io.update) {
-    when(io.hit) {
-      hitReg := true.B
-    }
+  when(io.hit) {
+    hitReg := true.B
   }
 
   val hitboxOffsetX = 4.S(12.W)
@@ -35,7 +34,7 @@ class MysteryBox extends Module {
   io.hitboxY := yPosReg + hitboxOffsetY
   io.hitboxWidth := hitboxWidthValue
   io.hitboxHeight := hitboxHeightValue
-  io.shownSprite := true.B
+  io.shownSprite := io.rand === 0.U
 }
 
 

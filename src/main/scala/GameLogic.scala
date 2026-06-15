@@ -180,9 +180,10 @@ val mysteryBox = Module(new MysteryBox)
 val rng = Module(new RNG(3))
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := false.B
+mysteryBox.io.rand := rng.io.idx
 io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
 io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
-io.spriteVisible(14) := true.B
+io.spriteVisible(14) := mysteryBox.io.shownSprite
 } // # todo - er det meningen, alt dette defineres i switch statement? 
