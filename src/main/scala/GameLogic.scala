@@ -59,7 +59,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiFlipH = WireDefault(false.B)
   val aiFlipV = WireDefault(false.B)
 
-    // AI car position
+  // AI car position
 
   car.io.btnLeft := io.btnL
   car.io.btnUp := io.btnU
@@ -89,6 +89,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   // AI-car
 
   val aiCar = Module(new AiCar)
+
+  aiCar.io.update := false.B
 
   io.spriteXPosition(4) := aiCar.io.posX - cameraX
   io.spriteYPosition(4) := aiCar.io.posY - cameraY
@@ -137,17 +139,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       }
     }
 
-  is(compute1) {
-    car.io.update := true.B
-}
+    is(compute1) {
+      car.io.update := true.B
+      aiCar.io.update := true.B
+      stateReg := done
+    }
 
-    stateReg := done
-  }
 
   is(done) {
     io.frameUpdateDone := true.B
     stateReg := idle
   }
+}
 
 // running sprite and hit-sprite wiring
 val runningSprite = Module(new RunningSprite)

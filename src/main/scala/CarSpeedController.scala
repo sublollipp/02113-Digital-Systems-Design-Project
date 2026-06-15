@@ -38,7 +38,7 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
           when (speed <= minSpeed.S) {
             speed := minSpeed.S
           }.otherwise {
-            speed := speed - (2.S * frictionCoef)
+            speed := speed - (2.S * frictionCoef.S)
           }
         }.otherwise {
           when (speed < 0.S) {

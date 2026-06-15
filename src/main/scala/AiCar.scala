@@ -2,7 +2,7 @@ import chisel3._
 import chisel3.util._
 
 class AiCar extends Module{
-  val io = IO(new Module {
+  val io = IO(new Bundle {
     val update = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
@@ -51,7 +51,6 @@ class AiCar extends Module{
     810.S, 800.S, 800.S
   )
 
-
   val currentCheckpoint = RegInit(0.U(6.W))
 
 
@@ -59,6 +58,9 @@ class AiCar extends Module{
 
   val aiX = RegInit(160.S(12.W))
   val aiY = RegInit(800.S(11.W))
+
+  io.posX := aiX
+  io.posY := aiY
 
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
