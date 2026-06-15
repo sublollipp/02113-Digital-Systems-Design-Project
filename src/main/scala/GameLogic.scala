@@ -177,4 +177,13 @@ io.spriteYPosition(5) := runningSprite.io.posY - cameraY
 io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
+
+
+  // Mystery Box
+  val mysteryBox = Module(new MysteryBox)
+  io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
+  io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
+  io.spriteVisible(14) := mysteryBox.io.shownSprite
+
+
 } // # todo - er det meningen, alt dette defineres i switch statement?
