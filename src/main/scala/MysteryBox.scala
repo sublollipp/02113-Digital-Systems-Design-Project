@@ -34,5 +34,5 @@ class MysteryBox extends Module {
   io.hitboxY := yPosReg + hitboxOffsetY
   io.hitboxWidth := hitboxWidthValue
   io.hitboxHeight := hitboxHeightValue
-  io.shownSprite := !hitReg
+  io.shownSprite := (io.rand === 0.U) && !hitReg
 }
