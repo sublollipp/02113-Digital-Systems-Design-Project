@@ -31,11 +31,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.led := Seq.fill(8)(false.B)
 
-  io.led(0) := checkpointPassed
-  io.led(1) := finishLine
-  io.led(2) := (lapCounter === 1.U)
-  io.led(3) := (lapCounter === 2.U)
-  io.led(4) := (lapCounter === 3.U)
 
   io.spriteXPosition := Seq.fill(SpriteNumber)(0.S)
   io.spriteYPosition := Seq.fill(SpriteNumber)(0.S)
@@ -94,6 +89,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiCar = Module(new AiCar)
 
   val winCondition = Module(new WinCondition)
+
+  io.led(0) := winCondition.io.checkpointHit
+io.led(1) := winCondition.io.finishHit
+io.led(2) := winCondition.io.lap1
+io.led(3) := winCondition.io.lap2
+io.led(4) := winCondition.io.lap3
+io.led(5) := winCondition.io.gameWon
+
 
   winCondition.io.carX := car.io.posX
   winCondition.io.carY := car.io.posY
@@ -214,4 +217,7 @@ io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
 io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 io.spriteVisible(14) := mysteryBox.io.shownSprite
+
+
 } // # todo - er det meningen, alt dette defineres i switch statement? 
+

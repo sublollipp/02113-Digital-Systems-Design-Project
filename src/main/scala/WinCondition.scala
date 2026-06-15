@@ -2,13 +2,19 @@ import chisel3._
 import chisel3.util._
 
 class WinCondition extends Module {
-  val io = IO(new Bundle {
-    val carX = Input(SInt(12.W))
-    val carY = Input(SInt(11.W))
+val io = IO(new Bundle {
+  val carX = Input(SInt(12.W))
+  val carY = Input(SInt(11.W))
 
-    val gameWon = Output(Bool())
-  })
+  val gameWon = Output(Bool())
 
+  // Debug
+  val checkpointHit = Output(Bool())
+  val finishHit = Output(Bool())
+  val lap1 = Output(Bool())
+  val lap2 = Output(Bool())
+  val lap3 = Output(Bool())
+})
   // Checkpoint for goal-line
 
   val checkpointPassed = RegInit(false.B)
@@ -44,4 +50,11 @@ class WinCondition extends Module {
     }
     }
     io.gameWon := (lapCounter === 3.U)
+
+io.checkpointHit := checkpointPassed
+io.finishHit := finishLine
+
+io.lap1 := lapCounter >= 1.U
+io.lap2 := lapCounter >= 2.U
+io.lap3 := lapCounter >= 3.U
 }
