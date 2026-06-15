@@ -11,7 +11,7 @@ class RoadCollision extends Module {
   // Definér vejstykker her
   val road1 =
     io.x >= 64.S &&
-    io.x <= 256.S &&
+    io.x <= 288.S &&
     io.y >= 128.S &&
     io.y <= 832.S
 
