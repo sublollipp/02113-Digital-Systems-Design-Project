@@ -185,4 +185,4 @@ io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
 io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 io.spriteVisible(14) := true.B
-} // # todo - er det meningen, alt dette defineres i switch statement?
+} // # todo - er det meningen, alt dette defineres i switch statement? 
