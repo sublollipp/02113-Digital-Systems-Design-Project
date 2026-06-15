@@ -37,6 +37,7 @@ class Car extends Module{
 
   offRoadController.io.speedIn := speedControl.io.speed
   offRoadController.io.onRoad := roadCollision.io.onRoad
+  offRoadController.io.frameUpdate := io.update
 
   speed := offRoadController.io.speedOut
 

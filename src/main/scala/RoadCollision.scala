@@ -10,45 +10,45 @@ class RoadCollision extends Module {
 
   // Vejen venstre del (lodret)
   val road1 =
-    io.x >= 64.S &&
-    io.x <= 192.S &&
-    io.y >= 128.S &&
-    io.y <= 832.S
+    io.x >= 54.S &&
+    io.x <= 202.S &&
+    io.y >= 118.S &&
+    io.y <= 842.S
 
  // Vejen højre del (vandret)
   val road2 =
-    io.x >= 96.S &&
-    io.x <= 1120.S &&
-    io.y >= 96.S &&
-    io.y <= 225.S
+    io.x >= 86.S &&
+    io.x <= 1130.S &&
+    io.y >= 86.S &&
+    io.y <= 235.S
 
  // Vejen øverste del (lodret)
   val road3 =
-    io.x >= 992.S &&
-    io.x <= 1120.S &&
-    io.y >= 225.S &&
-    io.y <= 544.S
+    io.x >= 982.S &&
+    io.x <= 1130.S &&
+    io.y >= 215.S &&
+    io.y <= 554.S
 
  // Vejen nederste del (lodret)
   val road4 =
-    io.x >= 832.S &&
-    io.x <= 960.S &&
-    io.y >= 416.S &&
-    io.y <= 704.S
+    io.x >= 822.S &&
+    io.x <= 970.S &&
+    io.y >= 406.S &&
+    io.y <= 714.S
 
  // Vejen nederste del (vandret)
   val road5 =
-    io.x >= 96.S &&
-    io.x <= 960.S &&
-    io.y >= 704.S &&
-    io.y <= 832.S
+    io.x >= 86.S &&
+    io.x <= 970.S &&
+    io.y >= 694.S &&
+    io.y <= 842.S
 
  // Vejen mellem road3 og road4 del (vandret)
   val road6 = 
-    io.x >= 832.S &&
-    io.x <= 1120.S &&
-    io.y >= 416.S &&
-    io.y <= 576.S
+    io.x >= 822.S &&
+    io.x <= 1130.S &&
+    io.y >= 406.S &&
+    io.y <= 586.S
 
 
   io.onRoad :=
