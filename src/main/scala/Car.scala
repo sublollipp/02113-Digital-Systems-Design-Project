@@ -9,13 +9,13 @@ class Car extends Module{
     val btnRight = Input(Bool())
     val update = Input(Bool())
     val boost = Input(Bool())
-    val boostSpeed = Input(SInt(10.W))
-    val boostFrames = Input(UInt(8.W))
     val posX = Output(SInt(12.W))
-    val posY = Output(SInt(11.W))
+    val posY = Output(SInt(11.W))                                                                                                                                                                                                                                                                                         
     val flipH = Output(Bool())
     val flipV = Output(Bool())
     val shownSprite = Output(Vec(3, Bool()))
+val boostFrames = Input(UInt(8.W))
+val boostSpeed = Input(SInt(16.W))
   })
 
   val xPosReg = RegInit(160.S(12.W))
@@ -29,8 +29,8 @@ class Car extends Module{
   speedControl.io.btnBckwd := io.btnDown
   speedControl.io.frameUpdate := io.update
   speedControl.io.boost := io.boost
-  speedControl.io.boostSpeed := io.boostSpeed
   speedControl.io.boostFrames := io.boostFrames
+  speedControl.io.boostSpeed := io.boostSpeed
   speed := speedControl.io.speed
 
   val roadCollision = Module(new RoadCollision)
@@ -44,6 +44,19 @@ class Car extends Module{
   offRoadController.io.speedIn := speedControl.io.speed
   offRoadController.io.onRoad := roadCollision.io.onRoad
   offRoadController.io.frameUpdate := io.update
+
+// Slowing down to half speed for 5 seconds for car if it hits sprite
+  val slowCount = RegInit(0.U(9.W))
+  when(io.update) {
+    when(io.boost && slowCount === 0.U) {
+      slowCount := 300.U //5 seconds
+    }.elsewhen(slowCount =/= 0.U) { //
+      slowCount := slowCount - 1.U
+    }
+  }
+
+  val slowedSpeed = offRoadController.io.speedOut >> 1
+  speed := Mux(slowCount =/= 0.U, slowedSpeed, offRoadController.io.speedOut)
 
   val angleControl = Module(new CarAngleController(3))
   angleControl.io.btnLeft := io.btnLeft
