@@ -91,15 +91,40 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val winCondition = Module(new WinCondition)
 
   io.led(0) := winCondition.io.checkpointHit
-io.led(1) := winCondition.io.finishHit
-io.led(2) := winCondition.io.lap1
-io.led(3) := winCondition.io.lap2
-io.led(4) := winCondition.io.lap3
-io.led(5) := winCondition.io.gameWon
+  io.led(1) := winCondition.io.finishHit
+  io.led(2) := winCondition.io.lap1
+  io.led(3) := winCondition.io.lap2
+  io.led(4) := winCondition.io.lap3
+  io.led(5) := winCondition.io.gameWon
+  io.led(7) := crashReg
 
 
   winCondition.io.carX := car.io.posX
   winCondition.io.carY := car.io.posY
+
+  val crashX = Wire(SInt(12.W))
+  val crashY = Wire(SInt(11.W))
+
+  crashX := (car.io.posX + aiCar.io.posX) >> 1
+  crashY := (car.io.posY + aiCar.io.posY) >> 1
+
+  val crashSpriteX = RegInit(0.S(12.W))
+  val crashSpriteY = RegInit(0.S(11.W))
+
+  when(carCollision.io.collision && !crashReg) {
+    crashReg := true.B
+
+    crashSpriteX := (car.io.posX + aiCar.io.posX) >> 1
+    crashSpriteY := (car.io.posY + aiCar.io.posY) >> 1
+}
+
+  io.spriteXPosition(10) := crashSpriteX - cameraX
+  io.spriteYPosition(10) := crashSpriteY - cameraY
+
+  io.spriteFlipHorizontal(10) := false.B
+  io.spriteFlipVertical(10) := false.B
+
+  io.spriteVisible(10) := crashReg
 
   val gameWonReg = RegInit(false.B)
 
@@ -158,13 +183,13 @@ io.led(5) := winCondition.io.gameWon
 
   is(compute1) {
 
-    when(!gameWonReg) {
-      car.io.update := true.B
-      aiCar.io.update := true.B
-    }.otherwise {
-      car.io.update := false.B
-      aiCar.io.update := false.B
-    }
+  when(!gameWonReg && !crashReg) {
+    car.io.update := true.B
+    aiCar.io.update := true.B
+  }.otherwise {
+    car.io.update := false.B
+    aiCar.io.update := false.B
+  }
 
     stateReg := done
   }
@@ -204,6 +229,20 @@ io.spriteYPosition(5) := runningSprite.io.posY - cameraY
 io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
+
+val carCollision = Module(new CarCollision)
+
+carCollision.io.carX := car.io.posX
+carCollision.io.carY := car.io.posY
+
+carCollision.io.aiX := aiCar.io.posX
+carCollision.io.aiY := aiCar.io.posY
+
+val crashReg = RegInit(false.B)
+
+when(carCollision.io.collision) {
+  crashReg := true.B
+}
 
 // Mystery Box
 val mysteryBox = Module(new MysteryBox)
