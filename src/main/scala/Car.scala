@@ -39,11 +39,12 @@ class Car extends Module{
   offRoadController.io.speedIn := speedControl.io.speed
   offRoadController.io.onRoad := roadCollision.io.onRoad
   offRoadController.io.frameUpdate := io.update
+
 //Boost logic for running sprite
-  val boostCount = RegInit(0.U(3.W))
+  val boostCount = RegInit(0.U(6.W))
   when(io.update) {
     when(io.boost && boostCount === 0.U) {
-      boostCount := 4.U
+      boostCount := 60.U
     }.elsewhen(boostCount =/= 0.U) {
       boostCount := boostCount - 1.U
     }
