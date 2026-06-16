@@ -17,14 +17,7 @@ class WinCondition extends Module {
   })
 
   // -----------------------------
-  // Registers
-  // -----------------------------
-
-  val checkpointTaken = RegInit(false.B)
-  val lapCounter = RegInit(0.U(3.W))
-
-  // -----------------------------
-  // Checkpoint zone
+  // Zones
   // -----------------------------
 
   val checkpointArea =
@@ -32,10 +25,6 @@ class WinCondition extends Module {
     io.carX <= 800.S &&
     io.carY >= 500.S &&
     io.carY <= 700.S
-
-  // -----------------------------
-  // Finish line
-  // -----------------------------
 
   val finishLine =
     io.carX >= 96.S &&
@@ -54,31 +43,58 @@ class WinCondition extends Module {
   val finishEnter     = finishLine && !finishPrev
 
   // -----------------------------
-  // Checkpoint logic
+  // States
   // -----------------------------
+
+  val sArmRace :: sWaitCheckpoint :: Nil = Enum(2)
+
+  val state = RegInit(sArmRace)
+
+  val lapCounter = RegInit(0.U(3.W))
+
+  switch(state) {
+
+    // Først skal spilleren passere målstregen én gang
+    // efter spawn før omgange kan tælles.
+    is(sArmRace) {
+      when(finishEnter) {
+        state := sWaitCheckpoint
+      }
+    }
+
+    is(sWaitCheckpoint) {
+
+      when(checkpointEnter) {
+        state := sArmRace
+      }
+
+      when(finishEnter && checkpointPrev) {
+        // safety
+        state := sWaitCheckpoint
+      }
+    }
+  }
+
+  // Tæl kun når checkpoint allerede er taget
+  val checkpointTaken = RegInit(false.B)
 
   when(checkpointEnter) {
     checkpointTaken := true.B
   }
 
-  // -----------------------------
-  // Lap counting
-  // -----------------------------
-
   when(finishEnter && checkpointTaken) {
-    lapCounter := lapCounter + 1.U
     checkpointTaken := false.B
+
+    when(lapCounter < 3.U) {
+      lapCounter := lapCounter + 1.U
+    }
   }
 
   // -----------------------------
-  // Win condition
+  // Outputs
   // -----------------------------
 
   io.gameWon := lapCounter >= 3.U
-
-  // -----------------------------
-  // Debug outputs
-  // -----------------------------
 
   io.checkpointHit := checkpointArea
   io.finishHit := finishLine
