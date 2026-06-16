@@ -3,7 +3,7 @@ import chisel3.util._
 
 class CarVelocityController extends Module {
   val io = IO(new Bundle {
-    val speed = Input(SInt(10.W))
+    val speed = Input(SInt(11.W))
     val ang = Input(UInt(6.W))
     val frameUpdate = Input(Bool())
     val oldXPos = Input(SInt(12.W))
@@ -29,8 +29,8 @@ class CarVelocityController extends Module {
   val sinOfAngle = sinTable(io.ang)
   val cosOfAngle = cosTable(io.ang)
 
-  val highResSpeedX = Reg(SInt(10.W))
-  val highResSpeedY = Reg(SInt(10.W))
+  val highResSpeedX = Reg(SInt(11.W))
+  val highResSpeedY = Reg(SInt(11.W))
 
   io.newXPos := io.oldXPos
   io.newYPos := io.oldYPos
