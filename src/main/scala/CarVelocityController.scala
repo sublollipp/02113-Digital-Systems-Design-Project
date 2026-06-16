@@ -15,7 +15,6 @@ class CarVelocityController extends Module {
   val xRemainder = RegInit(0.S(12.W))
   val yRemainder = RegInit(0.S(11.W))
 
-  // 1. Pre-compute the values into a Scala Seq during elaboration
   val sinValues = (0 until 64).map { i =>
     (Math.sin((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
   }
@@ -24,7 +23,6 @@ class CarVelocityController extends Module {
     (Math.cos((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
   }
 
-  // 2. Pass the sequences into VecInit to create the hardware ROMs
   val sinTable = VecInit(sinValues)
   val cosTable = VecInit(cosValues)
 
