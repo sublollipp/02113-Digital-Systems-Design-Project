@@ -90,20 +90,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val winCondition = Module(new WinCondition)
 
-  val crashReg = RegInit(false.B)
-
-  winCondition.io.carX := car.io.posX
-  winCondition.io.carY := car.io.posY
-
-  val crashX = Wire(SInt(12.W))
-  val crashY = Wire(SInt(11.W))
-
-  crashX := (car.io.posX + aiCar.io.posX) >> 1
-  crashY := (car.io.posY + aiCar.io.posY) >> 1
-
-  val crashSpriteX = RegInit(0.S(12.W))
-  val crashSpriteY = RegInit(0.S(11.W))
-
   val carCollision = Module(new CarCollision)
 
   carCollision.io.carX := car.io.posX
@@ -112,15 +98,30 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   carCollision.io.aiX := aiCar.io.posX
   carCollision.io.aiY := aiCar.io.posY
 
+  val crashReg = RegInit(false.B)
+
+  val crashSpriteX = RegInit(0.S(12.W))
+  val crashSpriteY = RegInit(0.S(11.W))
+
+  val crashX = Wire(0.S(12.W))
+  val crashY = Wire(0.S(11.W))
+
+  winCondition.io.carX := car.io.posX
+  winCondition.io.carY := car.io.posY
+
+  crashX := (car.io.posX + aiCar.io.posX) >> 1
+  crashY := (car.io.posY + aiCar.io.posY) >> 1
+
+
   when(carCollision.io.collision && !crashReg) {
     crashReg := true.B
 
-    crashSpriteX := (car.io.posX + aiCar.io.posX) >> 1
-    crashSpriteY := (car.io.posY + aiCar.io.posY) >> 1
+    crashSpriteX := ((car.io.posX+ 16.S) + (aiCar.io.posX + 16.S)) >> 1
+    crashSpriteY := ((car.io.posY + 16.S) + (aiCar.io.posY + 16.S)) >> 1
 }
 
-  io.spriteXPosition(10) := crashSpriteX - cameraX
-  io.spriteYPosition(10) := crashSpriteY - cameraY
+  io.spriteXPosition(10) := crashSpriteX - 16.S - cameraX
+  io.spriteYPosition(10) := crashSpriteY - 16.S - cameraY
 
   io.spriteFlipHorizontal(10) := false.B
   io.spriteFlipVertical(10) := false.B
