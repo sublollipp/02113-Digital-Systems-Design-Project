@@ -90,14 +90,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val winCondition = Module(new WinCondition)
 
-  io.led(0) := winCondition.io.checkpointHit
-  io.led(1) := winCondition.io.finishHit
-  io.led(2) := winCondition.io.lap1
-  io.led(3) := winCondition.io.lap2
-  io.led(4) := winCondition.io.lap3
-  io.led(5) := winCondition.io.gameWon
-  io.led(7) := crashReg
-
+  val crashReg = RegInit(false.B)
 
   winCondition.io.carX := car.io.posX
   winCondition.io.carY := car.io.posY
@@ -110,6 +103,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val crashSpriteX = RegInit(0.S(12.W))
   val crashSpriteY = RegInit(0.S(11.W))
+
+  val carCollision = Module(new CarCollision)
+
+  carCollision.io.carX := car.io.posX
+  carCollision.io.carY := car.io.posY
+
+  carCollision.io.aiX := aiCar.io.posX
+  carCollision.io.aiY := aiCar.io.posY
 
   when(carCollision.io.collision && !crashReg) {
     crashReg := true.B
@@ -125,12 +126,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipVertical(10) := false.B
 
   io.spriteVisible(10) := crashReg
-
-  val gameWonReg = RegInit(false.B)
-
-  when(winCondition.io.gameWon) {
-    gameWonReg := true.B
-  }
 
   aiCar.io.update := false.B
 
@@ -183,7 +178,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   is(compute1) {
 
-  when(!gameWonReg && !crashReg) {
+  when(!winCondition.io.gameWon && !crashReg) {
     car.io.update := true.B
     aiCar.io.update := true.B
   }.otherwise {
@@ -230,15 +225,6 @@ io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
-val carCollision = Module(new CarCollision)
-
-carCollision.io.carX := car.io.posX
-carCollision.io.carY := car.io.posY
-
-carCollision.io.aiX := aiCar.io.posX
-carCollision.io.aiY := aiCar.io.posY
-
-val crashReg = RegInit(false.B)
 
 when(carCollision.io.collision) {
   crashReg := true.B
@@ -266,6 +252,13 @@ io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 io.spriteVisible(14) := mysteryBox.io.shownSprite
 
+io.led(0) := winCondition.io.checkpointHit
+io.led(1) := winCondition.io.finishHit
+io.led(2) := winCondition.io.lap1
+io.led(3) := winCondition.io.lap2
+io.led(4) := winCondition.io.lap3
+io.led(5) := winCondition.io.gameWon
+io.led(6) := crashReg
 
 } // # todo - er det meningen, alt dette defineres i switch statement? 
 
