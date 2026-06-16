@@ -21,10 +21,10 @@ val io = IO(new Bundle {
   val lapCounter = RegInit(0.U(3.W))
 
   val checkpointArea =
-    io.carX >= 320.S &&
-    io.carX <= 448.S &&
-    io.carY >= 576.S &&
-    io.carY <= 608.S
+    io.carX >= 0.S &&
+    io.carX <= 1200.S &&
+    io.carY >= 0.S &&
+    io.carY <= 900.S
 
   val checkpointOnEdge = checkpointArea && !RegNext(checkpointArea, false.B)
 
