@@ -30,11 +30,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     val seg = Output(UInt(7.W))
     val an  = Output(UInt(4.W))
-
-    val timerDigit0 = Output(UInt(4.W))
-    val timerDigit1 = Output(UInt(4.W))
-    val timerDigit2 = Output(UInt(4.W))
-    val timerDigit3 = Output(UInt(4.W))
   })
 
   io.led := Seq.fill(8)(false.B)
