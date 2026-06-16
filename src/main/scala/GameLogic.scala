@@ -211,11 +211,13 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
 val runningHitPrev = RegNext(runningHit, false.B)
 val runningHitRising = runningHit && !runningHitPrev
 
-  car.io.boost := runningHitRising
-  car.io.boostSpeed := 10.S
-  car.io.boostFrames := 60.U
+
 
 runningSprite.io.hit := runningHit
+// Trigger car slow effect on running sprite hit
+car.io.boost := runningHitRising
+car.io.boostFrames := 300.U
+car.io.boostSpeed := 0.S
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
 io.spriteYPosition(3) := runningSprite.io.posY - cameraY

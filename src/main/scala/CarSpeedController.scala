@@ -7,10 +7,10 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     val btnBckwd = Input(Bool())
     val frameUpdate = Input(Bool())
     val offRoad = Input(Bool())
-    val speed = Output(SInt(10.W))
     val boost = Input(Bool())
     val boostSpeed = Input(SInt(10.W))
-    val boostFrames = Input(UInt(8.W))
+    val boostFrames = Input(UInt(10.W))
+    val speed = Output(SInt(10.W))
   })
 
   val speed = RegInit(0.S(10.W))
