@@ -3,13 +3,13 @@ import chisel3.util._
 
 class OffRoadSpeedController extends Module {
   val io = IO(new Bundle {
-    val speedIn = Input(SInt(10.W))
+    val speedIn = Input(SInt(11.W))
     val onRoad = Input(Bool())
     val frameUpdate = Input(Bool())
-    val speedOut = Output(SInt(10.W))
+    val speedOut = Output(SInt(11.W))
   })
 
-  val speedReg = RegInit(0.S(10.W))
+  val speedReg = RegInit(0.S(11.W))
 
   when(io.frameUpdate) {
 
