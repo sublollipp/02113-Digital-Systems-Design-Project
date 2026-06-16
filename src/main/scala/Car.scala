@@ -40,18 +40,17 @@ class Car extends Module{
   offRoadController.io.onRoad := roadCollision.io.onRoad
   offRoadController.io.frameUpdate := io.update
 
-//Boost logic for running sprite
-  val boostCount = RegInit(0.U(6.W))
+//Boost logic for running sprite - max speed for 5 seconds
+  val boostCount = RegInit(0.U(9.W))
   when(io.update) {
     when(io.boost && boostCount === 0.U) {
-      boostCount := 60.U
+      boostCount := 300.U
     }.elsewhen(boostCount =/= 0.U) {
       boostCount := boostCount - 1.U
     }
   }
 
-  val boostAmount = Mux(boostCount =/= 0.U, 2.S, 0.S)
-  speed := offRoadController.io.speedOut + boostAmount
+  speed := Mux(boostCount =/= 0.U, 500.S(10.W), offRoadController.io.speedOut)
 
   val angleControl = Module(new CarAngleController(3))
   angleControl.io.btnLeft := io.btnLeft
