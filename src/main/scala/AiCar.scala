@@ -56,7 +56,7 @@ class AiCar extends Module{
 
   val lookAhead = Mux(currentCheckpoint >= 47.U, currentCheckpoint + 4.U - 52.U, currentCheckpoint + 4.U)
 
-  val aiX = RegInit(96.S(12.W))
+  val aiX = RegInit(130.S(12.W))
   val aiY = RegInit(420.S(11.W))
 
   io.posX := aiX
