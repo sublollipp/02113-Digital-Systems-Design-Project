@@ -31,12 +31,12 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
 
   switch (state) {
     is (idle) {
+      when(io.boost) {
+        state := boostInit
+      }.elsewhen(clockDivCounter === framesPerAcceleration.U) {
+        state := accel
+      }
       when(io.frameUpdate) {
-        when(io.boost) {
-          state := boostInit
-        }.elsewhen(clockDivCounter === framesPerAcceleration.U) {
-          state := accel
-        }
         clockDivCounter := clockDivCounter + 1.U
       }
     }
