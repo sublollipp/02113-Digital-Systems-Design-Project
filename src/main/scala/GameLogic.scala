@@ -244,9 +244,6 @@ val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
 mysteryBox.io.rand := rng.io.idx
-car.io.boost := runningHitRising
-  car.io.boostFrames := 60.U
-  car.io.boostSpeed := 50.S
 
 io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
