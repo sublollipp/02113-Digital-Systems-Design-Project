@@ -103,8 +103,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val crashSpriteX = RegInit(0.S(12.W))
   val crashSpriteY = RegInit(0.S(11.W))
 
-  val crashX = Wire(0.S(12.W))
-  val crashY = Wire(0.S(11.W))
+  val crashX = WireDefault(0.S(12.W))
+  val crashY = WireDefault(0.S(11.W))
 
   winCondition.io.carX := car.io.posX
   winCondition.io.carY := car.io.posY
