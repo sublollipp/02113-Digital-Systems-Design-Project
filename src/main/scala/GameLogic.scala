@@ -90,6 +90,44 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val winCondition = Module(new WinCondition)
 
+  val lapDisplay = Module(new LapCounterDisplay)
+
+  lapDisplay.io.lap1 := winCondition.io.lap1
+  lapDisplay.io.lap2 := winCondition.io.lap2
+  lapDisplay.io.lap3 := winCondition.io.lap3
+
+  io.spriteXPosition(11) := 8.S
+  io.spriteYPosition(11) := 8.S
+
+  io.spriteVisible(11) := lapDisplay.io.show1
+
+  io.spriteFlipHorizontal(11) := false.B
+  io.spriteFlipVertical(11) := false.B
+
+  io.spriteXPosition(12) := 8.S
+  io.spriteYPosition(12) := 8.S
+
+  io.spriteVisible(12) := lapDisplay.io.show2
+
+  io.spriteFlipHorizontal(12) := false.B
+  io.spriteFlipVertical(12) := false.B
+
+  io.spriteXPosition(13) := 8.S
+  io.spriteYPosition(13) := 8.S
+
+  io.spriteVisible(13) := lapDisplay.io.show3
+
+  io.spriteFlipHorizontal(13) := false.B
+  io.spriteFlipVertical(13) := false.B
+
+  io.spriteXPosition(15) := 40.S
+  io.spriteYPosition(15) := 8.S
+
+  io.spriteVisible(15) := true.B
+
+  io.spriteFlipHorizontal(15) := false.B
+  io.spriteFlipVertical(15) := false.B
+
   val carCollision = Module(new CarCollision)
 
   carCollision.io.carX := car.io.posX

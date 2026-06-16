@@ -12,7 +12,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class RNGTester extends AnyFlatSpec with ChiselScalatestTester {
 
   "RNGTester" should "pass" in {
-    test(new RNG(4)) { dut =>
+    test(new RNG) { dut =>
       println("Running the RNG Tester")
         dut.clock.setTimeout(0)
         val abc = new scala.util.Random
@@ -22,7 +22,7 @@ class RNGTester extends AnyFlatSpec with ChiselScalatestTester {
           dut.clock.step(clockDel + 1)
           val chosenIdx = dut.io.peek().litValue.toInt
           if (chosenIdx >= 0 && chosenIdx < counts.length) {
-            counts(chosenIdx) += 1
+            counts(Math.log(chosenIdx).toInt) += 1
           }
         }
       for(i <- 0 to 3) {
