@@ -21,15 +21,15 @@ class WinCondition extends Module {
   // -----------------------------
 
   val checkpointArea =
-    io.carX >= 500.S &&
-    io.carX <= 800.S &&
+    io.carX >= 628.S &&
+    io.carX <= 928.S &&
     io.carY >= 500.S &&
-    io.carY <= 700.S
+    io.carY <= 800.S
 
   val finishLine =
     io.carX >= 96.S &&
     io.carX <= 224.S &&
-    io.carY >= 224.S &&
+    io.carY >= 180.S &&
     io.carY <= 240.S
 
   // -----------------------------
