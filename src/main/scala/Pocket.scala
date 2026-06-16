@@ -9,6 +9,8 @@ class Pocket extends Module {
     val carPosY = Input(SInt(11.W))
     val carAngle = Input(UInt(6.W))
     val hitMysteryBox = Input(Bool())
+    val rngInput = Input(Vec(4, Bool()))
+    val shownSprite = Output(Vec(2, Bool()))
   })
 
   val none :: shell :: shroom :: Nil = Enum(3)
