@@ -240,7 +240,7 @@ when(carCollision.io.collision) {
 
 // Mystery Box
 val mysteryBox = Module(new MysteryBox)
-val rng = Module(new RNG(3))
+val rng = Module(new RNG)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
@@ -251,7 +251,7 @@ val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
-mysteryBox.io.rand := rng.io.idx
+mysteryBox.io.rand := 0.U
 
 io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(14) := mysteryBox.io.posY - cameraY

@@ -1,15 +1,17 @@
 import chisel3.util._
 import chisel3._
-import chisel3.util.random.LFSR
 
-class RNG(options: Int) extends Module {
-  val width = log2Ceil(options)
+class RNG extends Module {
   val io = IO(new Bundle {
-    val idx = Output(UInt(width.W))
+    val output = Output(Vec(4, Bool()))
   })
 
-  val pseudoRandomNumber = LFSR(width)
-  val index = pseudoRandomNumber % options.U - 1.U
+  val oneHotShifter = RegInit(VecInit(false.B, false.B, false.B, true.B))
 
-  io.idx := index
+  oneHotShifter(0) := oneHotShifter(3)
+  oneHotShifter(1) := oneHotShifter(0)
+  oneHotShifter(2) := oneHotShifter(1)
+  oneHotShifter(3) := oneHotShifter(2)
+
+  io.output := oneHotShifter
 }
