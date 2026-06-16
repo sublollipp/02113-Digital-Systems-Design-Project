@@ -27,6 +27,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     val newFrame = Input(Bool())
     val frameUpdateDone = Output(Bool())
+
+    val seg = Output(UInt(7.W))
+    val an  = Output(UInt(4.W))
+
+    val timerDigit0 = Output(UInt(4.W))
+    val timerDigit1 = Output(UInt(4.W))
+    val timerDigit2 = Output(UInt(4.W))
+    val timerDigit3 = Output(UInt(4.W))
   })
 
   io.led := Seq.fill(8)(false.B)
@@ -52,6 +60,13 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val stateReg = RegInit(idle)
 
   val car = Module(new Car)
+
+  val firstInput = RegInit(false.B)
+
+  when(io.btnU || io.btnD || io.btnL || io.btnR) {
+    firstInput := true.B
+  }
+
 
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
@@ -89,6 +104,21 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val aiCar = Module(new AiCar)
 
   val winCondition = Module(new WinCondition)
+
+  val raceTimer = Module(new RaceTimer)
+
+  raceTimer.io.start := firstInput
+  raceTimer.io.stop := winCondition.io.gameWon
+
+  val display = Module(new SevenSegmentDisplay)
+
+  display.io.digit0 := raceTimer.io.digit0
+  display.io.digit1 := raceTimer.io.digit1
+  display.io.digit2 := raceTimer.io.digit2
+  display.io.digit3 := raceTimer.io.digit3
+
+  io.seg := display.io.seg  
+  io.an := display.io.an
 
   val lapDisplay = Module(new LapCounterDisplay)
 
