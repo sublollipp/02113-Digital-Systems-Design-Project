@@ -28,6 +28,9 @@ val boostSpeed = Input(SInt(16.W))
   speedControl.io.btnFwd := io.btnUp
   speedControl.io.btnBckwd := io.btnDown
   speedControl.io.frameUpdate := io.update
+  speedControl.io.boost := io.boost
+  speedControl.io.boostFrames := io.boostFrames
+  speedControl.io.boostSpeed := io.boostSpeed
   speed := speedControl.io.speed
 
   val roadCollision = Module(new RoadCollision)
@@ -46,8 +49,8 @@ val boostSpeed = Input(SInt(16.W))
   val slowCount = RegInit(0.U(9.W))
   when(io.update) {
     when(io.boost && slowCount === 0.U) {
-      slowCount := 300.U //
-    }.elsewhen(slowCount =/= 0.U) {
+      slowCount := 300.U //5 seconds
+    }.elsewhen(slowCount =/= 0.U) { //
       slowCount := slowCount - 1.U
     }
   }
