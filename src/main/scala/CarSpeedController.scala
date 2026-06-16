@@ -8,27 +8,33 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     val frameUpdate = Input(Bool())
     val offRoad = Input(Bool())
     val speed = Output(SInt(10.W))
+    val boost = Input(Bool())
+    val boostSpeed = Input(SInt(10.W))
+    val boostFrames = Input(UInt(8.W))
   })
 
   val speed = RegInit(0.S(10.W))
 
-  val idle :: accel :: Nil = Enum(2)
+  val idle :: accel :: boostInit :: boosting :: Nil = Enum(4)
 
   val state = RegInit(idle)
 
   val clockDivCounter = RegInit(0.U(6.W))
+
+  val boostFrameCount = RegInit(0.U(8.W))
+  val boostSpeed = RegInit(0.S(10.W))
 
   switch (state) {
     is (idle) {
       when(io.frameUpdate) {
         clockDivCounter := clockDivCounter + 1.U
         when(clockDivCounter === framesPerAcceleration.U) {
-          state := accel
+          state := Mux(io.boost, boostInit, accel)
         }
       }
     }
     is (accel) {
-      state := idle
+      state := Mux(io.boost, boostInit, idle)
       clockDivCounter := 0.U
       when(io.btnFwd && !io.btnBckwd) {
         when ((speed < maxSpeed.S && !io.offRoad) || (speed < offRoadMaxSpeed.S && io.offRoad)) {
@@ -57,6 +63,22 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
           }
         }.otherwise {
           speed := 0.S
+        }
+      }
+    }
+    is (boostInit) {
+      boostSpeed := io.boostSpeed
+      boostFrameCount := io.boostFrames
+      state := boosting
+    }
+    is (boosting) {
+      speed := boostSpeed
+      when(io.frameUpdate) {
+        boostFrameCount := boostFrameCount - 1.U
+        when(io.boost) {
+          state := boostInit
+        }.elsewhen(boostFrameCount === 0.U) {
+          state := idle
         }
       }
     }
