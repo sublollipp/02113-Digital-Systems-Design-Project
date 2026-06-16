@@ -210,6 +210,10 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
 val runningHitPrev = RegNext(runningHit, false.B)
 val runningHitRising = runningHit && !runningHitPrev
 
+  car.io.boost := runningHitRising
+  car.io.boostSpeed := 10.S
+  car.io.boostFrames := 60.U
+
 runningSprite.io.hit := runningHit
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
