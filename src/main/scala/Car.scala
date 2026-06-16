@@ -8,6 +8,7 @@ class Car extends Module{
     val btnLeft = Input(Bool())
     val btnRight = Input(Bool())
     val update = Input(Bool())
+    val boost = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val flipH = Output(Bool())
@@ -38,8 +39,18 @@ class Car extends Module{
   offRoadController.io.speedIn := speedControl.io.speed
   offRoadController.io.onRoad := roadCollision.io.onRoad
   offRoadController.io.frameUpdate := io.update
+//Boost logic for running sprite
+  val boostCount = RegInit(0.U(3.W))
+  when(io.update) {
+    when(io.boost && boostCount === 0.U) {
+      boostCount := 4.U
+    }.elsewhen(boostCount =/= 0.U) {
+      boostCount := boostCount - 1.U
+    }
+  }
 
-  speed := offRoadController.io.speedOut
+  val boostAmount = Mux(boostCount =/= 0.U, 2.S, 0.S)
+  speed := offRoadController.io.speedOut + boostAmount
 
   val angleControl = Module(new CarAngleController(3))
   angleControl.io.btnLeft := io.btnLeft

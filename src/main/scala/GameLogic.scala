@@ -187,6 +187,8 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
                  (car.io.posX + carWidth > runningSprite.io.hitboxX) &&
                  (car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
                  (car.io.posY + carHeight > runningSprite.io.hitboxY)
+val runningHitPrev = RegNext(runningHit, false.B)
+val runningHitRising = runningHit && !runningHitPrev
 
 runningSprite.io.hit := runningHit
 
@@ -206,12 +208,19 @@ io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 // Mystery Box
 val mysteryBox = Module(new MysteryBox)
 val rng = Module(new RNG(3))
-mysteryBox.io.box := false.B
-mysteryBox.io.hit := (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
+
+val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
                      (car.io.posY < mysteryBox.io.hitboxY + mysteryBox.io.hitboxHeight.asSInt) &&
                      (car.io.posY + carHeight > mysteryBox.io.hitboxY)
+val mysteryBoxHitPrev = RegNext(mysteryBoxHit, false.B)
+val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
+
+mysteryBox.io.box := false.B
+mysteryBox.io.hit := mysteryBoxHit
 mysteryBox.io.rand := rng.io.idx
+car.io.boost := runningHitRising
+
 io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
 io.spriteFlipHorizontal(14) := false.B
