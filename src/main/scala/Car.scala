@@ -14,8 +14,8 @@ class Car extends Module{
     val flipH = Output(Bool())
     val flipV = Output(Bool())
     val shownSprite = Output(Vec(3, Bool()))
-val boostFrames = Input(UInt(8.W))
-val boostSpeed = Input(SInt(16.W))
+  val boostFrames = Input(UInt(8.W))
+  val boostSpeed = Input(SInt(10.W))
   })
 
   val xPosReg = RegInit(160.S(12.W))
@@ -50,7 +50,7 @@ val boostSpeed = Input(SInt(16.W))
   when(io.update) {
     when(io.boost && slowCount === 0.U) {
       slowCount := 300.U //5 seconds
-    }.elsewhen(slowCount =/= 0.U) { //
+    }.elsewhen(slowCount =/= 0.U) { //Half speed
       slowCount := slowCount - 1.U
     }
   }
