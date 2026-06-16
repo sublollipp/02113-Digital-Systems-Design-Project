@@ -36,6 +36,10 @@ class GameTop extends Module {
     val missingFrameError = Output(Bool())
     val backBufferWriteError = Output(Bool())
     val viewBoxOutOfRangeError = Output(Bool())
+
+    //7 segment display
+    val sevenSegmentDisplay = Output(UInt(7.W))
+    val sevenSegmentSelect = Output(UInt(4.W))
   })
 
   val SPRITE_NUMBER = 32
@@ -109,6 +113,10 @@ class GameTop extends Module {
 
   //Leds
   io.led := gameLogic.io.led
+
+  //7 segment display
+  io.sevenSegmentDisplay := gameLogic.io.seg
+  io.sevenSegmentSelect := gameLogic.io.an
 
   //Errors
   io.missingFrameError := graphicEngineVGA.io.missingFrameError
