@@ -128,6 +128,15 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(15) := false.B
   io.spriteFlipVertical(15) := false.B
 
+    // Fast 3-tal efter "/"
+  io.spriteXPosition(16) := 72.S
+  io.spriteYPosition(16) := 8.S
+
+  io.spriteVisible(16) := true.B
+
+  io.spriteFlipHorizontal(16) := false.B
+  io.spriteFlipVertical(16) := false.B
+
   val carCollision = Module(new CarCollision)
 
   carCollision.io.carX := car.io.posX
@@ -270,7 +279,6 @@ io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
-io.led(7) := car.io.debugLed
 
 when(carCollision.io.collision) {
   crashReg := true.B
@@ -304,6 +312,7 @@ io.led(3) := winCondition.io.lap2
 io.led(4) := winCondition.io.lap3
 io.led(5) := winCondition.io.gameWon
 io.led(6) := crashReg
+io.led(7) := lapDisplay.io.show3
 
 } // # todo - er det meningen, alt dette defineres i switch statement? 
 
