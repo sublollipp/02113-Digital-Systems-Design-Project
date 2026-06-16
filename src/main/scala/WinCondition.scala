@@ -21,8 +21,8 @@ class WinCondition extends Module {
   // -----------------------------
 
   val checkpointArea =
-    io.carX >= 632.S &&
-    io.carX <= 920.S &&
+    io.carX >= 732.S &&
+    io.carX <= 1020.S &&
     io.carY >= 416.S &&
     io.carY <= 576.S
 
