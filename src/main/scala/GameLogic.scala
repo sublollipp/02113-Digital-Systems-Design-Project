@@ -114,6 +114,24 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
   )
 
+  val shell = Module(new Shell)
+
+  pocket.io.useBtn := io.btnC
+
+  shell.io.spawn := pocket.io.useShell
+
+  shell.io.startX := car.io.posX + 16.S
+  shell.io.startY := car.io.posY + 16.S
+  shell.io.startAngle := car.io.angleOut
+  shell.io.frameUpdate := frameUpdateReg
+
+  io.spriteXPosition(22) := shell.io.posX - cameraX
+  io.spriteYPosition(22) := shell.io.posY - cameraY
+  io.spriteVisible(22) := shell.io.visible
+
+  io.spriteFlipHorizontal(22) := false.B
+  io.spriteFlipVertical(22) := false.B
+
   startLight.io.update := frameUpdateReg
 
   raceTimer.io.start := firstInput
@@ -329,7 +347,7 @@ val runningSprite = Module(new RunningSprite)
 runningSprite.io.update := frameUpdateReg
 
 val runningSprite2 = Module(new SecondrunningSprite)
-runningSprite2.io.update := false.B
+runningSprite2.io.update := frameUpdateReg
 runningSprite2.io.hit := false.B
 
 val carWidth = 32.S(12.W)
@@ -346,7 +364,7 @@ runningSprite.io.hit := runningHit
 // Trigger car slow effect on running sprite hit
 car.io.boost := runningHitRising
 car.io.boostFrames := 30.U
-car.io.boostSpeed := -100.S
+car.io.boostSpeed := 000.S
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
 io.spriteYPosition(3) := runningSprite.io.posY - cameraY
@@ -390,16 +408,16 @@ mysteryBox.io.rand := 0.U
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 pocket.io.rngInput := rng.io.output
 
-io.spriteXPosition(22) := 576.S
-io.spriteYPosition(22) := 16.S
+io.spriteXPosition(22) := 100.S
+io.spriteYPosition(22) := 100.S
 
 io.spriteVisible(22) := pocket.io.showShell
 
 io.spriteFlipHorizontal(22) := false.B
 io.spriteFlipVertical(22) := false.B
 
-io.spriteXPosition(23) := 576.S
-io.spriteYPosition(23) := 16.S
+io.spriteXPosition(23) := 50.S
+io.spriteYPosition(23) := 50.S
 
 io.spriteVisible(23) := pocket.io.showShroom
 
