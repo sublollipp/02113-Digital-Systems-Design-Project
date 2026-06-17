@@ -165,7 +165,7 @@ class AiCar extends Module{
 
   // Accelerér
 
-  when(aiSpeed < 325.S) {
+  when(aiSpeed < 400.S) {
     aiSpeed := aiSpeed + 1.S
   }
 
