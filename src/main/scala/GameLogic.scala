@@ -176,43 +176,98 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(16) := false.B
   io.spriteFlipVertical(16) := false.B
 
-    // Startlys - rød
+  val startX = 272.S(12.W)
+  val startY = 20.S(11.W)
 
-  io.spriteXPosition(17) := 304.S
-  io.spriteYPosition(17) := 20.S
+// ==========================
+// STARTLYS - POSITIONER
+// ==========================
 
-  io.spriteVisible(17) :=
-    startLight.io.visible &&
-    startLight.io.showRed
+// Rød række
+io.spriteXPosition(17) := 272.S
+io.spriteYPosition(17) := 20.S
 
-  io.spriteFlipHorizontal(17) := false.B
-  io.spriteFlipVertical(17) := false.B
+io.spriteXPosition(18) := 304.S
+io.spriteYPosition(18) := 20.S
+
+io.spriteXPosition(19) := 336.S
+io.spriteYPosition(19) := 20.S
+
+// Gul række
+io.spriteXPosition(20) := 272.S
+io.spriteYPosition(20) := 52.S
+
+io.spriteXPosition(21) := 304.S
+io.spriteYPosition(21) := 52.S
+
+io.spriteXPosition(22) := 336.S
+io.spriteYPosition(22) := 52.S
+
+// Grøn række
+io.spriteXPosition(23) := 272.S
+io.spriteYPosition(23) := 84.S
+
+io.spriteXPosition(24) := 304.S
+io.spriteYPosition(24) := 84.S
+
+io.spriteXPosition(25) := 336.S
+io.spriteYPosition(25) := 84.S
 
 
-  // Startlys - gul
+// ==========================
+// STARTLYS - SYNLIGHED
+// ==========================
 
-  io.spriteXPosition(18) := 304.S
-  io.spriteYPosition(18) := 20.S
+// Røde lamper
+io.spriteVisible(17) :=
+  startLight.io.visible &&
+  startLight.io.showRed
 
-  io.spriteVisible(18) :=
-    startLight.io.visible &&
-    startLight.io.showYellow
+io.spriteVisible(18) :=
+  startLight.io.visible &&
+  startLight.io.showRed
 
-  io.spriteFlipHorizontal(18) := false.B
-  io.spriteFlipVertical(18) := false.B
+io.spriteVisible(19) :=
+  startLight.io.visible &&
+  startLight.io.showRed
 
 
-  // Startlys - grøn
+// Gule lamper
+io.spriteVisible(20) :=
+  startLight.io.visible &&
+  startLight.io.showYellow
 
-  io.spriteXPosition(19) := 304.S
-  io.spriteYPosition(19) := 20.S
+io.spriteVisible(21) :=
+  startLight.io.visible &&
+  startLight.io.showYellow
 
-  io.spriteVisible(19) :=
-    startLight.io.visible &&
-    startLight.io.showGreen
+io.spriteVisible(22) :=
+  startLight.io.visible &&
+  startLight.io.showYellow
 
-  io.spriteFlipHorizontal(19) := false.B
-  io.spriteFlipVertical(19) := false.B
+
+// Grønne lamper
+io.spriteVisible(23) :=
+  startLight.io.visible &&
+  startLight.io.showGreen
+
+io.spriteVisible(24) :=
+  startLight.io.visible &&
+  startLight.io.showGreen
+
+io.spriteVisible(25) :=
+  startLight.io.visible &&
+  startLight.io.showGreen
+
+
+// ==========================
+// FLIP (ingen spejling)
+// ==========================
+
+for(i <- 17 until 26) {
+  io.spriteFlipHorizontal(i) := false.B
+  io.spriteFlipVertical(i) := false.B
+}
 
   val carCollision = Module(new CarCollision)
 

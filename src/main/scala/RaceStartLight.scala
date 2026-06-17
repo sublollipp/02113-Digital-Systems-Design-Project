@@ -1,15 +1,13 @@
 import chisel3._
 import chisel3.util._
 
-class RaceStartLight(redFrames: Int,
-                     redYellowFrames: Int,
-                     greenFrames: Int) extends Module {
+class RaceStartLight(redFrames: Int, redYellowFrames: Int, greenFrames: Int) extends Module {
 
-  val io = IO(new Bundle {
+    val io = IO(new Bundle {
     val update = Input(Bool())
 
     val showRed       = Output(Bool())
-    val showYellow = Output(Bool())
+    val showYellow    = Output(Bool())
     val showGreen     = Output(Bool())
 
     val raceStarted   = Output(Bool())
@@ -47,6 +45,7 @@ class RaceStartLight(redFrames: Int,
 
     is(redYellow) {
 
+      io.showRed := true.B
       io.showYellow := true.B
 
       when(io.update) {
