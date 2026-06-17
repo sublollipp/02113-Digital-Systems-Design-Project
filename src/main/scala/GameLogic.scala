@@ -352,12 +352,12 @@ io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
-// slot 17 is the second running sprite
-io.spriteXPosition(17) := runningSprite2.io.posX - cameraX
-io.spriteYPosition(17) := runningSprite2.io.posY - cameraY
-io.spriteFlipHorizontal(17) := runningSprite2.io.flipH
-io.spriteFlipVertical(17) := runningSprite2.io.flipV
-io.spriteVisible(17) := runningSprite2.io.shownSprite(2)
+// slot 20 is the second running sprite
+io.spriteXPosition(20) := runningSprite2.io.posX - cameraX
+io.spriteYPosition(20) := runningSprite2.io.posY - cameraY
+io.spriteFlipHorizontal(20) := runningSprite2.io.flipH
+io.spriteFlipVertical(20) := runningSprite2.io.flipV
+io.spriteVisible(20) := runningSprite2.io.shownSprite(2)
 
 when(carCollision.io.collision) {
   crashReg := true.B
