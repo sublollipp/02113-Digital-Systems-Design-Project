@@ -347,7 +347,7 @@ val runningSprite = Module(new RunningSprite)
 runningSprite.io.update := frameUpdateReg
 
 val runningSprite2 = Module(new SecondrunningSprite)
-runningSprite2.io.update := false.B
+runningSprite2.io.update := frameUpdateReg
 runningSprite2.io.hit := false.B
 
 val carWidth = 32.S(12.W)
