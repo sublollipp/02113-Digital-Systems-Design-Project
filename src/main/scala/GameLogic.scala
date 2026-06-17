@@ -57,7 +57,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val car = Module(new Car)
 
   val pocket = Module(new Pocket)
-  pocket.io.useBtn := false.B
+  pocket.io.useBtn := io.btnC
   pocket.io.frameUpdate := false.B
   pocket.io.carPosX := 0.S
   pocket.io.carPosY := 0.S
@@ -457,8 +457,8 @@ io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 io.spriteVisible(14) := mysteryBox.io.shownSprite
 
-io.led(0) := pocket.io.showShell
-io.led(1) := pocket.io.showShroom
+io.led(0) := mysteryBoxHit
+io.led(1) := mysteryBoxHitRising
 io.led(2) := winCondition.io.lap1
 io.led(3) := winCondition.io.lap2
 io.led(4) := winCondition.io.lap3

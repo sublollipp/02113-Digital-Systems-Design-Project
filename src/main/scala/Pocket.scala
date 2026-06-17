@@ -28,10 +28,9 @@ class Pocket extends Module {
   io.useShroom := false.B
 
   when(io.hitMysteryBox && item === none) {
-    when(io.rngInput(0)) {
+    when(io.rngInput(0) || io.rngInput(2)) {
       item := shell
-    }
-    .elsewhen(io.rngInput(1)) {
+    }.otherwise {
       item := shroom
     }
   }
