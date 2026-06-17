@@ -135,7 +135,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   startLight.io.update := frameUpdateReg
 
   raceTimer.io.start := firstInput
-  raceTimer.io.stop := winCondition.io.gameWon
+  raceTimer.io.stop := winCondition.io.gameWon || crashReg
 
   val display = Module(new SevenSegmentDisplay)
 
@@ -408,16 +408,16 @@ mysteryBox.io.rand := 0.U
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 pocket.io.rngInput := rng.io.output
 
-io.spriteXPosition(22) := 576.S
-io.spriteYPosition(22) := 16.S
+io.spriteXPosition(22) := 100.S
+io.spriteYPosition(22) := 100.S
 
 io.spriteVisible(22) := pocket.io.showShell
 
 io.spriteFlipHorizontal(22) := false.B
 io.spriteFlipVertical(22) := false.B
 
-io.spriteXPosition(23) := 576.S
-io.spriteYPosition(23) := 16.S
+io.spriteXPosition(23) := 50.S
+io.spriteYPosition(23) := 50.S
 
 io.spriteVisible(23) := pocket.io.showShroom
 
