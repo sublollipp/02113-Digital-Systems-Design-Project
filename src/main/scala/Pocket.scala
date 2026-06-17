@@ -31,7 +31,7 @@ class Pocket extends Module {
     when (io.rngInput(0)) {
       item := shell
     }
-    when (io.rngInput(1)) {
+    .elsewhen (io.rngInput(1)) {
       item := shroom
     }
   }
