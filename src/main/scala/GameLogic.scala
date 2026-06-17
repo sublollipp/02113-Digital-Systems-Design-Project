@@ -420,13 +420,13 @@ mysteryBox.io.rand := 0.U
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 pocket.io.rngInput := rng.io.randomBit
 
-io.spriteXPosition(22) := 100.S
-io.spriteYPosition(22) := 100.S
+io.spriteXPosition(24) := 100.S
+io.spriteYPosition(24) := 100.S
 
-io.spriteVisible(22) := pocket.io.showShell
+io.spriteVisible(24) := pocket.io.showShell
 
-io.spriteFlipHorizontal(22) := false.B
-io.spriteFlipVertical(22) := false.B
+io.spriteFlipHorizontal(24) := false.B
+io.spriteFlipVertical(24) := false.B
 
 io.spriteXPosition(23) := 50.S
 io.spriteYPosition(23) := 50.S
