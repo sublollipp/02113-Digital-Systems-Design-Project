@@ -223,51 +223,41 @@ io.spriteVisible(17) :=
   startLight.io.visible &&
   startLight.io.showRed
 
-io.spriteVisible(18) :=
+io.spriteVisible(24) :=
   startLight.io.visible &&
   startLight.io.showRed
 
-io.spriteVisible(19) :=
+io.spriteVisible(25) :=
   startLight.io.visible &&
   startLight.io.showRed
 
 
 // Gule lamper
-io.spriteVisible(20) :=
+io.spriteVisible(18) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
-io.spriteVisible(21) :=
+io.spriteVisible(26) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
-io.spriteVisible(22) :=
+io.spriteVisible(27) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
 
 // Grønne lamper
-io.spriteVisible(23) :=
+io.spriteVisible(19) :=
   startLight.io.visible &&
   startLight.io.showGreen
 
-io.spriteVisible(24) :=
+io.spriteVisible(28) :=
   startLight.io.visible &&
   startLight.io.showGreen
 
-io.spriteVisible(25) :=
+io.spriteVisible(29) :=
   startLight.io.visible &&
   startLight.io.showGreen
-
-
-// ==========================
-// FLIP (ingen spejling)
-// ==========================
-
-for(i <- 17 until 26) {
-  io.spriteFlipHorizontal(i) := false.B
-  io.spriteFlipVertical(i) := false.B
-}
 
   val carCollision = Module(new CarCollision)
 
