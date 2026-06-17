@@ -114,6 +114,24 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
   )
 
+  val shell = Module(new Shell)
+
+  pocket.io.useBtn := io.btnC
+
+  shell.io.spawn := pocket.io.useShell
+
+  shell.io.startX := car.io.posX + 16.S
+  shell.io.startY := car.io.posY + 16.S
+  shell.io.startAngle := car.io.angleOut
+  shell.io.frameUpdate := frameUpdateReg
+
+  io.spriteXPosition(22) := shell.io.posX - cameraX
+  io.spriteYPosition(22) := shell.io.posY - cameraY
+  io.spriteVisible(22) := shell.io.visible
+
+  io.spriteFlipHorizontal(22) := false.B
+  io.spriteFlipVertical(22) := false.B
+
   startLight.io.update := frameUpdateReg
 
   raceTimer.io.start := firstInput

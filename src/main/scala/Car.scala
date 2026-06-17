@@ -17,6 +17,7 @@ class Car extends Module{
     val boostFrames = Input(UInt(10.W))
     val boostSpeed = Input(SInt(11.W))
     val debugLed = Output(Bool())
+    val angleOut = Output(UInt(6.W))
   })
 
   val xPosReg = RegInit(160.S(12.W))
@@ -70,4 +71,5 @@ class Car extends Module{
 
   io.posX := xPosReg
   io.posY := yPosReg
+  io.angleOut := angle
 }
