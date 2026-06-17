@@ -3,17 +3,14 @@ import chisel3.util._
 
 class RNG extends Module {
   val io = IO(new Bundle {
-    val output = Output(Vec(4, Bool()))
+    val randomBit = Output(Bool())
   })
 
-  val oneHotShifter = RegInit(VecInit(false.B, false.B, false.B, true.B))
+  val lfsr = RegInit("b10101101".U(8.W))
 
-  oneHotShifter := VecInit(
-    oneHotShifter(3),
-    oneHotShifter(0),
-    oneHotShifter(1),
-    oneHotShifter(2)
-  )
+  val feedback = lfsr(7) ^ lfsr(5) ^ lfsr(4) ^ lfsr(3)
 
-  io.output := oneHotShifter
+  lfsr := Cat(lfsr(6, 0), feedback)
+
+  io.randomBit := lfsr(0)
 }
