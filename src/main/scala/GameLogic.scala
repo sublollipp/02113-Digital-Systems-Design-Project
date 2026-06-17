@@ -111,7 +111,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val raceTimer = Module(new RaceTimer)
 
-  val startLight = Module(new RaceStartLight(redFrames = 120, redYellowFrames = 120, greenFrames = 60)
+  val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
   )
 
   startLight.io.update := frameUpdateReg
