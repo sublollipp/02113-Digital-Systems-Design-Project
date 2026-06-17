@@ -111,7 +111,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val raceTimer = Module(new RaceTimer)
 
-  val startLight = Module(new RaceStartLight(redFrames = 120, redYellowFrames = 120, greenFrames = 60)
+  val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
   )
 
   startLight.io.update := frameUpdateReg
@@ -223,51 +223,41 @@ io.spriteVisible(17) :=
   startLight.io.visible &&
   startLight.io.showRed
 
-io.spriteVisible(18) :=
+io.spriteVisible(24) :=
   startLight.io.visible &&
   startLight.io.showRed
 
-io.spriteVisible(19) :=
+io.spriteVisible(25) :=
   startLight.io.visible &&
   startLight.io.showRed
 
 
 // Gule lamper
-io.spriteVisible(20) :=
+io.spriteVisible(18) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
-io.spriteVisible(21) :=
+io.spriteVisible(26) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
-io.spriteVisible(22) :=
+io.spriteVisible(27) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
 
 // Grønne lamper
-io.spriteVisible(23) :=
+io.spriteVisible(19) :=
   startLight.io.visible &&
   startLight.io.showGreen
 
-io.spriteVisible(24) :=
+io.spriteVisible(28) :=
   startLight.io.visible &&
   startLight.io.showGreen
 
-io.spriteVisible(25) :=
+io.spriteVisible(29) :=
   startLight.io.visible &&
   startLight.io.showGreen
-
-
-// ==========================
-// FLIP (ingen spejling)
-// ==========================
-
-for(i <- 17 until 26) {
-  io.spriteFlipHorizontal(i) := false.B
-  io.spriteFlipVertical(i) := false.B
-}
 
   val carCollision = Module(new CarCollision)
 
@@ -445,21 +435,21 @@ mysteryBox.io.rand := 0.U
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 pocket.io.rngInput := rng.io.output
 
-io.spriteXPosition(22) := 576.S
-io.spriteYPosition(22) := 16.S
+io.spriteXPosition(26) := 576.S
+io.spriteYPosition(26) := 16.S
 
-io.spriteVisible(22) := pocket.io.showShell
+io.spriteVisible(26) := pocket.io.showShell
 
-io.spriteFlipHorizontal(22) := false.B
-io.spriteFlipVertical(22) := false.B
+io.spriteFlipHorizontal(26) := false.B
+io.spriteFlipVertical(26) := false.B
 
-io.spriteXPosition(23) := 576.S
-io.spriteYPosition(23) := 16.S
+io.spriteXPosition(27) := 576.S
+io.spriteYPosition(27) := 16.S
 
-io.spriteVisible(23) := pocket.io.showShroom
+io.spriteVisible(27) := pocket.io.showShroom
 
-io.spriteFlipHorizontal(23) := false.B
-io.spriteFlipVertical(23) := false.B
+io.spriteFlipHorizontal(27) := false.B
+io.spriteFlipVertical(27) := false.B
 
 io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
