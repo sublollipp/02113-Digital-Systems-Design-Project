@@ -364,7 +364,7 @@ runningSprite.io.hit := runningHit
 // Trigger car slow effect on running sprite hit
 car.io.boost := runningHitRising
 car.io.boostFrames := 30.U
-car.io.boostSpeed := 000.S
+car.io.boostSpeed := 0.S
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
 io.spriteYPosition(3) := runningSprite.io.posY - cameraY
