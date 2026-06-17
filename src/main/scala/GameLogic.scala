@@ -187,31 +187,31 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 io.spriteXPosition(17) := 272.S
 io.spriteYPosition(17) := 20.S
 
-io.spriteXPosition(18) := 304.S
-io.spriteYPosition(18) := 20.S
-
-io.spriteXPosition(19) := 336.S
-io.spriteYPosition(19) := 20.S
-
-// Gul række
-io.spriteXPosition(20) := 272.S
-io.spriteYPosition(20) := 52.S
-
-io.spriteXPosition(21) := 304.S
-io.spriteYPosition(21) := 52.S
-
-io.spriteXPosition(22) := 336.S
-io.spriteYPosition(22) := 52.S
-
-// Grøn række
-io.spriteXPosition(23) := 272.S
-io.spriteYPosition(23) := 84.S
-
 io.spriteXPosition(24) := 304.S
-io.spriteYPosition(24) := 84.S
+io.spriteYPosition(24) := 20.S
 
 io.spriteXPosition(25) := 336.S
-io.spriteYPosition(25) := 84.S
+io.spriteYPosition(25) := 20.S
+
+// Gul række
+io.spriteXPosition(18) := 272.S
+io.spriteYPosition(18) := 52.S
+
+io.spriteXPosition(26) := 304.S
+io.spriteYPosition(26) := 52.S
+
+io.spriteXPosition(27) := 336.S
+io.spriteYPosition(27) := 52.S
+
+// Grøn række
+io.spriteXPosition(19) := 272.S
+io.spriteYPosition(19) := 84.S
+
+io.spriteXPosition(28) := 304.S
+io.spriteYPosition(28) := 84.S
+
+io.spriteXPosition(29) := 336.S
+io.spriteYPosition(29) := 84.S
 
 
 // ==========================
@@ -435,16 +435,16 @@ mysteryBox.io.rand := 0.U
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 pocket.io.rngInput := rng.io.output
 
-io.spriteXPosition(22) := 576.S
-io.spriteYPosition(22) := 16.S
+io.spriteXPosition(22) := 100.S
+io.spriteYPosition(22) := 100.S
 
 io.spriteVisible(22) := pocket.io.showShell
 
 io.spriteFlipHorizontal(22) := false.B
 io.spriteFlipVertical(22) := false.B
 
-io.spriteXPosition(23) := 576.S
-io.spriteYPosition(23) := 16.S
+io.spriteXPosition(23) := 100.S
+io.spriteYPosition(23) := 100.S
 
 io.spriteVisible(23) := pocket.io.showShroom
 
@@ -457,8 +457,8 @@ io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 io.spriteVisible(14) := mysteryBox.io.shownSprite
 
-io.led(0) := winCondition.io.checkpointHit
-io.led(1) := winCondition.io.finishHit
+io.led(0) := pocket.io.showShell
+io.led(1) := pocket.io.showShroom
 io.led(2) := winCondition.io.lap1
 io.led(3) := winCondition.io.lap2
 io.led(4) := winCondition.io.lap3
