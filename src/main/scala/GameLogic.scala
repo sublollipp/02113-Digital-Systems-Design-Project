@@ -27,6 +27,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     val newFrame = Input(Bool())
     val frameUpdateDone = Output(Bool())
+
+    val seg = Output(UInt(7.W))
+    val an  = Output(UInt(4.W))
   })
 
   io.led := Seq.fill(8)(false.B)
@@ -52,6 +55,13 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val stateReg = RegInit(idle)
 
   val car = Module(new Car)
+
+  val firstInput = RegInit(false.B)
+
+  when(io.btnU || io.btnD || io.btnL || io.btnR) {
+    firstInput := true.B
+  }
+
 
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
@@ -90,6 +100,21 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val winCondition = Module(new WinCondition)
 
+  val raceTimer = Module(new RaceTimer)
+
+  raceTimer.io.start := firstInput
+  raceTimer.io.stop := winCondition.io.gameWon
+
+  val display = Module(new SevenSegmentDisplay)
+
+  display.io.digit0 := raceTimer.io.digit0
+  display.io.digit1 := raceTimer.io.digit1
+  display.io.digit2 := raceTimer.io.digit2
+  display.io.digit3 := raceTimer.io.digit3
+
+  io.seg := display.io.seg  
+  io.an := display.io.an
+
   val lapDisplay = Module(new LapCounterDisplay)
 
   lapDisplay.io.lap1 := winCondition.io.lap1
@@ -127,6 +152,15 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.spriteFlipHorizontal(15) := false.B
   io.spriteFlipVertical(15) := false.B
+
+    // Fast 3-tal efter "/"
+  io.spriteXPosition(16) := 72.S
+  io.spriteYPosition(16) := 8.S
+
+  io.spriteVisible(16) := true.B
+
+  io.spriteFlipHorizontal(16) := false.B
+  io.spriteFlipVertical(16) := false.B
 
   val carCollision = Module(new CarCollision)
 
@@ -270,7 +304,6 @@ io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
-io.led(7) := car.io.debugLed
 
 when(carCollision.io.collision) {
   crashReg := true.B
@@ -304,6 +337,7 @@ io.led(3) := winCondition.io.lap2
 io.led(4) := winCondition.io.lap3
 io.led(5) := winCondition.io.gameWon
 io.led(6) := crashReg
+io.led(7) := lapDisplay.io.show3
 
 } // # todo - er det meningen, alt dette defineres i switch statement? 
 
