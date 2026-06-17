@@ -443,7 +443,7 @@ io.spriteVisible(22) := pocket.io.showShell
 io.spriteFlipHorizontal(22) := false.B
 io.spriteFlipVertical(22) := false.B
 
-io.spriteXPosition(23) := 100.S
+io.spriteXPosition(23) := 99.S
 io.spriteYPosition(23) := 100.S
 
 io.spriteVisible(23) := pocket.io.showShroom
