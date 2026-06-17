@@ -9,7 +9,7 @@ class CarAngleController(framesPerAngleChange: Int) extends Module{
     val angle = Output(UInt(6.W))
   })
 
-  val angle = RegInit(0.U(6.W))
+  val angle = RegInit(48.U(6.W))
 
   val clockDivReg = RegInit(0.U(6.W))
 
