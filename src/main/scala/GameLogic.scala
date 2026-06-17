@@ -362,8 +362,8 @@ io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
 // slot 20 is the second running sprite
-io.spriteXPosition(20) := runningSprite2.io.posX - cameraX
-io.spriteYPosition(20) := runningSprite2.io.posY - cameraY
+io.spriteXPosition(20) := 96.S
+io.spriteYPosition(20) := 864.S
 io.spriteFlipHorizontal(20) := runningSprite2.io.flipH
 io.spriteFlipVertical(20) := runningSprite2.io.flipV
 io.spriteVisible(20) := runningSprite2.io.shownSprite(2)
