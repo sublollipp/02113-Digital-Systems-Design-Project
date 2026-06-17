@@ -11,12 +11,27 @@ class Pocket extends Module {
     val hitMysteryBox = Input(Bool())
     val rngInput = Input(Vec(4, Bool()))
     val shownSprite = Output(Vec(2, Bool()))
+    val showShell = Output(Bool())
+    val showShroom = Output(Bool())
   })
 
-  val none :: shell :: shroom :: Nil = Enum(3)
+val none :: shell :: shroom :: Nil = Enum(3)
 
-  val item = RegInit(none)
+val item = RegInit(none)
 
+when(io.hitMysteryBox) {
+
+  when(io.rngInput(0)) {
+    item := shell
+  }
+
+  when(io.rngInput(1)) {
+    item := shroom
+  }
+}
+
+io.showShell := item === shell
+io.showShroom := item === shroom
 
 
 }

@@ -56,6 +56,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val car = Module(new Car)
 
+  val pocket = Module(new Pocket)
+
   val firstInput = RegInit(false.B)
 
   when(io.btnU || io.btnD || io.btnL || io.btnR) {
@@ -377,6 +379,25 @@ val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
 mysteryBox.io.rand := 0.U
+
+pocket.io.hitMysteryBox := mysteryBoxHitRising
+pocket.io.rngInput := rng.io.output
+
+io.spriteXPosition(22) := 576.S
+io.spriteYPosition(22) := 16.S
+
+io.spriteVisible(22) := pocket.io.showShell
+
+io.spriteFlipHorizontal(22) := false.B
+io.spriteFlipVertical(22) := false.B
+
+io.spriteXPosition(23) := 576.S
+io.spriteYPosition(23) := 16.S
+
+io.spriteVisible(23) := pocket.io.showShroom
+
+io.spriteFlipHorizontal(23) := false.B
+io.spriteFlipVertical(23) := false.B
 
 io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
