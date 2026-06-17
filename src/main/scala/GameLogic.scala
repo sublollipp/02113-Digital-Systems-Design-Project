@@ -135,7 +135,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   startLight.io.update := frameUpdateReg
 
   raceTimer.io.start := firstInput
-  raceTimer.io.stop := winCondition.io.gameWon
+  raceTimer.io.stop := winCondition.io.gameWon || crashReg
 
   val display = Module(new SevenSegmentDisplay)
 
