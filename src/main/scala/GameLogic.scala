@@ -134,8 +134,10 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   startLight.io.update := frameUpdateReg
 
+    val carCollision = Module(new CarCollision)
+
   raceTimer.io.start := firstInput
-  raceTimer.io.stop := winCondition.io.gameWon
+  raceTimer.io.stop := winCondition.io.gameWon || carCollision.io.collision
 
   val display = Module(new SevenSegmentDisplay)
 
@@ -231,8 +233,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.spriteFlipHorizontal(19) := false.B
   io.spriteFlipVertical(19) := false.B
-
-  val carCollision = Module(new CarCollision)
 
   carCollision.io.carX := car.io.posX
   carCollision.io.carY := car.io.posY
