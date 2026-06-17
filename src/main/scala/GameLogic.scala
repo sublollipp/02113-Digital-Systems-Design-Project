@@ -57,6 +57,13 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val car = Module(new Car)
 
   val pocket = Module(new Pocket)
+  pocket.io.useBtn := false.B
+  pocket.io.frameUpdate := false.B
+  pocket.io.carPosX := 0.S
+  pocket.io.carPosY := 0.S
+  pocket.io.carAngle := 0.U
+  pocket.io.hitMysteryBox := false.B
+  pocket.io.rngInput := VecInit(Seq.fill(4)(false.B))
 
   val firstInput = RegInit(false.B)
 

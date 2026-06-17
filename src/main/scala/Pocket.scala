@@ -13,25 +13,42 @@ class Pocket extends Module {
     val shownSprite = Output(Vec(2, Bool()))
     val showShell = Output(Bool())
     val showShroom = Output(Bool())
+    val useShell = Output(Bool())
+    val useShroom = Output(Bool())
   })
 
-val none :: shell :: shroom :: Nil = Enum(3)
+  val none :: shell :: shroom :: Nil = Enum(3)
 
-val item = RegInit(none)
+  val item = RegInit(none)
 
-when(io.hitMysteryBox) {
+  val prevUseBtn = RegNext(io.useBtn, false.B)
+  val usePressed = io.useBtn && !prevUseBtn
 
-  when(io.rngInput(0)) {
-    item := shell
+  io.useShell := false.B
+  io.useShroom := false.B
+
+  when(io.hitMysteryBox && item === none) {
+    when(io.rngInput(0)) {
+      item := shell
+    }
+    .elsewhen(io.rngInput(1)) {
+      item := shroom
+    }
   }
 
-  when(io.rngInput(1)) {
-    item := shroom
+  when (usePressed) {
+    when (item === shell) {
+      io.useShell := true.B
+      item := none
+    }
+    .elsewhen(item === shroom) {
+      io.useShroom := true.B
+      item := none
+      }
   }
-}
 
-io.showShell := item === shell
-io.showShroom := item === shroom
-
-
+  io.showShell := item === shell
+  io.showShroom := item === shroom
+  io.shownSprite(0) := item === shell
+  io.shownSprite(1) := item === shroom
 }
