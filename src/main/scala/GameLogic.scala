@@ -223,41 +223,51 @@ io.spriteVisible(17) :=
   startLight.io.visible &&
   startLight.io.showRed
 
-io.spriteVisible(24) :=
+io.spriteVisible(18) :=
   startLight.io.visible &&
   startLight.io.showRed
 
-io.spriteVisible(25) :=
+io.spriteVisible(19) :=
   startLight.io.visible &&
   startLight.io.showRed
 
 
 // Gule lamper
-io.spriteVisible(18) :=
+io.spriteVisible(20) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
-io.spriteVisible(26) :=
+io.spriteVisible(21) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
-io.spriteVisible(27) :=
+io.spriteVisible(22) :=
   startLight.io.visible &&
   startLight.io.showYellow
 
 
 // Grønne lamper
-io.spriteVisible(19) :=
+io.spriteVisible(23) :=
   startLight.io.visible &&
   startLight.io.showGreen
 
-io.spriteVisible(28) :=
+io.spriteVisible(24) :=
   startLight.io.visible &&
   startLight.io.showGreen
 
-io.spriteVisible(29) :=
+io.spriteVisible(25) :=
   startLight.io.visible &&
   startLight.io.showGreen
+
+
+// ==========================
+// FLIP (ingen spejling)
+// ==========================
+
+for(i <- 17 until 26) {
+  io.spriteFlipHorizontal(i) := false.B
+  io.spriteFlipVertical(i) := false.B
+}
 
   val carCollision = Module(new CarCollision)
 
@@ -374,7 +384,7 @@ val runningSprite = Module(new RunningSprite)
 runningSprite.io.update := frameUpdateReg
 
 val runningSprite2 = Module(new SecondrunningSprite)
-runningSprite2.io.update := false.B
+runningSprite2.io.update := frameUpdateReg
 runningSprite2.io.hit := false.B
 
 val carWidth = 32.S(12.W)
@@ -407,8 +417,8 @@ io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
 // slot 20 is the second running sprite
-io.spriteXPosition(20) := 96.S
-io.spriteYPosition(20) := 864.S
+io.spriteXPosition(20) := runningSprite2.io.posX - cameraX
+io.spriteYPosition(20) := runningSprite2.io.posY - cameraY
 io.spriteFlipHorizontal(20) := runningSprite2.io.flipH
 io.spriteFlipVertical(20) := runningSprite2.io.flipV
 io.spriteVisible(20) := runningSprite2.io.shownSprite(2)
