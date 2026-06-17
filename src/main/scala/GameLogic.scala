@@ -102,6 +102,11 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val raceTimer = Module(new RaceTimer)
 
+  val startLight = Module(new RaceStartLight(redFrames = 120, redYellowFrames = 120, greenFrames = 60)
+  )
+
+  startLight.io.update := frameUpdateReg
+
   raceTimer.io.start := firstInput
   raceTimer.io.stop := winCondition.io.gameWon
 
@@ -161,6 +166,44 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.spriteFlipHorizontal(16) := false.B
   io.spriteFlipVertical(16) := false.B
+
+    // Startlys - rød
+
+  io.spriteXPosition(17) := 304.S
+  io.spriteYPosition(17) := 20.S
+
+  io.spriteVisible(17) :=
+    startLight.io.visible &&
+    startLight.io.showRed
+
+  io.spriteFlipHorizontal(17) := false.B
+  io.spriteFlipVertical(17) := false.B
+
+
+  // Startlys - gul
+
+  io.spriteXPosition(18) := 304.S
+  io.spriteYPosition(18) := 20.S
+
+  io.spriteVisible(18) :=
+    startLight.io.visible &&
+    startLight.io.showYellow
+
+  io.spriteFlipHorizontal(18) := false.B
+  io.spriteFlipVertical(18) := false.B
+
+
+  // Startlys - grøn
+
+  io.spriteXPosition(19) := 304.S
+  io.spriteYPosition(19) := 20.S
+
+  io.spriteVisible(19) :=
+    startLight.io.visible &&
+    startLight.io.showGreen
+
+  io.spriteFlipHorizontal(19) := false.B
+  io.spriteFlipVertical(19) := false.B
 
   val carCollision = Module(new CarCollision)
 
@@ -251,10 +294,13 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   is(compute1) {
 
-  when(!winCondition.io.gameWon && !crashReg) {
+  when(startLight.io.raceStarted && !winCondition.io.gameWon && !crashReg) {
+
     car.io.update := true.B
     aiCar.io.update := true.B
+
   }.otherwise {
+
     car.io.update := false.B
     aiCar.io.update := false.B
   }
