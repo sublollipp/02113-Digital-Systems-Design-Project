@@ -273,6 +273,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 val runningSprite = Module(new RunningSprite)
 runningSprite.io.update := frameUpdateReg
 
+val runningSprite2 = Module(new SecondrunningSprite)
+runningSprite2.io.update := false.B
+runningSprite2.io.hit := false.B
 
 val carWidth = 32.S(12.W)
 val carHeight = 32.S(11.W)
@@ -282,7 +285,6 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
                  (car.io.posY + carHeight > runningSprite.io.hitboxY)
 val runningHitPrev = RegNext(runningHit, false.B)
 val runningHitRising = runningHit && !runningHitPrev
-
 
 
 runningSprite.io.hit := runningHit
@@ -304,6 +306,12 @@ io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
 io.spriteVisible(5) := runningSprite.io.shownSprite(3)
 
+// slot 17 is the second running sprite
+io.spriteXPosition(17) := runningSprite2.io.posX - cameraX
+io.spriteYPosition(17) := runningSprite2.io.posY - cameraY
+io.spriteFlipHorizontal(17) := runningSprite2.io.flipH
+io.spriteFlipVertical(17) := runningSprite2.io.flipV
+io.spriteVisible(17) := runningSprite2.io.shownSprite(2)
 
 when(carCollision.io.collision) {
   crashReg := true.B
