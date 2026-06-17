@@ -44,7 +44,7 @@ class Pocket extends Module {
     .elsewhen(item === shroom) {
       io.useShroom := true.B
       item := none
-      }
+    }
   }
 
   io.showShell := item === shell
