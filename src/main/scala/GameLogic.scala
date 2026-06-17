@@ -435,16 +435,16 @@ mysteryBox.io.rand := 0.U
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 pocket.io.rngInput := rng.io.output
 
-io.spriteXPosition(22) := 100.S
-io.spriteYPosition(22) := 100.S
+io.spriteXPosition(22) := 600.S
+io.spriteYPosition(22) := 8.S
 
 io.spriteVisible(22) := pocket.io.showShell
 
 io.spriteFlipHorizontal(22) := false.B
 io.spriteFlipVertical(22) := false.B
 
-io.spriteXPosition(23) := 99.S
-io.spriteYPosition(23) := 100.S
+io.spriteXPosition(23) := 600.S
+io.spriteYPosition(23) := 8.S
 
 io.spriteVisible(23) := pocket.io.showShroom
 
