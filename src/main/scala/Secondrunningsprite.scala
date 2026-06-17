@@ -16,11 +16,11 @@ class SecondrunningSprite extends Module {
     val shownSprite = Output(Vec(4, Bool()))
   })
 
-  val startX = 60.S(12.W)
-  val targetX = (60 + 32 * 32).S(12.W) // 32 tiles right
+  val startX = 64.S(12.W)
+  val targetX = 928.S(12.W) // run right until x = 928
 
-  val xPosReg = RegInit(120.S(12.W))
-  val yPosReg = RegInit(220.S(11.W))
+  val xPosReg = RegInit(startX)
+  val yPosReg = RegInit(864.S(11.W))
   val movingRight = RegInit(true.B)
   val hitReg = RegInit(false.B)
 
