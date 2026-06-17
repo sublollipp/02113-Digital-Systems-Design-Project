@@ -111,7 +111,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val raceTimer = Module(new RaceTimer)
 
-  val startLight = Module(new RaceStartLight(redFrames = 120, redYellowFrames = 120, greenFrames = 60)
+  val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
   )
 
   startLight.io.update := frameUpdateReg
@@ -185,34 +185,51 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     startLight.io.visible &&
     startLight.io.showRed
 
-  io.spriteFlipHorizontal(17) := false.B
-  io.spriteFlipVertical(17) := false.B
+io.spriteVisible(18) :=
+  startLight.io.visible &&
+  startLight.io.showRed
+
+io.spriteVisible(19) :=
+  startLight.io.visible &&
+  startLight.io.showRed
 
 
-  // Startlys - gul
+// Gule lamper
+io.spriteVisible(20) :=
+  startLight.io.visible &&
+  startLight.io.showYellow
 
-  io.spriteXPosition(18) := 304.S
-  io.spriteYPosition(18) := 20.S
+io.spriteVisible(21) :=
+  startLight.io.visible &&
+  startLight.io.showYellow
 
-  io.spriteVisible(18) :=
-    startLight.io.visible &&
-    startLight.io.showYellow
-
-  io.spriteFlipHorizontal(18) := false.B
-  io.spriteFlipVertical(18) := false.B
+io.spriteVisible(22) :=
+  startLight.io.visible &&
+  startLight.io.showYellow
 
 
-  // Startlys - grøn
+// Grønne lamper
+io.spriteVisible(23) :=
+  startLight.io.visible &&
+  startLight.io.showGreen
 
-  io.spriteXPosition(19) := 304.S
-  io.spriteYPosition(19) := 20.S
+io.spriteVisible(24) :=
+  startLight.io.visible &&
+  startLight.io.showGreen
 
-  io.spriteVisible(19) :=
-    startLight.io.visible &&
-    startLight.io.showGreen
+io.spriteVisible(25) :=
+  startLight.io.visible &&
+  startLight.io.showGreen
 
-  io.spriteFlipHorizontal(19) := false.B
-  io.spriteFlipVertical(19) := false.B
+
+// ==========================
+// FLIP (ingen spejling)
+// ==========================
+
+for(i <- 17 until 26) {
+  io.spriteFlipHorizontal(i) := false.B
+  io.spriteFlipVertical(i) := false.B
+}
 
   val carCollision = Module(new CarCollision)
 
