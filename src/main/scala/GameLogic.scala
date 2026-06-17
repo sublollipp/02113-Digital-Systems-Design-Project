@@ -57,7 +57,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val car = Module(new Car)
 
   val pocket = Module(new Pocket)
-  pocket.io.useBtn := io.btnC
+  pocket.io.useBtn := false.B
   pocket.io.frameUpdate := false.B
   pocket.io.carPosX := 0.S
   pocket.io.carPosY := 0.S
@@ -111,7 +111,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val raceTimer = Module(new RaceTimer)
 
-  val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
+  val startLight = Module(new RaceStartLight(redFrames = 120, redYellowFrames = 120, greenFrames = 60)
   )
 
   startLight.io.update := frameUpdateReg
@@ -176,88 +176,43 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(16) := false.B
   io.spriteFlipVertical(16) := false.B
 
-  val startX = 272.S(12.W)
-  val startY = 20.S(11.W)
+    // Startlys - rød
 
-// ==========================
-// STARTLYS - POSITIONER
-// ==========================
+  io.spriteXPosition(17) := 304.S
+  io.spriteYPosition(17) := 20.S
 
-// Rød række
-io.spriteXPosition(17) := 272.S
-io.spriteYPosition(17) := 20.S
+  io.spriteVisible(17) :=
+    startLight.io.visible &&
+    startLight.io.showRed
 
-io.spriteXPosition(24) := 304.S
-io.spriteYPosition(24) := 20.S
-
-io.spriteXPosition(25) := 336.S
-io.spriteYPosition(25) := 20.S
-
-// Gul række
-io.spriteXPosition(18) := 272.S
-io.spriteYPosition(18) := 52.S
-
-io.spriteXPosition(26) := 304.S
-io.spriteYPosition(26) := 52.S
-
-io.spriteXPosition(27) := 336.S
-io.spriteYPosition(27) := 52.S
-
-// Grøn række
-io.spriteXPosition(19) := 272.S
-io.spriteYPosition(19) := 84.S
-
-io.spriteXPosition(28) := 304.S
-io.spriteYPosition(28) := 84.S
-
-io.spriteXPosition(29) := 336.S
-io.spriteYPosition(29) := 84.S
+  io.spriteFlipHorizontal(17) := false.B
+  io.spriteFlipVertical(17) := false.B
 
 
-// ==========================
-// STARTLYS - SYNLIGHED
-// ==========================
+  // Startlys - gul
 
-// Røde lamper
-io.spriteVisible(17) :=
-  startLight.io.visible &&
-  startLight.io.showRed
+  io.spriteXPosition(18) := 304.S
+  io.spriteYPosition(18) := 20.S
 
-io.spriteVisible(24) :=
-  startLight.io.visible &&
-  startLight.io.showRed
+  io.spriteVisible(18) :=
+    startLight.io.visible &&
+    startLight.io.showYellow
 
-io.spriteVisible(25) :=
-  startLight.io.visible &&
-  startLight.io.showRed
+  io.spriteFlipHorizontal(18) := false.B
+  io.spriteFlipVertical(18) := false.B
 
 
-// Gule lamper
-io.spriteVisible(18) :=
-  startLight.io.visible &&
-  startLight.io.showYellow
+  // Startlys - grøn
 
-io.spriteVisible(26) :=
-  startLight.io.visible &&
-  startLight.io.showYellow
+  io.spriteXPosition(19) := 304.S
+  io.spriteYPosition(19) := 20.S
 
-io.spriteVisible(27) :=
-  startLight.io.visible &&
-  startLight.io.showYellow
+  io.spriteVisible(19) :=
+    startLight.io.visible &&
+    startLight.io.showGreen
 
-
-// Grønne lamper
-io.spriteVisible(19) :=
-  startLight.io.visible &&
-  startLight.io.showGreen
-
-io.spriteVisible(28) :=
-  startLight.io.visible &&
-  startLight.io.showGreen
-
-io.spriteVisible(29) :=
-  startLight.io.visible &&
-  startLight.io.showGreen
+  io.spriteFlipHorizontal(19) := false.B
+  io.spriteFlipVertical(19) := false.B
 
   val carCollision = Module(new CarCollision)
 
@@ -374,7 +329,7 @@ val runningSprite = Module(new RunningSprite)
 runningSprite.io.update := frameUpdateReg
 
 val runningSprite2 = Module(new SecondrunningSprite)
-runningSprite2.io.update := frameUpdateReg
+runningSprite2.io.update := false.B
 runningSprite2.io.hit := false.B
 
 val carWidth = 32.S(12.W)
@@ -435,16 +390,16 @@ mysteryBox.io.rand := 0.U
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 pocket.io.rngInput := rng.io.output
 
-io.spriteXPosition(22) := 100.S
-io.spriteYPosition(22) := 100.S
+io.spriteXPosition(22) := 576.S
+io.spriteYPosition(22) := 16.S
 
 io.spriteVisible(22) := pocket.io.showShell
 
 io.spriteFlipHorizontal(22) := false.B
 io.spriteFlipVertical(22) := false.B
 
-io.spriteXPosition(23) := 99.S
-io.spriteYPosition(23) := 100.S
+io.spriteXPosition(23) := 576.S
+io.spriteYPosition(23) := 16.S
 
 io.spriteVisible(23) := pocket.io.showShroom
 
@@ -457,8 +412,8 @@ io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 io.spriteVisible(14) := mysteryBox.io.shownSprite
 
-io.led(0) := mysteryBoxHit
-io.led(1) := mysteryBoxHitRising
+io.led(0) := winCondition.io.checkpointHit
+io.led(1) := winCondition.io.finishHit
 io.led(2) := winCondition.io.lap1
 io.led(3) := winCondition.io.lap2
 io.led(4) := winCondition.io.lap3
