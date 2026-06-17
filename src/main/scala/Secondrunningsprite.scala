@@ -20,7 +20,7 @@ class SecondrunningSprite extends Module {
   val targetX = 928.S(12.W) // run right until x = 928
 
   val xPosReg = RegInit(startX)
-  val yPosReg = RegInit(859.S(11.W))
+  val yPosReg = RegInit(864.S(11.W))
   val movingRight = RegInit(true.B)
   val hitReg = RegInit(false.B)
 

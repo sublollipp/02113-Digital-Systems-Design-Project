@@ -359,8 +359,13 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
 val runningHitPrev = RegNext(runningHit, false.B)
 val runningHitRising = runningHit && !runningHitPrev
 
+val runningHit2 = (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
+                  (car.io.posX + carWidth > runningSprite2.io.hitboxX) &&
+                  (car.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
+                  (car.io.posY + carHeight > runningSprite2.io.hitboxY)
 
 runningSprite.io.hit := runningHit
+runningSprite2.io.hit := runningHit2
 // Trigger car slow effect on running sprite hit
 car.io.boost := runningHitRising
 car.io.boostFrames := 30.U
@@ -385,6 +390,13 @@ io.spriteYPosition(20) := runningSprite2.io.posY - cameraY
 io.spriteFlipHorizontal(20) := runningSprite2.io.flipH
 io.spriteFlipVertical(20) := runningSprite2.io.flipV
 io.spriteVisible(20) := runningSprite2.io.shownSprite(2)
+
+// slot 21 is the second running sprite hit version
+io.spriteXPosition(21) := runningSprite2.io.posX - cameraX
+io.spriteYPosition(21) := runningSprite2.io.posY - cameraY
+io.spriteFlipHorizontal(21) := runningSprite2.io.flipH
+io.spriteFlipVertical(21) := runningSprite2.io.flipV
+io.spriteVisible(21) := runningSprite2.io.shownSprite(3)
 
 when(carCollision.io.collision) {
   crashReg := true.B
