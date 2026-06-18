@@ -14,6 +14,15 @@ class Shell extends Module {
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val visible = Output(Bool())
+
+    val hitPlayer = Output(Bool())
+    val hitAi = Output(Bool())
+
+    val playerX = Input(SInt(12.W))
+    val playerY = Input(SInt(11.W))
+
+    val aiX = Input(SInt(12.W))
+    val aiY = Input(SInt(11.W))
   })
 
   val active = RegInit(false.B)
@@ -73,6 +82,30 @@ class Shell extends Module {
         lifeCounter := lifeCounter - 1.U
     }
     }
+    
+    val shellSize = 32.S
+
+    val playerHit =
+    active &&
+    (xPos < io.playerX + shellSize) &&
+    (xPos + shellSize > io.playerX) &&
+    (yPos < io.playerY + shellSize) &&
+    (yPos + shellSize > io.playerY)
+
+    val aiHit =
+    active &&
+    (xPos < io.aiX + shellSize) &&
+    (xPos + shellSize > io.aiX) &&
+    (yPos < io.aiY + shellSize) &&
+    (yPos + shellSize > io.aiY)
+
+    io.hitPlayer := playerHit
+    io.hitAi := aiHit
+
+    when(playerHit || aiHit) {
+    active := false.B
+    }
+
 
   io.posX := xPos
   io.posY := yPos
