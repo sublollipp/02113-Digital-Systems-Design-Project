@@ -23,12 +23,17 @@ class RunningSprite extends Module {
   val yPosReg = RegInit(170.S(11.W))
   val movingRight = RegInit(true.B)
   val hitReg = RegInit(false.B)
+  val hitboxGone = RegInit(false.B)
 
   val stopped = io.hit || hitReg
 
   when(io.update) {
     when(io.hit) {
-      hitReg := true.B
+      when(hitReg) {
+        hitboxGone := true.B
+      }.otherwise {
+        hitReg := true.B
+      }
     }
 
     when(!stopped) {
@@ -50,8 +55,8 @@ class RunningSprite extends Module {
 
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
-  val hitboxWidthValue = Mux(hitReg, 0.U(6.W), 24.U(6.W))
-  val hitboxHeightValue = Mux(hitReg, 0.U(6.W), 24.U(6.W))
+  val hitboxWidthValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W))
+  val hitboxHeightValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W))
 
   io.posX := xPosReg
   io.posY := yPosReg
