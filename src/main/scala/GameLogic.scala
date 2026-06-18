@@ -453,5 +453,5 @@ io.led(5) := winCondition.io.gameWon
 io.led(6) := crashReg
 io.led(7) := lapDisplay.io.show3
 
-} // # todo - er det meningen, alt dette defineres i switch statement? 
+}
 
