@@ -124,6 +124,32 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   shell.io.startAngle := car.io.angleOut
   shell.io.frameUpdate := frameUpdateReg
 
+  shell.io.playerX := car.io.posX
+  shell.io.playerY := car.io.posY
+
+  shell.io.aiX := aiCar.io.posX
+  shell.io.aiY := aiCar.io.posY
+
+  val playerStun = RegInit(0.U(8.W))
+
+    when(shell.io.hitPlayer) {
+    playerStun := 120.U
+  }
+
+    when(frameUpdateReg && playerStun =/= 0.U) {
+    playerStun := playerStun - 1.U
+  }
+
+  val aiStun = RegInit(0.U(8.W))
+
+    when(shell.io.hitAi) {
+      aiStun := 120.U
+    }
+
+    when(frameUpdateReg && aiStun =/= 0.U) {
+      aiStun := aiStun - 1.U
+    }
+
   io.spriteXPosition(22) := shell.io.posX - cameraX
   io.spriteYPosition(22) := shell.io.posY - cameraY
   io.spriteVisible(22) := shell.io.visible
@@ -154,7 +180,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   lapDisplay.io.lap2 := winCondition.io.lap2
   lapDisplay.io.lap3 := winCondition.io.lap3
 
-  io.spriteXPosition(11) := 566.S
+  io.spriteXPosition(11) := 536.S
   io.spriteYPosition(11) := 8.S
 
   io.spriteVisible(11) := lapDisplay.io.show1
@@ -162,7 +188,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(11) := false.B
   io.spriteFlipVertical(11) := false.B
 
-  io.spriteXPosition(12) := 566.S
+  io.spriteXPosition(12) := 536.S
   io.spriteYPosition(12) := 8.S
 
   io.spriteVisible(12) := lapDisplay.io.show2
@@ -170,7 +196,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(12) := false.B
   io.spriteFlipVertical(12) := false.B
 
-  io.spriteXPosition(13) := 566.S
+  io.spriteXPosition(13) := 536.S
   io.spriteYPosition(13) := 8.S
 
   io.spriteVisible(13) := lapDisplay.io.show3
@@ -178,7 +204,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(13) := false.B
   io.spriteFlipVertical(13) := false.B
 
-  io.spriteXPosition(15) := 598.S
+  io.spriteXPosition(15) := 568.S
   io.spriteYPosition(15) := 8.S
 
   io.spriteVisible(15) := true.B
@@ -187,7 +213,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipVertical(15) := false.B
 
     // Fast 3-tal efter "/"
-  io.spriteXPosition(16) := 630.S
+  io.spriteXPosition(16) := 600.S
   io.spriteYPosition(16) := 8.S
 
   io.spriteVisible(16) := true.B
@@ -322,10 +348,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     pocket.io.frameUpdate := true.B
 
-    when(startLight.io.raceStarted && !winCondition.io.gameWon && !crashReg) {
+    when(startLight.io.raceStarted &&
+        !winCondition.io.gameWon &&
+        !crashReg) {
 
-      car.io.update := true.B
-      aiCar.io.update := true.B
+      car.io.update := playerStun === 0.U
+      aiCar.io.update := aiStun === 0.U
 
     }.otherwise {
 

@@ -21,6 +21,7 @@ class MysteryBox extends Module {
 
   when(io.hit) {
     hitReg := true.B
+    xPosReg := 3000.S // Removes opened box from screen
   }
 
   val hitboxOffsetX = 4.S(12.W)
