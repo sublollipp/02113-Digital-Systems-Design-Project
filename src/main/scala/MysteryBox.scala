@@ -34,6 +34,8 @@ class MysteryBox extends Module {
 
   val rng = Module(new RNG(5))
 
+  rng.io.frameUpdate := io.frameUpdate
+
   when (io.frameUpdate) {
     clockDivReg := clockDivReg + 1.U
     when (clockDivReg === 600.U) {
