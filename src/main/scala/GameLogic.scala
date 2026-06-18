@@ -135,14 +135,17 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     (Math.cos((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
   ))
 
+  val carCenterX = car.io.posX + 16.S
+  val carCenterY = car.io.posY + 16.S
+
   val spawnOffsetX =
     ((cosValues(car.io.angleOut) * shellSpawnDistance) >> 6).asSInt
 
   val spawnOffsetY =
     ((sinValues(car.io.angleOut) * shellSpawnDistance) >> 6).asSInt
 
-  shell.io.startX := car.io.posX + 16.S + spawnOffsetX
-  shell.io.startY := car.io.posY + 16.S + spawnOffsetY
+  shell.io.startX := carCenterX + spawnOffsetX - 16.S
+  shell.io.startY := carCenterY + spawnOffsetY - 16.S
 
   shell.io.startAngle := car.io.angleOut
   shell.io.frameUpdate := frameUpdateReg
