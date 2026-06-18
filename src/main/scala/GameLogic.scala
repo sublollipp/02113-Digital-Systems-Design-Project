@@ -320,16 +320,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   is(compute1) {
 
-  when(startLight.io.raceStarted && !winCondition.io.gameWon && !crashReg) {
+    pocket.io.frameUpdate := true.B
 
-    car.io.update := true.B
-    aiCar.io.update := true.B
+    when(startLight.io.raceStarted && !winCondition.io.gameWon && !crashReg) {
 
-  }.otherwise {
+      car.io.update := true.B
+      aiCar.io.update := true.B
 
-    car.io.update := false.B
-    aiCar.io.update := false.B
-  }
+    }.otherwise {
+
+      car.io.update := false.B
+      aiCar.io.update := false.B
+    }
 
     stateReg := done
   }
