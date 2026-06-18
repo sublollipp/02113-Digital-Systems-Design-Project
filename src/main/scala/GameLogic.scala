@@ -121,6 +121,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val resetGame = Module(new ResetGame)
 
+  val gameReset = resetGame.io.resetGame
+
+  car.io.resetGame := gameReset
+  aiCar.io.resetGame := gameReset
+  raceTimer.io.resetGame := gameReset
+  pocket.io.resetGame := gameReset
+  winCondition.io.resetGame := gameReset
+
   resetGame.io.btnC := io.btnC
   resetGame.io.hasShell := pocket.io.showShell
   resetGame.io.hasShroom := pocket.io.showShroom
@@ -557,6 +565,8 @@ io.led(4) := winCondition.io.lap3
 io.led(5) := winCondition.io.gameWon
 io.led(6) := crashReg
 io.led(7) := lapDisplay.io.show3
+
+
 
 }
 
