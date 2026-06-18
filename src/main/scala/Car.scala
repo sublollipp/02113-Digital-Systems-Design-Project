@@ -8,7 +8,8 @@ class Car extends Module{
     val btnLeft = Input(Bool())
     val btnRight = Input(Bool())
     val update = Input(Bool())
-    val boost = Input(Bool())
+    val shroomBoost = Input(Bool())
+    val colBoost = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))                                                                                                                                                                                                                                                                                         
     val flipH = Output(Bool())
@@ -30,7 +31,8 @@ class Car extends Module{
   speedControl.io.btnFwd := io.btnUp
   speedControl.io.btnBckwd := io.btnDown
   speedControl.io.frameUpdate := io.update
-  speedControl.io.boost := io.boost
+  speedControl.io.shroomBoost := io.shroomBoost
+  speedControl.io.colBoost := io.colBoost
   speedControl.io.boostFrames := io.boostFrames
   speedControl.io.boostSpeed := io.boostSpeed
   speed := speedControl.io.speed
