@@ -17,14 +17,14 @@ class RNGTester extends AnyFlatSpec with ChiselScalatestTester {
         dut.clock.setTimeout(0)
         val abc = new scala.util.Random
         val counts: Array[Int] = Array(0, 0)
-        for (i <- 1 to 100) {
+        for (i <- 1 to 10000) {
           val clockDel = abc.nextInt(100)
           for (q <- 0 to clockDel) {
             dut.io.frameUpdate.poke(true.B)
             dut.clock.step(1)
 
             dut.io.frameUpdate.poke(false.B)
-            dut.clock.step(100)
+            dut.clock.step(5)
           }
           val chosenIdx = dut.io.randomVal.peek().litValue.toInt
           if (chosenIdx >= 0) {

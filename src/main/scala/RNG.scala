@@ -7,7 +7,7 @@ class RNG(options: Int) extends Module {
     val frameUpdate = Input(Bool())
   })
 
-  val randomReg = RegInit(0.U(log2Ceil(options-1).W))
+  val randomReg = RegInit(0.U(log2Ceil(options).W))
 
   when (io.frameUpdate) {
     when(randomReg === options.U - 1.U) {
