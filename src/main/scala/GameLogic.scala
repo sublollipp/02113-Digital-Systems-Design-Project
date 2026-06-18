@@ -387,6 +387,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
       car.io.update := playerStun === 0.U
       aiCar.io.update := aiStun === 0.U
+      mysteryBox.io.frameUpdate := true.B
 
     }.otherwise {
 
@@ -506,6 +507,7 @@ val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
 mysteryBox.io.rand := 0.U
+mysteryBox.io.frameUpdate := false.B
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 
