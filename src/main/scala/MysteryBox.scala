@@ -5,7 +5,7 @@ class MysteryBox extends Module {
   val io = IO(new Bundle {
     val box = Input(Bool())
     val hit = Input(Bool())
-    val rand = Input(UInt(2.W))
+    val rand = Input(UInt(3.W))
     val frameUpdate = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
@@ -32,13 +32,33 @@ class MysteryBox extends Module {
 
   val clockDivReg = RegInit(0.U(10.W))
 
+  val rng = Module(new RNG(5))
+
+  rng.io.frameUpdate := io.frameUpdate
+
   when (io.frameUpdate) {
-    clockDivReg := clockDivReg + 1.U
+    when (hitReg) {
+      clockDivReg := clockDivReg + 1.U
+    }
     when (clockDivReg === 600.U) {
       clockDivReg := 0.U
       hitReg := false.B
-      // xposReg
-      // yPosReg
+      when (rng.io.randomVal === 0.U) {
+        xPosReg := RegInit(32.S(12.W))
+        yPosReg := RegInit(32.S(11.W))
+      } .elsewhen (rng.io.randomVal === 1.U) {
+        xPosReg := RegInit(64.S(12.W))
+        yPosReg := RegInit(64.S(11.W))
+      } .elsewhen (rng.io.randomVal === 2.U) {
+        xPosReg := RegInit(96.S(12.W))
+        yPosReg := RegInit(96.S(11.W))
+      } .elsewhen (rng.io.randomVal === 3.U) {
+        xPosReg := RegInit(128.S(12.W))
+        yPosReg := RegInit(128.S(11.W))
+      } .otherwise {
+        xPosReg := RegInit(160.S(12.W))
+        yPosReg := RegInit(160.S(11.W))
+      }
     }
   }
 
