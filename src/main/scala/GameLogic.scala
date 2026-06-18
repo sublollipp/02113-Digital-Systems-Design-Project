@@ -117,6 +117,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val aiRouteRng = Module(new RNG(3))
 
+  val resetGame = Module(new ResetGame)
+
+  resetGame.io.btnC := io.btnC
+  resetGame.io.hasShell := pocket.io.showShell
+  resetGame.io.hasShroom := pocket.io.showShroom
+
   val playerHitPulse = shell.io.hitPlayer
 
   car.io.resetSpeed := playerHitPulse
