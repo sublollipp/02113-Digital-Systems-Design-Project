@@ -9,6 +9,7 @@ class Pocket extends Module {
     val carPosY = Input(SInt(11.W))
     val carAngle = Input(UInt(6.W))
     val hitMysteryBox = Input(Bool())
+    val shellOnScreen = Input(Bool())
     val resetGame = Input(Bool())
     val shownSprite = Output(Vec(2, Bool()))
     val showShell = Output(Bool())
@@ -43,7 +44,7 @@ class Pocket extends Module {
   }
 
   when (usePressed) {
-    when (item === shell) {
+    when (item === shell && !io.shellOnScreen) {
       io.useShell := true.B
       item := none
     }

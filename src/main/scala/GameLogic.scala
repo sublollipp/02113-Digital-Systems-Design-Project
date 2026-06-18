@@ -532,6 +532,7 @@ mysteryBox.io.rand := 0.U
 mysteryBox.io.frameUpdate := false.B
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
+  pocket.io.shellOnScreen := shell.io.visible
 
 io.spriteXPosition(24) := 8.S
 io.spriteYPosition(24) := 8.S
