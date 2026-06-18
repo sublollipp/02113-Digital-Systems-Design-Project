@@ -33,6 +33,7 @@ class RunningSprite extends Module {
         hitboxGone := true.B
       }.otherwise {
         hitReg := true.B
+        hitboxGone := true.B
       }
     }
 
