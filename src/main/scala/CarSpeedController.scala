@@ -41,21 +41,25 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
   switch (state) {
     is (idle) {
       when (io.shroomBoost) {
-        state := boostInit
+        state := boosting
       }.elsewhen(io.colBoost) {
-        state := colInit
+        state := collided
       }.elsewhen(clockDivCounter === framesPerAcceleration.U) {
         state := accel
       }
       when(io.frameUpdate) {
         clockDivCounter := clockDivCounter + 1.U
       }
+      boostSpeed := io.boostSpeed
+      boostFrameCount := io.boostFrames
     }
     is (accel) {
+      boostSpeed := io.boostSpeed
+      boostFrameCount := io.boostFrames
       when (io.shroomBoost) {
-        state := boostInit
+        state := boosting
       }.elsewhen(io.colBoost) {
-        state := colInit
+        state := collided
       }.otherwise {
         state := idle
       }
@@ -91,7 +95,6 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
       }
     }
     is (boostInit) {
-      debugLed := true.B
       boostSpeed := io.boostSpeed
       boostFrameCount := io.boostFrames
       state := boosting
