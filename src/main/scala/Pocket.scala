@@ -9,13 +9,14 @@ class Pocket extends Module {
     val carPosY = Input(SInt(11.W))
     val carAngle = Input(UInt(6.W))
     val hitMysteryBox = Input(Bool())
-    val rngInput = Input(Bool())
     val shownSprite = Output(Vec(2, Bool()))
     val showShell = Output(Bool())
     val showShroom = Output(Bool())
     val useShell = Output(Bool())
     val useShroom = Output(Bool())
   })
+
+  val rng = Module(new RNG(2))
 
   val none :: shell :: shroom :: Nil = Enum(3)
 
@@ -28,10 +29,10 @@ class Pocket extends Module {
   io.useShroom := false.B
 
   when (io.hitMysteryBox && item === none) {
-    when (io.rngInput) {
+    when (rng.io.randomVal === 0.U) {
       item := shell
-    }.otherwise {
-      item := shell
+    }.elsewhen (rng.io.randomVal === 1.U) {
+      item := shroom
     }
   }
 
