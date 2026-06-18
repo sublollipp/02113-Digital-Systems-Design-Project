@@ -115,6 +115,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val shell = Module(new Shell)
 
+  val aiRouteRng = Module(new RNG(3))
+
+  aiRouteRng.io.frameUpdate := frameUpdateReg
+
+  aiCar.io.routeSelect := aiRouteRng.io.randomVal(1,0)
+
   pocket.io.useBtn := io.btnC
 
   shell.io.spawn := pocket.io.useShell
@@ -180,7 +186,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   lapDisplay.io.lap2 := winCondition.io.lap2
   lapDisplay.io.lap3 := winCondition.io.lap3
 
-  io.spriteXPosition(11) := 504.S
+  io.spriteXPosition(11) := 536.S
   io.spriteYPosition(11) := 8.S
 
   io.spriteVisible(11) := lapDisplay.io.show1
@@ -188,7 +194,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(11) := false.B
   io.spriteFlipVertical(11) := false.B
 
-  io.spriteXPosition(12) := 504.S
+  io.spriteXPosition(12) := 536.S
   io.spriteYPosition(12) := 8.S
 
   io.spriteVisible(12) := lapDisplay.io.show2
@@ -196,7 +202,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(12) := false.B
   io.spriteFlipVertical(12) := false.B
 
-  io.spriteXPosition(13) := 504.S
+  io.spriteXPosition(13) := 536.S
   io.spriteYPosition(13) := 8.S
 
   io.spriteVisible(13) := lapDisplay.io.show3
@@ -204,7 +210,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(13) := false.B
   io.spriteFlipVertical(13) := false.B
 
-  io.spriteXPosition(15) := 536.S
+  io.spriteXPosition(15) := 568.S
   io.spriteYPosition(15) := 8.S
 
   io.spriteVisible(15) := true.B
@@ -213,7 +219,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipVertical(15) := false.B
 
     // Fast 3-tal efter "/"
-  io.spriteXPosition(16) := 568.S
+  io.spriteXPosition(16) := 600.S
   io.spriteYPosition(16) := 8.S
 
   io.spriteVisible(16) := true.B

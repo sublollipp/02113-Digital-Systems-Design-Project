@@ -33,17 +33,17 @@ class Shell extends Module {
   val angleReg = RegInit(0.U(6.W))
 
   // 60 FPS * 10 sekunder
-  val lifeCounter = RegInit(0.U(5.W))
+  val lifeCounter = RegInit(0.U(10.W))
 
   when(io.spawn && !active) {
     active := true.B
     xPos := io.startX
     yPos := io.startY
     angleReg := io.startAngle
-    lifeCounter := 300.U
+    lifeCounter := 600.U
   }
 
-  val speed = 4.S
+  val speed = 8.S
 
   val sinValues = (0 until 64).map(i =>
     (Math.sin((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
