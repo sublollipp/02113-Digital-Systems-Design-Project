@@ -70,6 +70,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     firstInput := true.B
   }
 
+  val mysteryBox = Module(new MysteryBox)
+
 
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
@@ -116,6 +118,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val shell = Module(new Shell)
 
   val aiRouteRng = Module(new RNG(3))
+
+  val resetGame = Module(new ResetGame)
+
+  resetGame.io.btnC := io.btnC
+  resetGame.io.hasShell := pocket.io.showShell
+  resetGame.io.hasShroom := pocket.io.showShroom
 
   val playerHitPulse = shell.io.hitPlayer
 
@@ -387,6 +395,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
       car.io.update := playerStun === 0.U
       aiCar.io.update := aiStun === 0.U
+      mysteryBox.io.frameUpdate := true.B
 
     }.otherwise {
 
@@ -446,7 +455,7 @@ car.io.boostSpeed := -10.S
   car.io.shroomBoost := pocket.io.useShroom
   when (pocket.io.useShroom) {
     car.io.boostFrames := 90.U
-    car.io.boostSpeed := 800.S
+    car.io.boostSpeed := 600.S
   }
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
@@ -501,7 +510,6 @@ when(carCollision.io.collision) {
 }
 
 // Mystery Box
-val mysteryBox = Module(new MysteryBox)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
@@ -513,6 +521,7 @@ val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
 mysteryBox.io.rand := 0.U
+mysteryBox.io.frameUpdate := false.B
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 

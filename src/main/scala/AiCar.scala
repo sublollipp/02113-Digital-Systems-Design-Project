@@ -273,7 +273,7 @@ val checkpointY3 = VecInit(
 
   when(io.update) {
     when(aiSpeed < 400.S) {
-      aiSpeed := aiSpeed + 1.S
+      aiSpeed := aiSpeed + 3.S
     }
   }
 
