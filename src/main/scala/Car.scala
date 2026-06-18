@@ -10,7 +10,7 @@ class Car extends Module{
     val resetSpeed = Input(Bool())
     val update = Input(Bool())
     val shroomBoost = Input(Bool())
-    val colBoost = Input(Bool())
+    val colBoost = Input(Bool())s
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))                                                                                                                                                                                                                                                                                         
     val flipH = Output(Bool())

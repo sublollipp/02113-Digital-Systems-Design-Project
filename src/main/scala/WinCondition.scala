@@ -5,7 +5,6 @@ class WinCondition extends Module {
   val io = IO(new Bundle {
     val carX = Input(SInt(12.W))
     val carY = Input(SInt(11.W))
-    val resetGame = Input(Bool())
 
     val gameWon = Output(Bool())
 
@@ -52,7 +51,6 @@ class WinCondition extends Module {
   val state = RegInit(sArmRace)
 
   val lapCounter = RegInit(0.U(3.W))
-
 
   switch(state) {
 
@@ -104,10 +102,4 @@ class WinCondition extends Module {
   io.lap1 := lapCounter >= 1.U
   io.lap2 := lapCounter >= 2.U
   io.lap3 := lapCounter >= 3.U
-
-      when(io.resetGame) {
-    state := sArmRace
-    lapCounter := 0.U
-    checkpointTaken := false.B
-  }
 }
