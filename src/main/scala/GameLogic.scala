@@ -154,7 +154,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   lapDisplay.io.lap2 := winCondition.io.lap2
   lapDisplay.io.lap3 := winCondition.io.lap3
 
-  io.spriteXPosition(11) := 8.S
+  io.spriteXPosition(11) := 566.S
   io.spriteYPosition(11) := 8.S
 
   io.spriteVisible(11) := lapDisplay.io.show1
@@ -162,7 +162,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(11) := false.B
   io.spriteFlipVertical(11) := false.B
 
-  io.spriteXPosition(12) := 8.S
+  io.spriteXPosition(12) := 566.S
   io.spriteYPosition(12) := 8.S
 
   io.spriteVisible(12) := lapDisplay.io.show2
@@ -170,7 +170,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(12) := false.B
   io.spriteFlipVertical(12) := false.B
 
-  io.spriteXPosition(13) := 8.S
+  io.spriteXPosition(13) := 566.S
   io.spriteYPosition(13) := 8.S
 
   io.spriteVisible(13) := lapDisplay.io.show3
@@ -178,7 +178,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(13) := false.B
   io.spriteFlipVertical(13) := false.B
 
-  io.spriteXPosition(15) := 40.S
+  io.spriteXPosition(15) := 598.S
   io.spriteYPosition(15) := 8.S
 
   io.spriteVisible(15) := true.B
@@ -187,7 +187,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipVertical(15) := false.B
 
     // Fast 3-tal efter "/"
-  io.spriteXPosition(16) := 72.S
+  io.spriteXPosition(16) := 630.S
   io.spriteYPosition(16) := 8.S
 
   io.spriteVisible(16) := true.B
@@ -419,16 +419,16 @@ mysteryBox.io.rand := 0.U
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 
-io.spriteXPosition(24) := 100.S
-io.spriteYPosition(24) := 100.S
+io.spriteXPosition(24) := 8.S
+io.spriteYPosition(24) := 8.S
 
 io.spriteVisible(24) := pocket.io.showShell
 
 io.spriteFlipHorizontal(24) := false.B
 io.spriteFlipVertical(24) := false.B
 
-io.spriteXPosition(23) := 50.S
-io.spriteYPosition(23) := 50.S
+io.spriteXPosition(23) := 8.S
+io.spriteYPosition(23) := 8.S
 
 io.spriteVisible(23) := pocket.io.showShroom
 
