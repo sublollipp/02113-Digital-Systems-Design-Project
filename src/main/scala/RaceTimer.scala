@@ -6,7 +6,7 @@ class RaceTimer(clockFreq: Int = 100000000) extends Module {
   val io = IO(new Bundle {
     val start = Input(Bool())
     val stop  = Input(Bool())
-    val resetGame = Input(Bool())
+
     val digit0 = Output(UInt(4.W)) // sekunder 1'ere
     val digit1 = Output(UInt(4.W)) // sekunder 10'ere
     val digit2 = Output(UInt(4.W)) // minutter 1'ere
@@ -28,13 +28,6 @@ class RaceTimer(clockFreq: Int = 100000000) extends Module {
 
   val seconds = RegInit(0.U(6.W))  // 0-59
   val minutes = RegInit(0.U(7.W))
-
-    when(io.resetGame) {
-    running := false.B
-    tickCounter := 0.U
-    seconds := 0.U
-    minutes := 0.U
-  }
 
   when(running) {
 

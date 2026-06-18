@@ -25,10 +25,6 @@ class Pocket extends Module {
 
   val item = RegInit(none)
 
-    when(io.resetGame) {
-    item := none
-  }
-
   val prevUseBtn = RegNext(io.useBtn, false.B)
   val usePressed = io.useBtn && !prevUseBtn
 

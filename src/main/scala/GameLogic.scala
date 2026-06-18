@@ -70,8 +70,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     firstInput := true.B
   }
 
-  val mysteryBox = Module(new MysteryBox)
-
 
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
@@ -118,20 +116,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val shell = Module(new Shell)
 
   val aiRouteRng = Module(new RNG(3))
-
-  val resetGame = Module(new ResetGame)
-
-  val gameReset = resetGame.io.resetGame
-
-  car.io.resetGame := gameReset
-  aiCar.io.resetGame := gameReset
-  raceTimer.io.resetGame := gameReset
-  pocket.io.resetGame := gameReset
-  winCondition.io.resetGame := gameReset
-
-  resetGame.io.btnC := io.btnC
-  resetGame.io.hasShell := pocket.io.showShell
-  resetGame.io.hasShroom := pocket.io.showShroom
 
   val playerHitPulse = shell.io.hitPlayer
 
@@ -452,12 +436,14 @@ val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.h
                   (car.io.posX + carWidth > runningSprite3.io.hitboxX) &&
                   (car.io.posY < runningSprite3.io.hitboxY + runningSprite3.io.hitboxHeight.asSInt) &&
                   (car.io.posY + carHeight > runningSprite3.io.hitboxY)
+val runningHit3Prev = RegNext(runningHit3, false.B)
+val runningHit3Rising = runningHit3 && !runningHit3Prev
 
 runningSprite.io.hit := runningHit
 runningSprite2.io.hit := runningHit2
 runningSprite3.io.hit := runningHit3
 // Trigger car slow effect on running sprite hit
-car.io.colBoost := runningHitRising || runningHit2Rising
+car.io.colBoost := runningHitRising || runningHit2Rising || runningHit3Rising
 car.io.boostFrames := 30.U
 car.io.boostSpeed := -10.S
   car.io.shroomBoost := pocket.io.useShroom
@@ -493,14 +479,7 @@ io.spriteFlipHorizontal(21) := runningSprite2.io.flipH
 io.spriteFlipVertical(21) := runningSprite2.io.flipV
 io.spriteVisible(21) := runningSprite2.io.shownSprite(3)
 
-// slot 25 is the third running sprite before it is hit
-io.spriteXPosition(25) := runningSprite3.io.posX - cameraX
-io.spriteYPosition(25) := runningSprite3.io.posY - cameraY
-io.spriteFlipHorizontal(25) := runningSprite3.io.flipH
-io.spriteFlipVertical(25) := runningSprite3.io.flipV
-io.spriteVisible(25) := runningSprite3.io.shownSprite(2)
-
-// slot 30 and 31 are the third running sprite alternates after hit
+// slot 30 and 31 are the third running sprite alternates
 io.spriteXPosition(30) := runningSprite3.io.posX - cameraX
 io.spriteYPosition(30) := runningSprite3.io.posY - cameraY
 io.spriteFlipHorizontal(30) := runningSprite3.io.flipH
@@ -518,6 +497,7 @@ when(carCollision.io.collision) {
 }
 
 // Mystery Box
+val mysteryBox = Module(new MysteryBox)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
@@ -564,8 +544,6 @@ io.led(4) := winCondition.io.lap3
 io.led(5) := winCondition.io.gameWon
 io.led(6) := crashReg
 io.led(7) := lapDisplay.io.show3
-
-
 
 }
 
