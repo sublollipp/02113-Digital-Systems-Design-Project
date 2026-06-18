@@ -47,13 +47,7 @@ class ThirdrunningSprite extends Module {
         }
       }
 
-      when(hitboxGone) {
-        when(yPosReg > (-32).S(11.W)) {
-          yPosReg := yPosReg - 1.S
-        }.otherwise {
-          hiddenReg := true.B
-        }
-      }.otherwise {
+      when(!hitReg) {
         when(movingDown) {
           when(yPosReg < targetY) {
             yPosReg := yPosReg + 1.S
@@ -93,7 +87,7 @@ class ThirdrunningSprite extends Module {
         VecInit(false.B, true.B, false.B, false.B),
         VecInit(true.B, false.B, false.B, false.B)
       ),
-      VecInit(true.B, false.B, false.B, false.B)
+      VecInit(false.B, false.B, true.B, false.B)
     )
   )
 }

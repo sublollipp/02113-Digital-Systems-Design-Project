@@ -476,7 +476,14 @@ io.spriteFlipHorizontal(21) := runningSprite2.io.flipH
 io.spriteFlipVertical(21) := runningSprite2.io.flipV
 io.spriteVisible(21) := runningSprite2.io.shownSprite(3)
 
-// slot 30 and 31 are the third running sprite alternates
+// slot 25 is the third running sprite before it is hit
+io.spriteXPosition(25) := runningSprite3.io.posX - cameraX
+io.spriteYPosition(25) := runningSprite3.io.posY - cameraY
+io.spriteFlipHorizontal(25) := runningSprite3.io.flipH
+io.spriteFlipVertical(25) := runningSprite3.io.flipV
+io.spriteVisible(25) := runningSprite3.io.shownSprite(2)
+
+// slot 30 and 31 are the third running sprite alternates after hit
 io.spriteXPosition(30) := runningSprite3.io.posX - cameraX
 io.spriteYPosition(30) := runningSprite3.io.posY - cameraY
 io.spriteFlipHorizontal(30) := runningSprite3.io.flipH
