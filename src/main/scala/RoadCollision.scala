@@ -27,7 +27,7 @@ class RoadCollision extends Module {
     io.x >= 982.S &&
     io.x <= 1130.S &&
     io.y >= 215.S &&
-    io.y <= 554.S
+    io.y <= 532.S
 
  // Vejen nederste del (lodret)
   val road4 =
