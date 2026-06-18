@@ -23,15 +23,15 @@ class SecondrunningSprite extends Module {
   val yPosReg = RegInit(864.S(11.W))
   val movingRight = RegInit(true.B)
   val hitReg = RegInit(false.B)
-
-  val stopped = io.hit || hitReg
+  val hitboxGone = RegInit(false.B)
 
   when(io.update) {
-    when(io.hit) {
+    when(io.hit && !hitReg) {
       hitReg := true.B
+      hitboxGone := true.B
     }
 
-    when(!stopped) {
+    when(!hitboxGone) {
       when(movingRight) {
         when(xPosReg < targetX) {
           xPosReg := xPosReg + 1.S
@@ -45,13 +45,15 @@ class SecondrunningSprite extends Module {
           movingRight := true.B
         }
       }
+    }.otherwise {
+      yPosReg := yPosReg - 1.S
     }
   }
 
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
-  val hitboxWidthValue = 24.U(6.W)
-  val hitboxHeightValue = 24.U(6.W)
+  val hitboxWidthValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W))
+  val hitboxHeightValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W))
 
   io.posX := xPosReg
   io.posY := yPosReg
