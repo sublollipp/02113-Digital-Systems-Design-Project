@@ -115,6 +115,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val shell = Module(new Shell)
 
+  val aiRouteRng = Module(new RNG(3))
+
+  aiRouteRng.io.frameUpdate := frameUpdateReg
+
+  aiCar.io.routeSelect := aiRouteRng.io.randomVal(1,0)
+
   pocket.io.useBtn := io.btnC
 
   shell.io.spawn := pocket.io.useShell
