@@ -13,7 +13,7 @@ class CarCollision extends Module {
   })
 
     val carWidth  = 22.S(12.W)
-    val carHeight = 32.S(11.W)
+    val carHeight = 22.S(11.W)
     val offset = 3.S
 
     io.collision :=
