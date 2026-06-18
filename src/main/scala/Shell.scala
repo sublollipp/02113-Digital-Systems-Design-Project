@@ -43,7 +43,7 @@ class Shell extends Module {
     lifeCounter := 600.U
   }
 
-  val speed = 4.S
+  val speed = 8.S
 
   val sinValues = (0 until 64).map(i =>
     (Math.sin((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
