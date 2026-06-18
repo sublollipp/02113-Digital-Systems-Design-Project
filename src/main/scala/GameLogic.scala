@@ -124,6 +124,32 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   shell.io.startAngle := car.io.angleOut
   shell.io.frameUpdate := frameUpdateReg
 
+  shell.io.playerX := car.io.posX
+  shell.io.playerY := car.io.posY
+
+  shell.io.aiX := aiCar.io.posX
+  shell.io.aiY := aiCar.io.posY
+
+  val playerStun = RegInit(0.U(8.W))
+
+    when(shell.io.hitPlayer) {
+    playerStun := 120.U
+  }
+
+    when(frameUpdateReg && playerStun =/= 0.U) {
+    playerStun := playerStun - 1.U
+  }
+
+  val aiStun = RegInit(0.U(8.W))
+
+    when(shell.io.hitAi) {
+      aiStun := 120.U
+    }
+
+    when(frameUpdateReg && aiStun =/= 0.U) {
+      aiStun := aiStun - 1.U
+    }
+
   io.spriteXPosition(22) := shell.io.posX - cameraX
   io.spriteYPosition(22) := shell.io.posY - cameraY
   io.spriteVisible(22) := shell.io.visible
@@ -320,16 +346,20 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   is(compute1) {
 
-  when(startLight.io.raceStarted && !winCondition.io.gameWon && !crashReg) {
+    pocket.io.frameUpdate := true.B
 
-    car.io.update := true.B
-    aiCar.io.update := true.B
+    when(startLight.io.raceStarted &&
+        !winCondition.io.gameWon &&
+        !crashReg) {
 
-  }.otherwise {
+      car.io.update := playerStun === 0.U
+      aiCar.io.update := aiStun === 0.U
 
-    car.io.update := false.B
-    aiCar.io.update := false.B
-  }
+    }.otherwise {
+
+      car.io.update := false.B
+      aiCar.io.update := false.B
+    }
 
     stateReg := done
   }
