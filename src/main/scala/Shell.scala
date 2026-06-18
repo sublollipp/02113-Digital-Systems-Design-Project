@@ -47,7 +47,7 @@ class Shell extends Module {
     armCounter := 4.U
   }
 
-  val speed = 8.S
+  val speed = 6.S
 
   val sinValues = (0 until 64).map(i =>
     (Math.sin((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
