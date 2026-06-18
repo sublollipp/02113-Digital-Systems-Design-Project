@@ -19,11 +19,13 @@ class RNGTester extends AnyFlatSpec with ChiselScalatestTester {
         val counts: Array[Int] = Array(0, 0)
         for (i <- 1 to 100) {
           val clockDel = abc.nextInt(100)
-          dut.io.frameUpdate.poke(true.B)
-          dut.clock.step(1)
+          for (q <- 0 to clockDel) {
+            dut.io.frameUpdate.poke(true.B)
+            dut.clock.step(1)
 
-          dut.io.frameUpdate.poke(false.B)
-          dut.clock.step(100)
+            dut.io.frameUpdate.poke(false.B)
+            dut.clock.step(100)
+          }
           val chosenIdx = dut.io.randomVal.peek().litValue.toInt
           if (chosenIdx >= 0) {
             counts(chosenIdx) += 1
