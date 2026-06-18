@@ -6,6 +6,7 @@ class MysteryBox extends Module {
     val box = Input(Bool())
     val hit = Input(Bool())
     val rand = Input(UInt(2.W))
+    val frameUpdate = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val hitboxX = Output(SInt(12.W))
@@ -28,6 +29,18 @@ class MysteryBox extends Module {
   val hitboxOffsetY = 4.S(11.W)
   val hitboxWidthValue = 24.U(6.W)
   val hitboxHeightValue = 24.U(6.W)
+
+  val clockDivReg = RegInit(0.U(10.W))
+
+  when (io.frameUpdate) {
+    clockDivReg := clockDivReg + 1.U
+    when (clockDivReg === 600.U) {
+      clockDivReg := 0.U
+      hitReg := false.B
+      // xposReg
+      // yPosReg
+    }
+  }
 
   io.posX := xPosReg
   io.posY := yPosReg
