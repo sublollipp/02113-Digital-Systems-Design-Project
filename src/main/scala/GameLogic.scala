@@ -70,6 +70,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     firstInput := true.B
   }
 
+  val mysteryBox = Module(new MysteryBox)
+
 
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
@@ -447,7 +449,7 @@ car.io.boostSpeed := -10.S
   car.io.shroomBoost := pocket.io.useShroom
   when (pocket.io.useShroom) {
     car.io.boostFrames := 90.U
-    car.io.boostSpeed := 800.S
+    car.io.boostSpeed := 600.S
   }
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
@@ -495,7 +497,6 @@ when(carCollision.io.collision) {
 }
 
 // Mystery Box
-val mysteryBox = Module(new MysteryBox)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
