@@ -1,16 +1,18 @@
 import chisel3._
 import chisel3.util._
 
-class RNG extends Module {
+class RNG(options: Int) extends Module {
   val io = IO(new Bundle {
-    val randomBit = Output(Bool())
+    val randomVal = Output(UInt(5.W))
   })
 
-  val lfsr = RegInit("b10101101".U(8.W))
+  val randomReg = RegInit(0.U(log2Ceil(options).W))
 
-  val feedback = lfsr(7) ^ lfsr(5) ^ lfsr(4) ^ lfsr(3)
+  when (randomReg === options.U) {
+    randomReg := 0.U
+  }.otherwise {
+    randomReg := randomReg + 1.U
+  }
 
-  lfsr := Cat(lfsr(6, 0), feedback)
-
-  io.randomBit := lfsr(0)
+  io.randomVal := randomReg
 }

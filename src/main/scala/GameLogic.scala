@@ -63,7 +63,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   pocket.io.carPosY := 0.S
   pocket.io.carAngle := 0.U
   pocket.io.hitMysteryBox := false.B
-  pocket.io.rngInput := false.B
 
   val firstInput = RegInit(false.B)
 
@@ -406,7 +405,6 @@ when(carCollision.io.collision) {
 
 // Mystery Box
 val mysteryBox = Module(new MysteryBox)
-val rng = Module(new RNG)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
@@ -420,7 +418,6 @@ mysteryBox.io.hit := mysteryBoxHit
 mysteryBox.io.rand := 0.U
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
-pocket.io.rngInput := rng.io.randomBit
 
 io.spriteXPosition(24) := 100.S
 io.spriteYPosition(24) := 100.S
