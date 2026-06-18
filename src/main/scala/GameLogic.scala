@@ -121,6 +121,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
 
   val mysteryBox = Module(new MysteryBox)
+  mysteryBox.io.frameUpdate := false.B
 
   car.io.resetSpeed := playerHitPulse
 
@@ -394,7 +395,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       mysteryBox.io.frameUpdate := true.B
 
     }.otherwise {
-
       car.io.update := false.B
       aiCar.io.update := false.B
     }
@@ -511,8 +511,6 @@ val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
-mysteryBox.io.rand := 0.U
-mysteryBox.io.frameUpdate := false.B
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
   pocket.io.shellOnScreen := shell.io.visible
@@ -545,7 +543,7 @@ io.led(2) := winCondition.io.lap1
 io.led(3) := winCondition.io.lap2
 io.led(4) := winCondition.io.lap3
 io.led(5) := winCondition.io.gameWon
-io.led(6) := crashReg
+io.led(6) := !mysteryBox.io.shownSprite
 io.led(7) := lapDisplay.io.show3
 
 }
