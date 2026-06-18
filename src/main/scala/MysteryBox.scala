@@ -37,7 +37,9 @@ class MysteryBox extends Module {
   rng.io.frameUpdate := io.frameUpdate
 
   when (io.frameUpdate) {
-    clockDivReg := clockDivReg + 1.U
+    when (hitReg) {
+      clockDivReg := clockDivReg + 1.U
+    }
     when (clockDivReg === 600.U) {
       clockDivReg := 0.U
       hitReg := false.B
