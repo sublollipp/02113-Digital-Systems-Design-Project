@@ -440,9 +440,14 @@ runningSprite.io.hit := runningHit
 runningSprite2.io.hit := runningHit2
 runningSprite3.io.hit := runningHit3
 // Trigger car slow effect on running sprite hit
-car.io.boost := runningHitRising || runningHit2Rising
+car.io.colBoost := runningHitRising || runningHit2Rising
 car.io.boostFrames := 30.U
 car.io.boostSpeed := -10.S
+  car.io.shroomBoost := pocket.io.useShroom
+  when (pocket.io.useShroom) {
+    car.io.boostFrames := 90.U
+    car.io.boostSpeed := 800.S
+  }
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
 io.spriteYPosition(3) := runningSprite.io.posY - cameraY
