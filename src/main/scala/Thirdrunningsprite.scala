@@ -16,7 +16,7 @@ class ThirdrunningSprite extends Module {
     val shownSprite = Output(Vec(4, Bool()))
   })
 
-  val startX = 984.S(12.W)
+  val startX = 992.S(12.W)
   val startY = 256.S(11.W)
   val targetY = 384.S(11.W)
 
@@ -26,14 +26,27 @@ class ThirdrunningSprite extends Module {
   val hitReg = RegInit(false.B)
   val hitboxGone = RegInit(false.B)
   val hiddenReg = RegInit(false.B)
+  val hitToggleCounter = RegInit(119.U(7.W))
+  val hitSpriteToggle = RegInit(false.B)
 
   when(io.update) {
     when(io.hit && !hitReg && !hiddenReg) {
       hitReg := true.B
       hitboxGone := true.B
+      hitToggleCounter := 119.U
+      hitSpriteToggle := false.B
     }
 
     when(!hiddenReg) {
+      when(hitReg) {
+        when(hitToggleCounter === 0.U) {
+          hitSpriteToggle := ~hitSpriteToggle
+          hitToggleCounter := 119.U
+        }.otherwise {
+          hitToggleCounter := hitToggleCounter - 1.U
+        }
+      }
+
       when(hitboxGone) {
         when(yPosReg > (-32).S(11.W)) {
           yPosReg := yPosReg - 1.S
@@ -76,8 +89,11 @@ class ThirdrunningSprite extends Module {
   io.shownSprite := Mux(hiddenReg,
     VecInit(false.B, false.B, false.B, false.B),
     Mux(hitReg,
-      VecInit(false.B, false.B, false.B, true.B),
-      VecInit(false.B, false.B, true.B, false.B)
+      Mux(hitSpriteToggle,
+        VecInit(false.B, true.B, false.B, false.B),
+        VecInit(true.B, false.B, false.B, false.B)
+      ),
+      VecInit(true.B, false.B, false.B, false.B)
     )
   )
 }
