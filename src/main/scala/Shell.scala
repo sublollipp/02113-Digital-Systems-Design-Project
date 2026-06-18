@@ -47,17 +47,32 @@ class Shell extends Module {
   val sinTable = VecInit(sinValues)
   val cosTable = VecInit(cosValues)
 
-  when(active && io.frameUpdate) {
+  val dx = ((cosTable(angleReg) * speed) >> 6).asSInt
+    val dy = ((sinTable(angleReg) * speed) >> 6).asSInt
 
-    xPos := xPos + ((cosTable(angleReg) * speed) >> 6).asSInt
-    yPos := yPos + ((sinTable(angleReg) * speed) >> 6).asSInt
+    val nextX = xPos + dx
+    val nextY = yPos + dy
+
+    when(active && io.frameUpdate) {
+
+    when(nextX < 0.S || nextX > 1248.S) {
+        angleReg := (32.U - angleReg)(5,0)
+    }.otherwise {
+        xPos := nextX
+    }
+
+    when(nextY < 0.S || nextY > 928.S) {
+        angleReg := (64.U - angleReg)(5,0)
+    }.otherwise {
+        yPos := nextY
+    }
 
     when(lifeCounter === 0.U) {
-      active := false.B
+        active := false.B
     }.otherwise {
-      lifeCounter := lifeCounter - 1.U
+        lifeCounter := lifeCounter - 1.U
     }
-  }
+    }
 
   io.posX := xPos
   io.posY := yPos
