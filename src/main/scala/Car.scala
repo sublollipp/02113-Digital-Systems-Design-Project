@@ -11,7 +11,6 @@ class Car extends Module{
     val update = Input(Bool())
     val shroomBoost = Input(Bool())
     val colBoost = Input(Bool())
-    val resetGame = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))                                                                                                                                                                                                                                                                                         
     val flipH = Output(Bool())
@@ -28,11 +27,6 @@ class Car extends Module{
 
   val speed = WireInit(0.S(11.W))
   val angle = WireInit(48.U(6.W))
-
-    when(io.resetGame) {
-    xPosReg := 160.S
-    yPosReg := 420.S
-  }
 
   val speedControl = Module(new CarSpeedController(1, 2, 500, -150, 125, 3))
   speedControl.io.resetSpeed := io.resetSpeed

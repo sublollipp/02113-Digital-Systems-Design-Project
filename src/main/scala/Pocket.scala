@@ -9,7 +9,6 @@ class Pocket extends Module {
     val carPosY = Input(SInt(11.W))
     val carAngle = Input(UInt(6.W))
     val hitMysteryBox = Input(Bool())
-    val resetGame = Input(Bool())
     val shownSprite = Output(Vec(2, Bool()))
     val showShell = Output(Bool())
     val showShroom = Output(Bool())
@@ -23,10 +22,6 @@ class Pocket extends Module {
   val none :: shell :: shroom :: Nil = Enum(3)
 
   val item = RegInit(none)
-
-    when(io.resetGame) {
-    item := none
-  }
 
   val prevUseBtn = RegNext(io.useBtn, false.B)
   val usePressed = io.useBtn && !prevUseBtn

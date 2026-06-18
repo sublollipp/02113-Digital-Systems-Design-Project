@@ -6,7 +6,6 @@ class AiCar extends Module{
     val update = Input(Bool())
     val routeSelect = Input(UInt(2.W))
     val resetSpeed = Input(Bool())
-    val resetGame = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val flipH = Output(Bool())
@@ -149,16 +148,6 @@ val checkpointY3 = VecInit(
 
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
-
-
-    when(io.resetGame) {
-    aiX := 100.S
-    aiY := 420.S
-    aiAngle := 48.U
-    aiSpeed := 0.S
-    currentCheckpoint := 0.U
-    route := 0.U
-  }
 
     when(io.resetSpeed) {
     aiSpeed := 0.S
