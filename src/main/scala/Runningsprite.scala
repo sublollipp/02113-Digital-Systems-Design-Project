@@ -28,13 +28,9 @@ class RunningSprite extends Module {
   val stopped = io.hit || hitReg
 
   when(io.update) {
-    when(io.hit) {
-      when(hitReg) {
-        hitboxGone := true.B
-      }.otherwise {
-        hitReg := true.B
-        hitboxGone := true.B
-      }
+    when(io.hit && !hitReg) {
+      hitReg := true.B
+      hitboxGone := true.B
     }
 
     when(!stopped) {
