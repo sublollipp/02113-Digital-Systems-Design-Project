@@ -5,6 +5,7 @@ class AiCar extends Module{
   val io = IO(new Bundle {
     val update = Input(Bool())
     val routeSelect = Input(UInt(2.W))
+    val resetSpeed = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val flipH = Output(Bool())
@@ -148,6 +149,10 @@ val checkpointY3 = VecInit(
   val aiAngle = RegInit(48.U(6.W))
   val aiSpeed = RegInit(0.S(10.W))
 
+    when(io.resetSpeed) {
+    aiSpeed := 0.S
+  }
+
   val targetX = Wire(SInt(12.W))
   val targetY = Wire(SInt(11.W))
 
@@ -266,8 +271,10 @@ val checkpointY3 = VecInit(
 
   // Accelerér
 
-  when(aiSpeed < 400.S) {
-    aiSpeed := aiSpeed + 1.S
+  when(io.update) {
+    when(aiSpeed < 400.S) {
+      aiSpeed := aiSpeed + 1.S
+    }
   }
 
   // Flyt bilen
