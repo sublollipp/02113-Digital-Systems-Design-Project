@@ -16,12 +16,13 @@ class ThirdrunningSprite extends Module {
     val shownSprite = Output(Vec(4, Bool()))
   })
 
-  val startX = 64.S(12.W)
-  val targetX = 928.S(12.W) // run right until x = 928
+  val startX = 992.S(12.W)
+  val startY = 256.S(11.W)
+  val targetY = 384.S(11.W)
 
   val xPosReg = RegInit(startX)
-  val yPosReg = RegInit(864.S(11.W))
-  val movingRight = RegInit(true.B)
+  val yPosReg = RegInit(startY)
+  val movingDown = RegInit(true.B)
   val hitReg = RegInit(false.B)
   val hitboxGone = RegInit(false.B)
   val hiddenReg = RegInit(false.B)
@@ -40,17 +41,17 @@ class ThirdrunningSprite extends Module {
           hiddenReg := true.B
         }
       }.otherwise {
-        when(movingRight) {
-          when(xPosReg < targetX) {
-            xPosReg := xPosReg + 1.S
+        when(movingDown) {
+          when(yPosReg < targetY) {
+            yPosReg := yPosReg + 1.S
           }.otherwise {
-            movingRight := false.B
+            movingDown := false.B
           }
         }.otherwise {
-          when(xPosReg > startX) {
-            xPosReg := xPosReg - 1.S
+          when(yPosReg > startY) {
+            yPosReg := yPosReg - 1.S
           }.otherwise {
-            movingRight := true.B
+            movingDown := true.B
           }
         }
       }
@@ -69,7 +70,7 @@ class ThirdrunningSprite extends Module {
   io.hitboxWidth := hitboxWidthValue
   io.hitboxHeight := hitboxHeightValue
 
-  io.flipH := !movingRight
+  io.flipH := false.B
   io.flipV := false.B
 
   io.shownSprite := Mux(hiddenReg,
