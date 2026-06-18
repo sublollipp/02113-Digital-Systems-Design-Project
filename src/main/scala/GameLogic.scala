@@ -125,8 +125,25 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   shell.io.spawn := pocket.io.useShell
 
-  shell.io.startX := car.io.posX + 16.S
-  shell.io.startY := car.io.posY + 16.S
+  val shellSpawnDistance = 48.S
+
+  val sinValues = VecInit((0 until 64).map(i =>
+    (Math.sin((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
+  ))
+
+  val cosValues = VecInit((0 until 64).map(i =>
+    (Math.cos((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
+  ))
+
+  val spawnOffsetX =
+    ((cosValues(car.io.angleOut) * shellSpawnDistance) >> 6).asSInt
+
+  val spawnOffsetY =
+    ((sinValues(car.io.angleOut) * shellSpawnDistance) >> 6).asSInt
+
+  shell.io.startX := car.io.posX + 16.S + spawnOffsetX
+  shell.io.startY := car.io.posY + 16.S + spawnOffsetY
+
   shell.io.startAngle := car.io.angleOut
   shell.io.frameUpdate := frameUpdateReg
 
