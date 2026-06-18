@@ -363,11 +363,13 @@ val runningHit2 = (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.h
                   (car.io.posX + carWidth > runningSprite2.io.hitboxX) &&
                   (car.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
                   (car.io.posY + carHeight > runningSprite2.io.hitboxY)
+val runningHit2Prev = RegNext(runningHit2, false.B)
+val runningHit2Rising = runningHit2 && !runningHit2Prev
 
 runningSprite.io.hit := runningHit
 runningSprite2.io.hit := runningHit2
 // Trigger car slow effect on running sprite hit
-car.io.boost := runningHitRising
+car.io.boost := runningHitRising || runningHit2Rising
 car.io.boostFrames := 30.U
 car.io.boostSpeed := -10.S
 
@@ -451,5 +453,5 @@ io.led(5) := winCondition.io.gameWon
 io.led(6) := crashReg
 io.led(7) := lapDisplay.io.show3
 
-} // # todo - er det meningen, alt dette defineres i switch statement? 
+}
 
