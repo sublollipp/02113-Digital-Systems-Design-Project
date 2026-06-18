@@ -125,7 +125,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   shell.io.spawn := pocket.io.useShell
 
-  shell.io.startX := car.io.posX + 64.S
+  shell.io.startX := car.io.posX + 16.S
   shell.io.startY := car.io.posY + 16.S
   shell.io.startAngle := car.io.angleOut
   shell.io.frameUpdate := frameUpdateReg
