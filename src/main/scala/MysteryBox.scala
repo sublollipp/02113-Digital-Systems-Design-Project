@@ -42,20 +42,20 @@ class MysteryBox extends Module {
       clockDivReg := 0.U
       hitReg := false.B
       when (rng.io.randomVal === 0.U) {
-        val xPosReg1 = RegInit(32.S(12.W))
-        val yPosReg1 = RegInit(32.S(11.W))
+        xPosReg := RegInit(32.S(12.W))
+        yPosReg := RegInit(32.S(11.W))
       } .elsewhen (rng.io.randomVal === 1.U) {
-        val xPosReg2 = RegInit(64.S(12.W))
-        val yPosReg2 = RegInit(64.S(11.W))
+        xPosReg := RegInit(64.S(12.W))
+        yPosReg := RegInit(64.S(11.W))
       } .elsewhen (rng.io.randomVal === 2.U) {
-        val xPosReg3 = RegInit(96.S(12.W))
-        val yPosReg3 = RegInit(96.S(11.W))
+        xPosReg := RegInit(96.S(12.W))
+        yPosReg := RegInit(96.S(11.W))
       } .elsewhen (rng.io.randomVal === 3.U) {
-        val xPosReg4 = RegInit(128.S(12.W))
-        val yPosReg4 = RegInit(128.S(11.W))
+        xPosReg := RegInit(128.S(12.W))
+        yPosReg := RegInit(128.S(11.W))
       } .otherwise {
-        val xPosReg5 = RegInit(160.S(12.W))
-        val yPosReg5 = RegInit(160.S(11.W))
+        xPosReg := RegInit(160.S(12.W))
+        yPosReg := RegInit(160.S(11.W))
       }
     }
   }
