@@ -119,6 +119,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val playerHitPulse = shell.io.hitPlayer
 
+
+  val mysteryBox = Module(new MysteryBox)
+
   car.io.resetSpeed := playerHitPulse
 
   aiRouteRng.io.frameUpdate := frameUpdateReg
@@ -128,6 +131,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   aiCar.io.resetSpeed := false.B
 
   pocket.io.useBtn := io.btnC
+  pocket.io.resetGame := false.B
 
   shell.io.spawn := pocket.io.useShell
 
@@ -497,7 +501,6 @@ when(carCollision.io.collision) {
 }
 
 // Mystery Box
-val mysteryBox = Module(new MysteryBox)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
