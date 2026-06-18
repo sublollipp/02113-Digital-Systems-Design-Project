@@ -346,6 +346,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   is(compute1) {
 
+    pocket.io.frameUpdate := true.B
+
     when(startLight.io.raceStarted &&
         !winCondition.io.gameWon &&
         !crashReg) {
