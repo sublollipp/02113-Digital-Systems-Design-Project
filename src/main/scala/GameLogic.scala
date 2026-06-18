@@ -117,9 +117,15 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val aiRouteRng = Module(new RNG(3))
 
+  val playerHitPulse = shell.io.hitPlayer
+
+  car.io.resetSpeed := playerHitPulse
+
   aiRouteRng.io.frameUpdate := frameUpdateReg
 
   aiCar.io.routeSelect := aiRouteRng.io.randomVal(1,0)
+
+  aiCar.io.resetSpeed := false.B
 
   pocket.io.useBtn := io.btnC
 
@@ -170,6 +176,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     when(shell.io.hitAi) {
       aiStun := 120.U
+      aiCar.io.resetSpeed := true.B
     }
 
     when(frameUpdateReg && aiStun =/= 0.U) {

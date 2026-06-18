@@ -7,6 +7,7 @@ class Car extends Module{
     val btnDown = Input(Bool())
     val btnLeft = Input(Bool())
     val btnRight = Input(Bool())
+    val resetSpeed = Input(Bool())
     val update = Input(Bool())
     val boost = Input(Bool())
     val posX = Output(SInt(12.W))
@@ -27,6 +28,7 @@ class Car extends Module{
   val angle = WireInit(48.U(6.W))
 
   val speedControl = Module(new CarSpeedController(1, 2, 500, -150, 125, 3))
+  speedControl.io.resetSpeed := io.resetSpeed
   speedControl.io.btnFwd := io.btnUp
   speedControl.io.btnBckwd := io.btnDown
   speedControl.io.frameUpdate := io.update

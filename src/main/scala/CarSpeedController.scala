@@ -6,6 +6,7 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     val btnFwd = Input(Bool())
     val btnBckwd = Input(Bool())
     val frameUpdate = Input(Bool())
+    val resetSpeed = Input(Bool())
     val offRoad = Input(Bool())
     val boost = Input(Bool())
     val boostSpeed = Input(SInt(11.W))
@@ -16,10 +17,16 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
 
   val speed = RegInit(0.S(11.W))
 
+
   val idle :: accel :: boostInit :: boosting :: Nil = Enum(4)
 
   val state = RegInit(idle)
 
+    when(io.resetSpeed) {
+    speed := 0.S
+    state := idle
+  }
+  
   val clockDivCounter = RegInit(0.U(6.W))
 
   val boostFrameCount = RegInit(0.U(8.W))
