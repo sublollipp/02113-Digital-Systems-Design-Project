@@ -17,6 +17,7 @@ class Pocket extends Module {
   })
 
   val rng = Module(new RNG(2))
+  rng.io.frameUpdate := io.frameUpdate
 
   val none :: shell :: shroom :: Nil = Enum(3)
 
