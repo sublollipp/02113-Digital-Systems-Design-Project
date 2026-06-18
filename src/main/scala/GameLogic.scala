@@ -444,19 +444,21 @@ val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.h
                   (car.io.posX + carWidth > runningSprite3.io.hitboxX) &&
                   (car.io.posY < runningSprite3.io.hitboxY + runningSprite3.io.hitboxHeight.asSInt) &&
                   (car.io.posY + carHeight > runningSprite3.io.hitboxY)
+val runningHit3Prev = RegNext(runningHit3, false.B)
+val runningHit3Rising = runningHit3 && !runningHit3Prev
 
 runningSprite.io.hit := runningHit
 runningSprite2.io.hit := runningHit2
 runningSprite3.io.hit := runningHit3
 // Trigger car slow effect on running sprite hit
-car.io.colBoost := runningHitRising || runningHit2Rising
+car.io.colBoost := runningHitRising || runningHit2Rising || runningHit3Rising
 car.io.boostFrames := 30.U
 car.io.boostSpeed := -10.S
-  car.io.shroomBoost := pocket.io.useShroom
-  when (pocket.io.useShroom) {
-    car.io.boostFrames := 90.U
-    car.io.boostSpeed := 600.S
-  }
+car.io.shroomBoost := pocket.io.useShroom
+when (pocket.io.useShroom) {
+  car.io.boostFrames := 90.U
+  car.io.boostSpeed := 600.S
+}
 
 io.spriteXPosition(3) := runningSprite.io.posX - cameraX
 io.spriteYPosition(3) := runningSprite.io.posY - cameraY
