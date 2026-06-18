@@ -50,8 +50,8 @@ class RunningSprite extends Module {
 
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
-  val hitboxWidthValue = 24.U(6.W)
-  val hitboxHeightValue = 24.U(6.W)
+  val hitboxWidthValue = Mux(hitReg, 0.U(6.W), 24.U(6.W))
+  val hitboxHeightValue = Mux(hitReg, 0.U(6.W), 24.U(6.W))
 
   io.posX := xPosReg
   io.posY := yPosReg
