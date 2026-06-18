@@ -35,12 +35,16 @@ class Shell extends Module {
   // 60 FPS * 10 sekunder
   val lifeCounter = RegInit(0.U(10.W))
 
+  // Immunitet lige efter spawn
+  val armCounter = RegInit(0.U(4.W))
+
   when(io.spawn && !active) {
     active := true.B
     xPos := io.startX
     yPos := io.startY
     angleReg := io.startAngle
     lifeCounter := 600.U
+    armCounter := 4.U
   }
 
   val speed = 8.S
@@ -57,55 +61,60 @@ class Shell extends Module {
   val cosTable = VecInit(cosValues)
 
   val dx = ((cosTable(angleReg) * speed) >> 6).asSInt
-    val dy = ((sinTable(angleReg) * speed) >> 6).asSInt
+  val dy = ((sinTable(angleReg) * speed) >> 6).asSInt
 
-    val nextX = xPos + dx
-    val nextY = yPos + dy
+  val nextX = xPos + dx
+  val nextY = yPos + dy
 
-    when(active && io.frameUpdate) {
+  when(active && io.frameUpdate) {
+
+    when(armCounter =/= 0.U) {
+      armCounter := armCounter - 1.U
+    }
 
     when(nextX < 0.S || nextX > 1248.S) {
-        angleReg := (32.U - angleReg)(5,0)
+      angleReg := (32.U - angleReg)(5,0)
     }.otherwise {
-        xPos := nextX
+      xPos := nextX
     }
 
     when(nextY < 0.S || nextY > 928.S) {
-        angleReg := (64.U - angleReg)(5,0)
+      angleReg := (64.U - angleReg)(5,0)
     }.otherwise {
-        yPos := nextY
+      yPos := nextY
     }
 
     when(lifeCounter === 0.U) {
-        active := false.B
+      active := false.B
     }.otherwise {
-        lifeCounter := lifeCounter - 1.U
+      lifeCounter := lifeCounter - 1.U
     }
-    }
+  }
 
-    val shellSize = 32.S
+  val shellSize = 32.S
 
-    val playerHit =
+  val playerHit =
     active &&
+    (armCounter === 0.U) &&
     (xPos < io.playerX + shellSize) &&
     (xPos + shellSize > io.playerX) &&
     (yPos < io.playerY + shellSize) &&
     (yPos + shellSize > io.playerY)
 
-    val aiHit =
+  val aiHit =
     active &&
+    (armCounter === 0.U) &&
     (xPos < io.aiX + shellSize) &&
     (xPos + shellSize > io.aiX) &&
     (yPos < io.aiY + shellSize) &&
     (yPos + shellSize > io.aiY)
 
-    io.hitPlayer := playerHit
-    io.hitAi := aiHit
+  io.hitPlayer := playerHit
+  io.hitAi := aiHit
 
-    when(playerHit || aiHit) {
+  when(playerHit || aiHit) {
     active := false.B
-    }
-
+  }
 
   io.posX := xPos
   io.posY := yPos
