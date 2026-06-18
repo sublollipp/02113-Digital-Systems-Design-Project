@@ -65,8 +65,8 @@ class CarVelocityController extends Module {
         io.newXPos := nextX
       }
 
-      when(nextY < 0.S) {
-        io.newYPos := 0.S
+      when(nextY < 64.S) {
+        io.newYPos := 64.S
       }.elsewhen(nextY > 928.S) { // 960 - 32
         io.newYPos := 928.S
       }.otherwise {
