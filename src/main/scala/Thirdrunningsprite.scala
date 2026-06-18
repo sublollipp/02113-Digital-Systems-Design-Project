@@ -16,7 +16,7 @@ class ThirdrunningSprite extends Module {
     val shownSprite = Output(Vec(4, Bool()))
   })
 
-  val startX = 992.S(12.W)
+  val startX = 980.S(12.W)
   val startY = 256.S(11.W)
   val targetY = 384.S(11.W)
 
