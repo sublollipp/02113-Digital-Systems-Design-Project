@@ -32,7 +32,7 @@ class Pocket extends Module {
     when (rng.io.randomVal === 0.U) {
       item := shell
     }.elsewhen (rng.io.randomVal === 1.U) {
-      item := shell
+      item := shroom
     }
   }
 
