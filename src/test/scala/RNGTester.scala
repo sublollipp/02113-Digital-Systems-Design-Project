@@ -12,11 +12,11 @@ import org.scalatest.flatspec.AnyFlatSpec
 class RNGTester extends AnyFlatSpec with ChiselScalatestTester {
 
   "RNGTester" should "pass" in {
-    test(new RNG(2)) { dut =>
+    test(new RNG(5)) { dut =>
       println("Running the RNG Tester")
         dut.clock.setTimeout(0)
         val abc = new scala.util.Random
-        val counts: Array[Int] = Array(0, 0)
+        val counts: Array[Int] = Array(0, 0, 0, 0, 0)
         for (i <- 1 to 10000) {
           val clockDel = abc.nextInt(100)
           for (q <- 0 to clockDel) {
@@ -34,7 +34,7 @@ class RNGTester extends AnyFlatSpec with ChiselScalatestTester {
             print(chosenIdx)
           }
         }
-      for(i <- 0 to 1) {
+      for(i <- 0 to 4) {
         println("Index " + i + " was chosen " + counts(i) + " times.")
       }
 
