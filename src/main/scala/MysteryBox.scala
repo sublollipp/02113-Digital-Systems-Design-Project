@@ -5,7 +5,6 @@ class MysteryBox extends Module {
   val io = IO(new Bundle {
     val box = Input(Bool())
     val hit = Input(Bool())
-    val rand = Input(UInt(3.W))
     val frameUpdate = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
@@ -20,9 +19,9 @@ class MysteryBox extends Module {
   val yPosReg = RegInit(460.S(11.W))
   val hitReg = RegInit(true.B)
 
-  when(io.hit) {
+  when(io.hit && !hitReg) {
     hitReg := true.B
-    xPosReg := 3000.S // Removes opened box from screen
+    xPosReg := 2000.S // Removes opened box from screen
   }
 
   val hitboxOffsetX = 4.S(12.W)
@@ -38,24 +37,24 @@ class MysteryBox extends Module {
 
   when (io.frameUpdate) {
     when (hitReg) {
-      clockDivReg := clockDivReg + 1.U
+     clockDivReg := clockDivReg + 1.U
     }
-    when (clockDivReg === 600.U) {
+    when (clockDivReg >= 600.U) {
       clockDivReg := 0.U
       hitReg := false.B
       when (rng.io.randomVal === 0.U) {
-        xPosReg := 32.S
-        yPosReg := 32.S
-      } .elsewhen (rng.io.randomVal === 1.U) {
-        xPosReg := 64.S
-        yPosReg := 64.S
-      } .elsewhen (rng.io.randomVal === 2.U) {
+        xPosReg := 192.S
+        yPosReg := 192.S
+      }.elsewhen (rng.io.randomVal === 1.U) {
+        xPosReg := 224.S
+        yPosReg := 224.S
+      }.elsewhen (rng.io.randomVal === 2.U) {
         xPosReg := 96.S
         yPosReg := 96.S
-      } .elsewhen (rng.io.randomVal === 3.U) {
+      }.elsewhen (rng.io.randomVal === 3.U) {
         xPosReg := 128.S
         yPosReg := 128.S
-      } .otherwise {
+      }.otherwise {
         xPosReg := 160.S
         yPosReg := 160.S
       }
