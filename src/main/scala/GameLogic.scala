@@ -56,6 +56,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val car = Module(new Car)
 
+  val shell = Module(new Shell)
+
   val pocket = Module(new Pocket)
   pocket.io.useBtn := false.B
   pocket.io.frameUpdate := false.B
@@ -63,15 +65,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   pocket.io.carPosY := 0.S
   pocket.io.carAngle := 0.U
   pocket.io.hitMysteryBox := false.B
+  pocket.io.shellOnScreen := shell.io.visible
+  pocket.io.resetGame := false.B
 
   val firstInput = RegInit(false.B)
 
   when(io.btnU || io.btnD || io.btnL || io.btnR) {
     firstInput := true.B
   }
-
-  val mysteryBox = Module(new MysteryBox)
-
 
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
@@ -114,8 +115,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
   )
-
-  val shell = Module(new Shell)
 
   val aiRouteRng = Module(new RNG(3))
 
@@ -515,7 +514,6 @@ when(carCollision.io.collision) {
 }
 
 // Mystery Box
-val mysteryBox = Module(new MysteryBox)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
