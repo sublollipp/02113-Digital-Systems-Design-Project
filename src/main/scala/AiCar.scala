@@ -203,6 +203,12 @@ val checkpointY3 = VecInit(
 
   val spriteController = Module(new RotatingSpriteController(Array(63, 0, 1, 15, 17, 31, 33, 47, 49)))
 
+  val desiredAngleReg = RegInit(48.U(6.W))
+
+  when(io.update) {
+    desiredAngleReg := newDesiredRaw
+  }
+
   // History of last 3 requested angles (most recent at index 0)
   val angleHist = RegInit(VecInit(Seq.fill(3)(48.U(6.W))))
 
@@ -210,7 +216,7 @@ val checkpointY3 = VecInit(
   when(io.update) {
     angleHist(2) := angleHist(1)
     angleHist(1) := angleHist(0)
-    angleHist(0) := newDesiredRaw
+    angleHist(0) := desiredAngleReg
   }
 
   // Majority vote among the three history entries. If no majority, keep previous angle.
