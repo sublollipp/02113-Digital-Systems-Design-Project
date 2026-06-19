@@ -20,6 +20,7 @@ class Car extends Module{
     val boostSpeed = Input(SInt(11.W))
     val debugLed = Output(Bool())
     val angleOut = Output(UInt(6.W))
+    val updateDone = Output(Bool())
   })
 
   val xPosReg = RegInit(160.S(12.W))
@@ -66,6 +67,7 @@ class Car extends Module{
   velControl.io.frameUpdate := io.update
   xPosReg := velControl.io.newXPos
   yPosReg := velControl.io.newYPos
+  io.updateDone := velControl.io.updateDone && speedControl.io.updateDone && angleControl.io.updateDone
 
   val spriteControl = Module(new RotatingSpriteController)
   spriteControl.io.angle := angle

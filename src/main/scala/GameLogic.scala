@@ -377,7 +377,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   switch(stateReg) {
     is(idle) {
-      when(io.newFrame) {
+      when(io.newFrame && car.io.updateDone) {
         stateReg := compute1
       }
     }

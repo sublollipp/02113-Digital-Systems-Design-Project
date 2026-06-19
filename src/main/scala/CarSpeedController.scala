@@ -14,6 +14,7 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     val boostFrames = Input(UInt(10.W))
     val speed = Output(SInt(11.W))
     val debugLed = Output(Bool())
+    val updateDone = Output(Bool())
   })
 
   val boost = io.colBoost || io.shroomBoost
@@ -38,8 +39,13 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
 
   io.debugLed := debugLed
 
+  val boostLogicDone = WireDefault(false.B)
+
+  io.updateDone := boostLogicDone
+
   switch (state) {
     is (idle) {
+      boostLogicDone := true.B
       when (io.shroomBoost) {
         state := boosting
       }.elsewhen(io.colBoost) {
@@ -101,6 +107,7 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     }
     is (boosting) {
       speed := boostSpeed
+      boostLogicDone := true.B
       when(io.frameUpdate) {
         boostFrameCount := boostFrameCount - 1.U
         when(io.shroomBoost) {
@@ -118,6 +125,7 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     }
     is (collided) {
       speed := boostSpeed
+      boostLogicDone := true.B
       when(io.frameUpdate) {
         boostFrameCount := boostFrameCount - 1.U
         when(io.shroomBoost) {

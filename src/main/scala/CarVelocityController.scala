@@ -10,6 +10,7 @@ class CarVelocityController extends Module {
     val oldYPos = Input(SInt(11.W))
     val newXPos = Output(SInt(12.W))
     val newYPos = Output(SInt(11.W))
+    val updateDone = Output(Bool())
   })
 
   val xRemainder = RegInit(0.S(12.W))
@@ -44,8 +45,11 @@ class CarVelocityController extends Module {
   val nextX = io.oldXPos + (accumX >> 7).asSInt
   val nextY = io.oldYPos + (accumY >> 7).asSInt
 
+  io.updateDone := false.B
+
   switch (state) {
     is (idle) {
+      io.updateDone := true.B
       when (io.frameUpdate) {
         state := computeSpeed
       }
