@@ -515,6 +515,7 @@ when(carCollision.io.collision) {
 }
 
 // Mystery Box
+val mysteryBox = Module(new MysteryBox)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
