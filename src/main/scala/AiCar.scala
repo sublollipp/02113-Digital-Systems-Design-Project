@@ -174,10 +174,20 @@ val checkpointY3 = VecInit(
     }
   }
 
-  val dx = targetX - aiX
-  val dy = targetY - aiY
+  val racingOffset = WireDefault(0.S(12.W))
 
-  val racingOffset = WireDefault(0.S(8.W))
+  val targetXReg = RegInit(0.S(12.W))
+  val targetYReg = RegInit(0.S(11.W))
+
+  targetXReg := targetX
+  targetYReg := targetY
+
+  val dx = targetXReg - aiX
+  val dy = targetYReg - aiY
+
+  val adjustedDx = (targetXReg + racingOffset) - aiX
+  val adjustedDy = targetYReg - aiY
+
 
   val aiFlipH = WireDefault(false.B)
   val aiFlipV = WireDefault(false.B)
@@ -188,9 +198,6 @@ val checkpointY3 = VecInit(
   newDesiredRaw := aiAngle
 
   val aiVel = Module(new CarVelocityController)
-
-  val adjustedDx = (targetX + racingOffset) - aiX
-  val adjustedDy = targetY - aiY
 
   val absDx = Mux(adjustedDx < 0.S, -adjustedDx, adjustedDx)
   val absDy = Mux(adjustedDy < 0.S, -adjustedDy, adjustedDy)
