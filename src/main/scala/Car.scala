@@ -1,6 +1,7 @@
 import chisel3._
 import chisel3.util._
 
+// Top-level module for the player-controlled car
 class Car extends Module{
   val io = IO(new Bundle {
     val btnUp = Input(Bool())

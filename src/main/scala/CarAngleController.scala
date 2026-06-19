@@ -1,6 +1,7 @@
 import chisel3._
 import chisel3.util._
 
+// Controlling the angle of the player-controlled car
 class CarAngleController(framesPerAngleChange: Int) extends Module{
   val io = IO(new Bundle {
     val btnLeft = Input(Bool())

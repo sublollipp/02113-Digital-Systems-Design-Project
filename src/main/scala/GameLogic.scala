@@ -51,7 +51,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   // Game Logic
 
-  val idle :: compute1 :: done :: Nil = Enum(3)
+  val idle :: game :: startSplash :: done :: Nil = Enum(4)
   val stateReg = RegInit(idle)
 
   val car = Module(new Car)
@@ -381,14 +381,16 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   car.io.update := false.B
 
+  val onSplash = RegInit(true.B)
+
   switch(stateReg) {
     is(idle) {
-      when(io.newFrame && car.io.updateDone) {
-        stateReg := compute1
+      when(io.newFrame) {
+        stateReg := game
       }
     }
 
-  is(compute1) {
+  is(game) {
 
     pocket.io.frameUpdate := true.B
 
@@ -408,10 +410,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     stateReg := done
   }
 
+    is(startSplash) {
+      for(i <- 0 to 31) {
+        io.spriteVisible(i) := false.B
+      }
+    }
+
 
   is(done) {
-    io.frameUpdateDone := true.B
-    stateReg := idle
+    when (car.io.updateDone) {
+      io.frameUpdateDone := true.B
+      stateReg := idle
+    }
   }
 }
 

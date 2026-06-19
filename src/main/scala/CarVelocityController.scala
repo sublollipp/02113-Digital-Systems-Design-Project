@@ -1,6 +1,8 @@
 import chisel3._
 import chisel3.util._
 
+// Converts the angle and speed of the cars into new x and y positions
+// Manages coordinate conversion as well as sub-pixel speed utilization
 class CarVelocityController extends Module {
   val io = IO(new Bundle {
     val speed = Input(SInt(11.W))

@@ -1,6 +1,7 @@
 import chisel3._
 import chisel3.util._
 
+// Manages player car acceleration, mushroom boost, speed change when colliding with RunningSprites, deceleration and offroad speed
 class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int, maxSpeed: Int, minSpeed: Int, offRoadMaxSpeed: Int, frictionCoef: Int) extends Module {
   val io = IO(new Bundle {
     val btnFwd = Input(Bool())
@@ -16,8 +17,6 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     val debugLed = Output(Bool())
     val updateDone = Output(Bool())
   })
-
-  val boost = io.colBoost || io.shroomBoost
 
   val speed = RegInit(0.S(11.W))
 

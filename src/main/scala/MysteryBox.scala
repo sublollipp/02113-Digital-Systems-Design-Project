@@ -1,6 +1,7 @@
 import chisel3._
 import chisel3.util._
 
+// Spawning the mystery box random places around the track
 class MysteryBox extends Module {
   val io = IO(new Bundle {
     val box = Input(Bool())
