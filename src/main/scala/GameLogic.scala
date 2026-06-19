@@ -163,6 +163,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   shell.io.startAngle := car.io.angleOut
   shell.io.frameUpdate := frameUpdateReg
+  pocket.io.shellOnScreen := shell.io.visible
+  pocket.io.resetGame := false.B
 
   shell.io.playerX := car.io.posX
   shell.io.playerY := car.io.posY
@@ -522,7 +524,6 @@ val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 
 mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
-mysteryBox.io.rand := 0.U
 mysteryBox.io.frameUpdate := false.B
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
