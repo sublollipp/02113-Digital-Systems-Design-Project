@@ -44,20 +44,20 @@ class MysteryBox extends Module {
       clockDivReg := 0.U
       hitReg := false.B
       when (rng.io.randomVal === 0.U) {
-        xPosReg := 192.S
-        yPosReg := 192.S
+        xPosReg := 288.S
+        yPosReg := 160.S
       }.elsewhen (rng.io.randomVal === 1.U) {
-        xPosReg := 224.S
-        yPosReg := 224.S
+        xPosReg := 768.S
+        yPosReg := 160.S
       }.elsewhen (rng.io.randomVal === 2.U) {
-        xPosReg := 96.S
-        yPosReg := 96.S
+        xPosReg := 1408.S
+        yPosReg := 384.S
       }.elsewhen (rng.io.randomVal === 3.U) {
-        xPosReg := 128.S
-        yPosReg := 128.S
+        xPosReg := 640.S
+        yPosReg := 800.S
       }.otherwise {
         xPosReg := 160.S
-        yPosReg := 160.S
+        yPosReg := 460.S
       }
     }
   }
