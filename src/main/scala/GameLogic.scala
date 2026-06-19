@@ -70,6 +70,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     firstInput := true.B
   }
 
+  val mysteryBox = Module(new MysteryBox)
+
 
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
@@ -117,6 +119,12 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val aiRouteRng = Module(new RNG(3))
 
+  val resetGame = Module(new ResetGame)
+
+  resetGame.io.btnC := io.btnC
+  resetGame.io.hasShell := pocket.io.showShell
+  resetGame.io.hasShroom := pocket.io.showShroom
+
   val playerHitPulse = shell.io.hitPlayer
 
 
@@ -132,7 +140,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   aiCar.io.resetSpeed := false.B
 
   pocket.io.useBtn := io.btnC
-  pocket.io.resetGame := false.B
 
   shell.io.spawn := pocket.io.useShell
 
@@ -483,7 +490,14 @@ io.spriteFlipHorizontal(21) := runningSprite2.io.flipH
 io.spriteFlipVertical(21) := runningSprite2.io.flipV
 io.spriteVisible(21) := runningSprite2.io.shownSprite(3)
 
-// slot 30 and 31 are the third running sprite alternates
+// slot 25 is the third running sprite before it is hit
+io.spriteXPosition(25) := runningSprite3.io.posX - cameraX
+io.spriteYPosition(25) := runningSprite3.io.posY - cameraY
+io.spriteFlipHorizontal(25) := runningSprite3.io.flipH
+io.spriteFlipVertical(25) := runningSprite3.io.flipV
+io.spriteVisible(25) := runningSprite3.io.shownSprite(2)
+
+// slot 30 and 31 are the third running sprite alternates after hit
 io.spriteXPosition(30) := runningSprite3.io.posX - cameraX
 io.spriteYPosition(30) := runningSprite3.io.posY - cameraY
 io.spriteFlipHorizontal(30) := runningSprite3.io.flipH
@@ -501,6 +515,7 @@ when(carCollision.io.collision) {
 }
 
 // Mystery Box
+val mysteryBox = Module(new MysteryBox)
 
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
@@ -513,7 +528,6 @@ mysteryBox.io.box := false.B
 mysteryBox.io.hit := mysteryBoxHit
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
-  pocket.io.shellOnScreen := shell.io.visible
 
 io.spriteXPosition(24) := 8.S
 io.spriteYPosition(24) := 8.S
