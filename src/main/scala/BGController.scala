@@ -5,12 +5,25 @@ class BGController extends Module {
   val io = IO(new Bundle {
     val showSplash = Input(Bool()) // show___ switches background on a rising edge
     val showGame = Input(Bool())
-    val anyPlayerInput = Input(Bool())
     val backBufferWriteData = Output(UInt(6.W))
     val backBufferWriteAddress = Output(UInt(11.W))
     val backBufferWriteEnable = Output(Bool())
     val bgUpdateDone = Output(Bool())
   })
+
+  val gameBackBufferMemory = Module(new Memory(log2Up(1300), 11, "memory_init/game_backbuffer_init.mem"))
+  val splashBackBufferMemory = Module(new Memory(log2Up(1300), 11, "memory_init/backbuffer_init.mem"))
+
+  splashBackBufferMemory.io.address := 0.U
+  gameBackBufferMemory.io.address := 0.U
+  splashBackBufferMemory.io.enable := false.B
+  gameBackBufferMemory.io.enable := false.B
+  splashBackBufferMemory.io.writeEnable := false.B
+  gameBackBufferMemory.io.writeEnable := false.B
+  splashBackBufferMemory.io.dataWrite := 0.U
+  gameBackBufferMemory.io.dataWrite := 0.U
+
+
 
   val showSplash = io.showSplash
   val showGame = io.showGame && !showSplash
@@ -21,6 +34,11 @@ class BGController extends Module {
   val updateTile = RegInit(false.B)
 
   val state = RegInit(splash)
+
+  io.bgUpdateDone := false.B
+  io.backBufferWriteEnable := false.B
+  io.backBufferWriteData := 0.U
+  io.backBufferWriteAddress := 0.U
 
   switch (state) {
     is (splash) {
@@ -38,9 +56,33 @@ class BGController extends Module {
     is (goingToSplash) {
       when (updateTile) {
         currentTile := currentTile + 1.U
+        io.backBufferWriteEnable := true.B
+      }
+      when (currentTile === 1199.U) {
+        state := splash
+        io.bgUpdateDone := true.B
+        currentTile := 0.U
       }
       io.backBufferWriteAddress := currentTile
-      io.backBufferWriteData
+      splashBackBufferMemory.io.enable := true.B
+      splashBackBufferMemory.io.address := currentTile
+      io.backBufferWriteData := splashBackBufferMemory.io.dataRead
+      updateTile := !updateTile
+    }
+    is (goingToGame) {
+      when (updateTile) {
+        currentTile := currentTile + 1.U
+        io.backBufferWriteEnable := true.B
+      }
+      when (currentTile === 1199.U) {
+        state := game
+        io.bgUpdateDone := true.B
+        currentTile := 0.U
+      }
+      gameBackBufferMemory.io.enable := true.B
+      io.backBufferWriteAddress := currentTile
+      gameBackBufferMemory.io.address := currentTile
+      io.backBufferWriteData := gameBackBufferMemory.io.dataRead
       updateTile := !updateTile
     }
   }

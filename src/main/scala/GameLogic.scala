@@ -34,12 +34,18 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.led := Seq.fill(8)(false.B)
 
+  val spriteVisible = WireDefault(VecInit.fill(32)(false.B))
+
+  val hideAllSprites = WireDefault(false.B)
 
   io.spriteXPosition := Seq.fill(SpriteNumber)(0.S)
   io.spriteYPosition := Seq.fill(SpriteNumber)(0.S)
-  io.spriteVisible := Seq.fill(SpriteNumber)(false.B)
   io.spriteFlipHorizontal := Seq.fill(SpriteNumber)(false.B)
   io.spriteFlipVertical := Seq.fill(SpriteNumber)(false.B)
+
+  for (i <- 0 to 31) {
+    io.spriteVisible(i) := spriteVisible(i) && !hideAllSprites
+  }
 
   io.backBufferWriteData := 0.U
   io.backBufferWriteAddress := 0.U
@@ -50,9 +56,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
 
   // Game Logic
-
-  val idle :: game :: startSplash :: done :: Nil = Enum(4)
-  val stateReg = RegInit(idle)
 
   val car = Module(new Car)
 
@@ -195,7 +198,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.spriteXPosition(22) := shell.io.posX - cameraX
   io.spriteYPosition(22) := shell.io.posY - cameraY
-  io.spriteVisible(22) := shell.io.visible
+  spriteVisible(22) := shell.io.visible
 
   io.spriteFlipHorizontal(22) := false.B
   io.spriteFlipVertical(22) := false.B
@@ -226,7 +229,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(11) := 536.S
   io.spriteYPosition(11) := 8.S
 
-  io.spriteVisible(11) := lapDisplay.io.show1
+  spriteVisible(11) := lapDisplay.io.show1
 
   io.spriteFlipHorizontal(11) := false.B
   io.spriteFlipVertical(11) := false.B
@@ -234,7 +237,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(12) := 536.S
   io.spriteYPosition(12) := 8.S
 
-  io.spriteVisible(12) := lapDisplay.io.show2
+  spriteVisible(12) := lapDisplay.io.show2
 
   io.spriteFlipHorizontal(12) := false.B
   io.spriteFlipVertical(12) := false.B
@@ -242,7 +245,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(13) := 536.S
   io.spriteYPosition(13) := 8.S
 
-  io.spriteVisible(13) := lapDisplay.io.show3
+  spriteVisible(13) := lapDisplay.io.show3
 
   io.spriteFlipHorizontal(13) := false.B
   io.spriteFlipVertical(13) := false.B
@@ -250,7 +253,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(15) := 568.S
   io.spriteYPosition(15) := 8.S
 
-  io.spriteVisible(15) := true.B
+  spriteVisible(15) := true.B
 
   io.spriteFlipHorizontal(15) := false.B
   io.spriteFlipVertical(15) := false.B
@@ -259,7 +262,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(16) := 600.S
   io.spriteYPosition(16) := 8.S
 
-  io.spriteVisible(16) := true.B
+  spriteVisible(16) := true.B
 
   io.spriteFlipHorizontal(16) := false.B
   io.spriteFlipVertical(16) := false.B
@@ -269,7 +272,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(17) := 304.S
   io.spriteYPosition(17) := 20.S
 
-  io.spriteVisible(17) :=
+  spriteVisible(17) :=
     startLight.io.visible &&
     startLight.io.showRed
 
@@ -282,7 +285,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(18) := 304.S
   io.spriteYPosition(18) := 20.S
 
-  io.spriteVisible(18) :=
+  spriteVisible(18) :=
     startLight.io.visible &&
     startLight.io.showYellow
 
@@ -295,7 +298,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(19) := 304.S
   io.spriteYPosition(19) := 20.S
 
-  io.spriteVisible(19) :=
+  spriteVisible(19) :=
     startLight.io.visible &&
     startLight.io.showGreen
 
@@ -336,7 +339,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(10) := false.B
   io.spriteFlipVertical(10) := false.B
 
-  io.spriteVisible(10) := crashReg
+  spriteVisible(10) := crashReg
 
   aiCar.io.update := false.B
 
@@ -349,9 +352,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(7) := aiCar.io.posX - cameraX
   io.spriteYPosition(7) := aiCar.io.posY - cameraY
 
-  io.spriteVisible(4) := aiCar.io.spriteOH_UDR(0)
-  io.spriteVisible(6) := aiCar.io.spriteOH_UDR(1)
-  io.spriteVisible(7) := aiCar.io.spriteOH_UDR(2)
+  spriteVisible(4) := aiCar.io.spriteOH_UDR(0)
+  spriteVisible(6) := aiCar.io.spriteOH_UDR(1)
+  spriteVisible(7) := aiCar.io.spriteOH_UDR(2)
 
   io.spriteFlipHorizontal(4) := aiCar.io.flipH
   io.spriteFlipHorizontal(6) := aiCar.io.flipH
@@ -374,13 +377,25 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteYPosition(1) := car.io.posY - cameraY
   io.spriteYPosition(2) := car.io.posY - cameraY
 
-  io.spriteVisible(0) := car.io.shownSprite(0)
-  io.spriteVisible(1) := car.io.shownSprite(1)
-  io.spriteVisible(2) := car.io.shownSprite(2)
+  spriteVisible(0) := car.io.shownSprite(0)
+  spriteVisible(1) := car.io.shownSprite(1)
+  spriteVisible(2) := car.io.shownSprite(2)
 
   car.io.update := false.B
 
   val onSplash = RegInit(true.B)
+
+  val bgController = Module(new BGController)
+  bgController.io.showGame := !onSplash
+  bgController.io.showSplash := onSplash
+  io.backBufferWriteData := bgController.io.backBufferWriteData
+  io.backBufferWriteAddress := bgController.io.backBufferWriteAddress
+  io.backBufferWriteEnable := bgController.io.backBufferWriteEnable
+
+  val doneUpdatingBG = bgController.io.bgUpdateDone
+
+  val idle :: game :: startSplash :: done :: Nil = Enum(4)
+  val stateReg = RegInit(startSplash)
 
   switch(stateReg) {
     is(idle) {
@@ -411,8 +426,15 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   }
 
     is(startSplash) {
+      hideAllSprites := true.B
       for(i <- 0 to 31) {
-        io.spriteVisible(i) := false.B
+        spriteVisible(i) := false.B
+      }
+      when (io.btnU || io.btnC || io.btnD || io.btnR || io.btnL) {
+        onSplash := false.B
+      }
+      when (!onSplash && doneUpdatingBG) {
+        stateReg := idle
       }
     }
 
@@ -476,48 +498,48 @@ io.spriteXPosition(3) := runningSprite.io.posX - cameraX
 io.spriteYPosition(3) := runningSprite.io.posY - cameraY
 io.spriteFlipHorizontal(3) := runningSprite.io.flipH
 io.spriteFlipVertical(3) := runningSprite.io.flipV
-io.spriteVisible(3) := runningSprite.io.shownSprite(2)
+spriteVisible(3) := runningSprite.io.shownSprite(2)
 
 // slot 5 shows the hit version of the running sprite
 io.spriteXPosition(5) := runningSprite.io.posX - cameraX
 io.spriteYPosition(5) := runningSprite.io.posY - cameraY
 io.spriteFlipHorizontal(5) := runningSprite.io.flipH
 io.spriteFlipVertical(5) := runningSprite.io.flipV
-io.spriteVisible(5) := runningSprite.io.shownSprite(3)
+spriteVisible(5) := runningSprite.io.shownSprite(3)
 
 // slot 20 is the second running sprite
 io.spriteXPosition(20) := runningSprite2.io.posX - cameraX
 io.spriteYPosition(20) := runningSprite2.io.posY - cameraY
 io.spriteFlipHorizontal(20) := runningSprite2.io.flipH
 io.spriteFlipVertical(20) := runningSprite2.io.flipV
-io.spriteVisible(20) := runningSprite2.io.shownSprite(2)
+spriteVisible(20) := runningSprite2.io.shownSprite(2)
 
 // slot 21 is the second running sprite hit version
 io.spriteXPosition(21) := runningSprite2.io.posX - cameraX
 io.spriteYPosition(21) := runningSprite2.io.posY - cameraY
 io.spriteFlipHorizontal(21) := runningSprite2.io.flipH
 io.spriteFlipVertical(21) := runningSprite2.io.flipV
-io.spriteVisible(21) := runningSprite2.io.shownSprite(3)
+spriteVisible(21) := runningSprite2.io.shownSprite(3)
 
 // slot 25 is the third running sprite before it is hit
 io.spriteXPosition(25) := runningSprite3.io.posX - cameraX
 io.spriteYPosition(25) := runningSprite3.io.posY - cameraY
 io.spriteFlipHorizontal(25) := runningSprite3.io.flipH
 io.spriteFlipVertical(25) := runningSprite3.io.flipV
-io.spriteVisible(25) := runningSprite3.io.shownSprite(2)
+spriteVisible(25) := runningSprite3.io.shownSprite(2)
 
 // slot 30 and 31 are the third running sprite alternates after hit
 io.spriteXPosition(30) := runningSprite3.io.posX - cameraX
 io.spriteYPosition(30) := runningSprite3.io.posY - cameraY
 io.spriteFlipHorizontal(30) := runningSprite3.io.flipH
 io.spriteFlipVertical(30) := runningSprite3.io.flipV
-io.spriteVisible(30) := runningSprite3.io.shownSprite(0)
+spriteVisible(30) := runningSprite3.io.shownSprite(0)
 
 io.spriteXPosition(31) := runningSprite3.io.posX - cameraX
 io.spriteYPosition(31) := runningSprite3.io.posY - cameraY
 io.spriteFlipHorizontal(31) := runningSprite3.io.flipH
 io.spriteFlipVertical(31) := runningSprite3.io.flipV
-io.spriteVisible(31) := runningSprite3.io.shownSprite(1)
+spriteVisible(31) := runningSprite3.io.shownSprite(1)
 
 when(carCollision.io.collision) {
   crashReg := true.B
@@ -541,7 +563,7 @@ pocket.io.hitMysteryBox := mysteryBoxHitRising
 io.spriteXPosition(24) := 8.S
 io.spriteYPosition(24) := 8.S
 
-io.spriteVisible(24) := pocket.io.showShell
+spriteVisible(24) := pocket.io.showShell
 
 io.spriteFlipHorizontal(24) := false.B
 io.spriteFlipVertical(24) := false.B
@@ -549,7 +571,7 @@ io.spriteFlipVertical(24) := false.B
 io.spriteXPosition(23) := 8.S
 io.spriteYPosition(23) := 8.S
 
-io.spriteVisible(23) := pocket.io.showShroom
+spriteVisible(23) := pocket.io.showShroom
 
 io.spriteFlipHorizontal(23) := false.B
 io.spriteFlipVertical(23) := false.B
@@ -558,7 +580,7 @@ io.spriteXPosition(14) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
 io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
-io.spriteVisible(14) := mysteryBox.io.shownSprite
+spriteVisible(14) := mysteryBox.io.shownSprite
 
 io.led(0) := winCondition.io.checkpointHit
 io.led(1) := winCondition.io.finishHit
