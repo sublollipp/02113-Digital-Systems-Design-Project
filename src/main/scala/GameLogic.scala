@@ -52,7 +52,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.backBufferWriteEnable := false.B
 
   io.frameUpdateDone := false.B
-  val frameUpdateReg = RegNext(io.newFrame, false.B)
+  val updateFrame = WireDefault(false.B)
 
 
   // Game Logic
@@ -132,7 +132,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   car.io.resetSpeed := playerHitPulse
 
-  aiRouteRng.io.frameUpdate := frameUpdateReg
+  aiRouteRng.io.frameUpdate := updateFrame
 
   aiCar.io.routeSelect := aiRouteRng.io.randomVal(1,0)
 
@@ -165,7 +165,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   shell.io.startY := carCenterY + spawnOffsetY - 16.S
 
   shell.io.startAngle := car.io.angleOut
-  shell.io.frameUpdate := frameUpdateReg
+  shell.io.frameUpdate := updateFrame
   pocket.io.shellOnScreen := shell.io.visible
   pocket.io.resetGame := false.B
 
@@ -181,7 +181,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     playerStun := 120.U
   }
 
-    when(frameUpdateReg && playerStun =/= 0.U) {
+    when(updateFrame && playerStun =/= 0.U) {
     playerStun := playerStun - 1.U
   }
 
@@ -192,7 +192,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       aiCar.io.resetSpeed := true.B
     }
 
-    when(frameUpdateReg && aiStun =/= 0.U) {
+    when(updateFrame && aiStun =/= 0.U) {
       aiStun := aiStun - 1.U
     }
 
@@ -203,7 +203,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(22) := false.B
   io.spriteFlipVertical(22) := false.B
 
-  startLight.io.update := frameUpdateReg
+  startLight.io.update := updateFrame
 
     val carCollision = Module(new CarCollision)
 
@@ -397,6 +397,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val idle :: game :: startSplash :: done :: Nil = Enum(4)
   val stateReg = RegInit(startSplash)
 
+  /////////
+  // FSM //
+  /////////
   switch(stateReg) {
     is(idle) {
       when(io.newFrame) {
@@ -407,6 +410,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   is(game) {
 
     pocket.io.frameUpdate := true.B
+
+    updateFrame := true.B
 
     when(startLight.io.raceStarted &&
         !winCondition.io.gameWon &&
@@ -427,9 +432,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     is(startSplash) {
       hideAllSprites := true.B
-      for(i <- 0 to 31) {
-        spriteVisible(i) := false.B
-      }
       when (io.btnU || io.btnC || io.btnD || io.btnR || io.btnL) {
         onSplash := false.B
       }
@@ -449,14 +451,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
 // running sprite and hit-sprite wiring
 val runningSprite = Module(new RunningSprite)
-runningSprite.io.update := frameUpdateReg
+runningSprite.io.update := updateFrame
 
 val runningSprite2 = Module(new SecondrunningSprite)
-runningSprite2.io.update := frameUpdateReg
+runningSprite2.io.update := updateFrame
 runningSprite2.io.hit := false.B
 
 val runningSprite3 = Module(new ThirdrunningSprite)
-runningSprite3.io.update := frameUpdateReg
+runningSprite3.io.update := updateFrame
 
 val carWidth = 32.S(12.W)
 val carHeight = 32.S(11.W)
