@@ -390,6 +390,10 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val doneUpdatingBG = bgController.io.bgUpdateDone
 
+  val startupCounter = RegInit(0.U(4.W))
+  val startcountOver = RegInit(false.B)
+  val readyForStartup = RegInit(false.B)
+
   val idle :: game :: startSplash :: splashIdle :: done :: startSplashUpdateDone :: Nil = Enum(6)
   val stateReg = RegInit(startSplash)
 
@@ -436,7 +440,21 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     is(startSplash) {
       hideAllSprites := true.B
       updateRNG := true.B
-      when (io.btnU || io.btnC || io.btnD || io.btnR || io.btnL) {
+      when (!readyForStartup) {
+        when(!startcountOver) {
+          startupCounter := startupCounter + 1.U
+          when(startupCounter === 10.U) {
+            startcountOver := true.B
+          }
+        }
+        // Ignoring inputs held on power-on to prevent RNG manip
+        when(startcountOver) {
+          when(!io.btnU && !io.btnC && !io.btnD && !io.btnL && !io.btnR) {
+            readyForStartup := true.B
+          }
+        }
+      }
+      when ((io.btnU || io.btnC || io.btnD || io.btnR || io.btnL) && readyForStartup) {
         onSplash := false.B
       }
       when (!onSplash && doneUpdatingBG) {
