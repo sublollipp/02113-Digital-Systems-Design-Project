@@ -53,6 +53,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   io.frameUpdateDone := false.B
   val updateFrame = WireDefault(false.B)
+  val updateRNG = WireDefault(false.B)
 
 
   // Game Logic
@@ -120,8 +121,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val shell = Module(new Shell)
 
-  val aiRouteRng = Module(new RNG(3))
-
   val resetGame = Module(new ResetGame)
 
   resetGame.io.btnC := io.btnC
@@ -131,10 +130,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val playerHitPulse = shell.io.hitPlayer
 
   car.io.resetSpeed := playerHitPulse
-
-  aiRouteRng.io.frameUpdate := updateFrame
-
-  aiCar.io.routeSelect := aiRouteRng.io.randomVal(1,0)
 
   aiCar.io.resetSpeed := false.B
 
@@ -341,7 +336,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   spriteVisible(10) := crashReg
 
-  aiCar.io.update := false.B
+  aiCar.io.updateFrame := false.B
+  aiCar.io.updateRNG := updateRNG
 
   io.spriteXPosition(4) := aiCar.io.posX - cameraX
   io.spriteYPosition(4) := aiCar.io.posY - cameraY
@@ -394,7 +390,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val doneUpdatingBG = bgController.io.bgUpdateDone
 
-  val idle :: game :: startSplash :: done :: Nil = Enum(4)
+  val idle :: game :: startSplash :: splashIdle :: done :: startSplashUpdateDone :: Nil = Enum(6)
   val stateReg = RegInit(startSplash)
 
   /////////
@@ -412,32 +408,48 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     pocket.io.frameUpdate := true.B
 
     updateFrame := true.B
+    updateRNG := true.B
 
     when(startLight.io.raceStarted &&
         !winCondition.io.gameWon &&
         !crashReg) {
 
       car.io.update := playerStun === 0.U
-      aiCar.io.update := aiStun === 0.U
-      mysteryBox.io.frameUpdate := true.B
+      aiCar.io.updateFrame := aiStun === 0.U
 
     }.otherwise {
 
       car.io.update := false.B
-      aiCar.io.update := false.B
+      aiCar.io.updateFrame := false.B
     }
 
     stateReg := done
   }
 
+    is(splashIdle) {
+      hideAllSprites := true.B
+      when(io.newFrame) {
+        stateReg := startSplash
+      }
+    }
+
     is(startSplash) {
       hideAllSprites := true.B
+      updateRNG := true.B
       when (io.btnU || io.btnC || io.btnD || io.btnR || io.btnL) {
         onSplash := false.B
       }
       when (!onSplash && doneUpdatingBG) {
         stateReg := idle
+        io.frameUpdateDone := true.B
+      }.otherwise {
+        stateReg := startSplashUpdateDone
       }
+    }
+
+    is (startSplashUpdateDone) {
+      io.frameUpdateDone := true.B
+      stateReg := splashIdle
     }
 
 
@@ -556,9 +568,9 @@ val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxW
 val mysteryBoxHitPrev = RegNext(mysteryBoxHit, false.B)
 val mysteryBoxHitRising = mysteryBoxHit && !mysteryBoxHitPrev
 
-mysteryBox.io.box := false.B
+mysteryBox.io.rngUpdate := updateRNG
 mysteryBox.io.hit := mysteryBoxHit
-mysteryBox.io.frameUpdate := false.B
+mysteryBox.io.frameUpdate := updateFrame
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 

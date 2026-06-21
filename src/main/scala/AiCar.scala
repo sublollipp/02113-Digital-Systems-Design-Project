@@ -3,8 +3,8 @@ import chisel3.util._
 
 class AiCar extends Module{
   val io = IO(new Bundle {
-    val update = Input(Bool())
-    val routeSelect = Input(UInt(2.W))
+    val updateFrame = Input(Bool())
+    val updateRNG = Input(Bool())
     val resetSpeed = Input(Bool())
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
@@ -137,6 +137,11 @@ val checkpointY3 = VecInit(
 
   val currentCheckpoint = RegInit(0.U(6.W))
 
+  val aiRouteRng = Module(new RNG(3))
+
+  val routeSelect = aiRouteRng.io.randomVal(1,0)
+
+  aiRouteRng.io.frameUpdate := io.updateRNG
 
   val lookAhead = Mux(currentCheckpoint >= 47.U, currentCheckpoint + 4.U - 52.U, currentCheckpoint + 4.U)
 
@@ -206,21 +211,21 @@ val checkpointY3 = VecInit(
   aiVel.io.oldYPos := aiY
   aiVel.io.ang := aiAngle
   aiVel.io.speed := aiSpeed
-  aiVel.io.frameUpdate := io.update
+  aiVel.io.frameUpdate := io.updateFrame
 
   val spriteController = Module(new RotatingSpriteController(Array(63, 0, 1, 15, 17, 31, 33, 47, 49)))
 
   val desiredAngleReg = RegInit(48.U(6.W))
 
-  when(io.update) {
+  when(io.updateFrame) {
     desiredAngleReg := newDesiredRaw
   }
 
   // History of last 3 requested angles (most recent at index 0)
   val angleHist = RegInit(VecInit(Seq.fill(3)(48.U(6.W))))
 
-  // Shift history on frame update so we sample once per frame
-  when(io.update) {
+  // Shift history on frame updateFrame so we sample once per frame
+  when(io.updateFrame) {
     angleHist(2) := angleHist(1)
     angleHist(1) := angleHist(0)
     angleHist(0) := desiredAngleReg
@@ -254,7 +259,7 @@ val checkpointY3 = VecInit(
 
   // Drej gradvist mod målet
 
-  // Update aiAngle from votedAngle
+  // updateFrame aiAngle from votedAngle
   aiAngle := votedAngle
 
   // Determine raw desired angle based on direction to the target
@@ -284,7 +289,7 @@ val checkpointY3 = VecInit(
 
   // Accelerér
 
-  when(io.update) {
+  when(io.updateFrame) {
     when(aiSpeed < 400.S) {
       aiSpeed := aiSpeed + 3.S
     }
@@ -304,7 +309,7 @@ val checkpointY3 = VecInit(
 
       currentCheckpoint := 0.U
 
-      route := io.routeSelect
+      route := routeSelect
 
     }.otherwise {
       currentCheckpoint := currentCheckpoint + 1.U

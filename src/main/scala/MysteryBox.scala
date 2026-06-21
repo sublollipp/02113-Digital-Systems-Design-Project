@@ -4,7 +4,7 @@ import chisel3.util._
 // Spawning the mystery box random places around the track
 class MysteryBox extends Module {
   val io = IO(new Bundle {
-    val box = Input(Bool())
+    val rngUpdate = Input(Bool())
     val hit = Input(Bool())
     val frameUpdate = Input(Bool())
     val posX = Output(SInt(12.W))
@@ -34,7 +34,7 @@ class MysteryBox extends Module {
 
   val rng = Module(new RNG(5))
 
-  rng.io.frameUpdate := io.frameUpdate
+  rng.io.frameUpdate := io.rngUpdate
 
   when (io.frameUpdate) {
     when (hitReg) {
