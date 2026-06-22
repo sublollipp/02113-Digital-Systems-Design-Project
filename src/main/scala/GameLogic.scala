@@ -427,10 +427,10 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
                  (car.io.posY + carHeight > runningSprite.io.hitboxY)
 val runningHitPrev = RegNext(runningHit, false.B)
 val runningHitRising = runningHit && !runningHitPrev
-val shellHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
-                 (car.io.posX + shellWidth > runningSprite.io.hitboxX) &&
-                 (car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
-                 (car.io.posY + shellHeight > runningSprite.io.hitboxY)
+//val shellHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
+                 //(car.io.posX + shellWidth > runningSprite.io.hitboxX) &&
+                 //(car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
+                 //(car.io.posY + shellHeight > runningSprite.io.hitboxY)
 val shellHitPrev = RegNext(shellHitsRunningSprite, false.B)
 val shellHitRising = shellHitsRunningSprite && !shellHitPrev
 
