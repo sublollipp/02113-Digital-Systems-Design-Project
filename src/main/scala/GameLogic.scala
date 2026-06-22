@@ -411,20 +411,20 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(0) := car.io.posX - cameraX
   io.spriteXPosition(1) := car.io.posX - cameraX
   io.spriteXPosition(2) := car.io.posX - cameraX
-  io.spriteXPosition(26) := car.io.posX - cameraX
+  io.spriteXPosition(8) := car.io.posX - cameraX
   io.spriteXPosition(27) := car.io.posX - cameraX
 
   io.spriteYPosition(0) := car.io.posY - cameraY
   io.spriteYPosition(1) := car.io.posY - cameraY
   io.spriteYPosition(2) := car.io.posY - cameraY
-  io.spriteYPosition(26) := car.io.posY - cameraY
+  io.spriteYPosition(8) := car.io.posY - cameraY
   io.spriteYPosition(27) := car.io.posY - cameraY
 
   spriteVisible(0) := car.io.shownSprite(0)
   spriteVisible(1) := car.io.shownSprite(1)
   spriteVisible(2) := car.io.shownSprite(2)
-  spriteVisible(26) := car.io.shownSprite(3)
-  spriteVisible(27) := car.io.shownSprite(4)
+  spriteVisible(27) := car.io.shownSprite(3)
+  spriteVisible(8) := car.io.shownSprite(4)
 
   car.io.update := false.B
 

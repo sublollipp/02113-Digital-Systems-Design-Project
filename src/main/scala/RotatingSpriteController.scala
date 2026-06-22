@@ -15,8 +15,8 @@ class RotatingSpriteController(steps: Array[Int] = Array(62, 0, 1, 6, 9, 14, 17,
   val upSprite :: diagSprite :: rightSprite :: diagUpSprite :: diagSideSprite :: Nil = Enum(5)
 
   val dir = WireDefault(uu)
-  val flipSpriteH = RegInit(false.B)
-  val flipSpriteV = RegInit(false.B)
+  val flipSpriteH = WireDefault(false.B)
+  val flipSpriteV = WireDefault(false.B)
   val sprite = WireDefault(upSprite)
   val shownSprite = WireDefault(VecInit(true.B, false.B, false.B, false.B, false.B))
 
@@ -139,19 +139,12 @@ class RotatingSpriteController(steps: Array[Int] = Array(62, 0, 1, 6, 9, 14, 17,
     }
   }
 
-  shownSprite(0) := false.B
-  shownSprite(1) := false.B
-  shownSprite(2) := false.B
-  shownSprite(3) := false.B
-  shownSprite(4) := false.B
-
   switch(sprite) {
     is(upSprite) {
       shownSprite(0) := true.B
     }
     is(diagSprite) {
       shownSprite(1) := true.B
-
     }
     is(rightSprite) {
       shownSprite(2) := true.B
@@ -164,8 +157,8 @@ class RotatingSpriteController(steps: Array[Int] = Array(62, 0, 1, 6, 9, 14, 17,
     }
   }
 
-
   io.spriteOH_UDR := shownSprite
+
   io.flipH := flipSpriteH
   io.flipV := flipSpriteV
 }
