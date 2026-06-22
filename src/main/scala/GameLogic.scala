@@ -447,7 +447,14 @@ val shellHitsRunningSprite2 =
   (shell.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
   (shell.io.posY + shellSize > runningSprite2.io.hitboxY)
 
-  shell.io.hitObstacle := shellHitsRunningSprite || shellHitsRunningSprite2
+val shellHitsRunningSprite3 =
+  shell.io.visible &&
+  (shell.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.hitboxWidth.asSInt) &&
+  (shell.io.posX + shellSize > runningSprite3.io.hitboxX) &&
+  (shell.io.posY < runningSprite3.io.hitboxY + runningSprite3.io.hitboxHeight.asSInt) &&
+  (shell.io.posY + shellSize > runningSprite3.io.hitboxY)
+
+  shell.io.hitObstacle := shellHitsRunningSprite || shellHitsRunningSprite2 || shellHitsRunningSprite3
 
   // running sprite and hit-sprite wiring
 val carWidth = 32.S(12.W)
@@ -485,10 +492,16 @@ val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.h
                   (car.io.posY + carHeight > runningSprite3.io.hitboxY)
 val runningHit3Prev = RegNext(runningHit3, false.B)
 val runningHit3Rising = runningHit3 && !runningHit3Prev
+val shellHit3Pending = RegInit(false.B)
+when(shellHitsRunningSprite3) {
+  shellHit3Pending := true.B
+}.otherwise {
+  shellHit3Pending := false.B
+}
 
 runningSprite.io.hit := runningHit || shellHitsRunningSprite || shellHitPending
 runningSprite2.io.hit := runningHit2 || shellHitsRunningSprite2 || shellHit2Pending
-runningSprite3.io.hit := runningHit3
+runningSprite3.io.hit := runningHit3 || shellHitsRunningSprite3 || shellHit3Pending
 // Trigger car slow effect on running sprite hit
 car.io.colBoost := runningHitRising || runningHit2Rising || runningHit3Rising
 car.io.boostFrames := 30.U
