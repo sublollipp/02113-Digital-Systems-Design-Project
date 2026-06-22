@@ -50,7 +50,7 @@ class MysteryBox extends Module {
         xPosReg := 768.S
         yPosReg := 160.S
       }.elsewhen (rng.io.randomVal === 2.U) {
-        xPosReg := 1408.S
+        xPosReg := 1088.S
         yPosReg := 384.S
       }.elsewhen (rng.io.randomVal === 3.U) {
         xPosReg := 640.S
