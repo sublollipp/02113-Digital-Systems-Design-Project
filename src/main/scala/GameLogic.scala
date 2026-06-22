@@ -201,7 +201,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
     val carCollision = Module(new CarCollision)
 
-  raceTimer.io.start := firstInput
+  raceTimer.io.start := firstInput && startLight.io.raceStarted
   raceTimer.io.stop := winCondition.io.gameWon || carCollision.io.collision
 
   val display = Module(new SevenSegmentDisplay)
