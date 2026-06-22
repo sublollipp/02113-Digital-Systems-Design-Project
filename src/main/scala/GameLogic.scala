@@ -567,7 +567,8 @@ when(carCollision.io.collision) {
       when ((io.btnU || io.btnC || io.btnD || io.btnR || io.btnL) && readyForStartup) {
         onSplash := false.B
       }
-      when (!onSplash && doneUpdatingBG) {
+      // todo - && doneUpdatingBG
+      when (!onSplash) {
         stateReg := idle
         io.frameUpdateDone := true.B
       }.otherwise {

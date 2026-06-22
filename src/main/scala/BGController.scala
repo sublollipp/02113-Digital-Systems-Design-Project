@@ -74,7 +74,7 @@ class BGController extends Module {
         currentTile := currentTile + 1.U
         io.backBufferWriteEnable := true.B
       }
-      when (currentTile === 1199.U) {
+      when (currentTile >= 1199.U) {
         state := game
         io.bgUpdateDone := true.B
         currentTile := 0.U
