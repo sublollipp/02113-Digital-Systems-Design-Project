@@ -190,12 +190,36 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       aiStun := aiStun - 1.U
     }
 
+  val shellAnimCounter = RegInit(0.U(6.W))
+  val shellAnimToggle = RegInit(false.B)
+
+  when(updateFrame && shell.io.visible) {
+    when(shellAnimCounter === 14.U) {
+      shellAnimCounter := 0.U
+      shellAnimToggle := !shellAnimToggle
+    }.otherwise {
+      shellAnimCounter := shellAnimCounter + 1.U
+    }
+  }.elsewhen(!shell.io.visible) {
+    shellAnimCounter := 0.U
+    shellAnimToggle := false.B
+  }
+
+
   io.spriteXPosition(22) := shell.io.posX - cameraX
   io.spriteYPosition(22) := shell.io.posY - cameraY
-  spriteVisible(22) := shell.io.visible
+  spriteVisible(22) := shell.io.visible && !shellAnimToggle
 
   io.spriteFlipHorizontal(22) := false.B
   io.spriteFlipVertical(22) := false.B
+
+  io.spriteXPosition(24) := shell.io.posX - cameraX
+  io.spriteYPosition(24) := shell.io.posY - cameraY
+
+  spriteVisible(24) := shell.io.visible && shellAnimToggle
+
+  io.spriteFlipHorizontal(24) := false.B
+  io.spriteFlipVertical(24) := false.B
 
   startLight.io.update := updateFrame
 
@@ -416,7 +440,14 @@ val shellHitsRunningSprite =
   (shell.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
   (shell.io.posY + shellSize > runningSprite.io.hitboxY)
 
-  shell.io.hitObstacle := shellHitsRunningSprite
+val shellHitsRunningSprite2 =
+  shell.io.visible &&
+  (shell.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
+  (shell.io.posX + shellSize > runningSprite2.io.hitboxX) &&
+  (shell.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
+  (shell.io.posY + shellSize > runningSprite2.io.hitboxY)
+
+  shell.io.hitObstacle := shellHitsRunningSprite || shellHitsRunningSprite2
 
   // running sprite and hit-sprite wiring
 val carWidth = 32.S(12.W)
@@ -427,12 +458,13 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
                  (car.io.posY + carHeight > runningSprite.io.hitboxY)
 val runningHitPrev = RegNext(runningHit, false.B)
 val runningHitRising = runningHit && !runningHitPrev
-//val shellHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
-                 //(car.io.posX + shellWidth > runningSprite.io.hitboxX) &&
-                 //(car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
-                 //(car.io.posY + shellHeight > runningSprite.io.hitboxY)
-val shellHitPrev = RegNext(shellHitsRunningSprite, false.B)
-val shellHitRising = shellHitsRunningSprite && !shellHitPrev
+// Latch shell hit for 1 cycle so it bridges the shell deactivation gap
+val shellHitPending = RegInit(false.B)
+when(shellHitsRunningSprite) {
+  shellHitPending := true.B
+}.otherwise {
+  shellHitPending := false.B
+}
 
 val runningHit2 = (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
                   (car.io.posX + carWidth > runningSprite2.io.hitboxX) &&
@@ -440,6 +472,12 @@ val runningHit2 = (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.h
                   (car.io.posY + carHeight > runningSprite2.io.hitboxY)
 val runningHit2Prev = RegNext(runningHit2, false.B)
 val runningHit2Rising = runningHit2 && !runningHit2Prev
+val shellHit2Pending = RegInit(false.B)
+when(shellHitsRunningSprite2) {
+  shellHit2Pending := true.B
+}.otherwise {
+  shellHit2Pending := false.B
+}
 
 val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.hitboxWidth.asSInt) &&
                   (car.io.posX + carWidth > runningSprite3.io.hitboxX) &&
@@ -448,8 +486,8 @@ val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.h
 val runningHit3Prev = RegNext(runningHit3, false.B)
 val runningHit3Rising = runningHit3 && !runningHit3Prev
 
-runningSprite.io.hit := runningHit || shellHitRising
-runningSprite2.io.hit := runningHit2
+runningSprite.io.hit := runningHit || shellHitsRunningSprite || shellHitPending
+runningSprite2.io.hit := runningHit2 || shellHitsRunningSprite2 || shellHit2Pending
 runningSprite3.io.hit := runningHit3
 // Trigger car slow effect on running sprite hit
 car.io.colBoost := runningHitRising || runningHit2Rising || runningHit3Rising
@@ -612,13 +650,13 @@ mysteryBox.io.frameUpdate := updateFrame
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 
-io.spriteXPosition(24) := 8.S
-io.spriteYPosition(24) := 8.S
+io.spriteXPosition(26) := 8.S
+io.spriteYPosition(26) := 8.S
 
-spriteVisible(24) := pocket.io.showShell
+spriteVisible(26) := pocket.io.showShell
 
-io.spriteFlipHorizontal(24) := false.B
-io.spriteFlipVertical(24) := false.B
+io.spriteFlipHorizontal(26) := false.B
+io.spriteFlipVertical(26) := false.B
 
 io.spriteXPosition(23) := 8.S
 io.spriteYPosition(23) := 8.S

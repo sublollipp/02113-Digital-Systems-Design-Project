@@ -33,6 +33,7 @@ class Shell extends Module {
   val yPos = RegInit(0.S(11.W))
 
   val angleReg = RegInit(0.U(6.W))
+  val anglePipe = RegNext(angleReg, 0.U)
 
   // 60 FPS * 10 sekunder
   val lifeCounter = RegInit(0.U(10.W))
@@ -62,11 +63,14 @@ class Shell extends Module {
   val sinTable = VecInit(sinValues)
   val cosTable = VecInit(cosValues)
 
-  val dx = ((cosTable(angleReg) * speed) >> 6).asSInt
-  val dy = ((sinTable(angleReg) * speed) >> 6).asSInt
+  val dx = ((cosTable(anglePipe) * speed) >> 6).asSInt
+  val dy = ((sinTable(anglePipe) * speed) >> 6).asSInt
 
-  val nextX = xPos + dx
-  val nextY = yPos + dy
+  val dxReg = RegNext(dx, 0.S)
+  val dyReg = RegNext(dy, 0.S)
+
+  val nextX = xPos + dxReg
+  val nextY = yPos + dyReg
 
   when(active && io.frameUpdate) {
 

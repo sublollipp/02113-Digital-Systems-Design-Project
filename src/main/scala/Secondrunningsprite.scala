@@ -26,12 +26,12 @@ class SecondrunningSprite extends Module {
   val hitboxGone = RegInit(false.B)
   val hiddenReg = RegInit(false.B)
 
-  when(io.update) {
-    when(io.hit && !hitReg && !hiddenReg) {
-      hitReg := true.B
-      hitboxGone := true.B
-    }
+  when(io.hit && !hitReg && !hiddenReg) {
+    hitReg := true.B
+    hitboxGone := true.B
+  }
 
+  when(io.update) {
     when(!hiddenReg) {
       when(hitboxGone) {
         when(yPosReg > (-32).S(11.W)) {
