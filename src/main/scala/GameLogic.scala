@@ -433,8 +433,13 @@ runningSprite3.io.update := updateFrame
 // Shell hit detection against running sprite
 val shellSize = 32.S(12.W)
 
+val runningSpriteAlive = runningSprite.io.hitboxWidth =/= 0.U && runningSprite.io.hitboxHeight =/= 0.U
+val runningSprite2Alive = runningSprite2.io.hitboxWidth =/= 0.U && runningSprite2.io.hitboxHeight =/= 0.U
+val runningSprite3Alive = runningSprite3.io.hitboxWidth =/= 0.U && runningSprite3.io.hitboxHeight =/= 0.U
+
 val shellHitsRunningSprite =
   shell.io.visible &&
+  runningSpriteAlive &&
   (shell.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
   (shell.io.posX + shellSize > runningSprite.io.hitboxX) &&
   (shell.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
@@ -442,6 +447,7 @@ val shellHitsRunningSprite =
 
 val shellHitsRunningSprite2 =
   shell.io.visible &&
+  runningSprite2Alive &&
   (shell.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
   (shell.io.posX + shellSize > runningSprite2.io.hitboxX) &&
   (shell.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
@@ -449,6 +455,7 @@ val shellHitsRunningSprite2 =
 
 val shellHitsRunningSprite3 =
   shell.io.visible &&
+  runningSprite3Alive &&
   (shell.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.hitboxWidth.asSInt) &&
   (shell.io.posX + shellSize > runningSprite3.io.hitboxX) &&
   (shell.io.posY < runningSprite3.io.hitboxY + runningSprite3.io.hitboxHeight.asSInt) &&
@@ -459,7 +466,8 @@ val shellHitsRunningSprite3 =
   // running sprite and hit-sprite wiring
 val carWidth = 32.S(12.W)
 val carHeight = 32.S(11.W)
-val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
+val runningHit = runningSpriteAlive &&
+                 (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
                  (car.io.posX + carWidth > runningSprite.io.hitboxX) &&
                  (car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
                  (car.io.posY + carHeight > runningSprite.io.hitboxY)
@@ -473,7 +481,8 @@ when(shellHitsRunningSprite) {
   shellHitPending := false.B
 }
 
-val runningHit2 = (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
+val runningHit2 = runningSprite2Alive &&
+                  (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
                   (car.io.posX + carWidth > runningSprite2.io.hitboxX) &&
                   (car.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
                   (car.io.posY + carHeight > runningSprite2.io.hitboxY)
@@ -486,7 +495,8 @@ when(shellHitsRunningSprite2) {
   shellHit2Pending := false.B
 }
 
-val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.hitboxWidth.asSInt) &&
+val runningHit3 = runningSprite3Alive &&
+                  (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.hitboxWidth.asSInt) &&
                   (car.io.posX + carWidth > runningSprite3.io.hitboxX) &&
                   (car.io.posY < runningSprite3.io.hitboxY + runningSprite3.io.hitboxHeight.asSInt) &&
                   (car.io.posY + carHeight > runningSprite3.io.hitboxY)
