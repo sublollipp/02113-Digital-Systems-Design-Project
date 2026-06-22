@@ -33,9 +33,9 @@ class CarAngleController(framesPerAngleChange: Int) extends Module{
       state := idle
       clockDivReg := 0.U
       when(io.btnLeft && !io.btnRight) {
-        angle := angle - 1.U
+          angle := angle - 2.U
       }.elsewhen(!io.btnLeft && io.btnRight) {
-        angle := angle + 1.U
+          angle := angle + 2.U
       }
     }
   }
