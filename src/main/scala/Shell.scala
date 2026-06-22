@@ -65,8 +65,11 @@ class Shell extends Module {
   val dx = ((cosTable(angleReg) * speed) >> 6).asSInt
   val dy = ((sinTable(angleReg) * speed) >> 6).asSInt
 
-  val nextX = xPos + dx
-  val nextY = yPos + dy
+  val dxReg = RegNext(dx, 0.S)
+  val dyReg = RegNext(dy, 0.S)
+
+  val nextX = xPos + dxReg
+  val nextY = yPos + dyReg
 
   when(active && io.frameUpdate) {
 
