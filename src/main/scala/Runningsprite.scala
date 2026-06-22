@@ -25,14 +25,14 @@ class RunningSprite extends Module {
   val hitReg = RegInit(false.B)
   val hitboxGone = RegInit(false.B)
 
-  val stopped = io.hit || hitReg
+  when(io.hit && !hitReg) {
+    hitReg := true.B
+    hitboxGone := true.B
+  }
+
+  val stopped = hitReg
 
   when(io.update) {
-    when(io.hit && !hitReg) {
-      hitReg := true.B
-      hitboxGone := true.B
-    }
-
     when(!stopped) {
       when(movingRight) {
         when(xPosReg < targetX) {
