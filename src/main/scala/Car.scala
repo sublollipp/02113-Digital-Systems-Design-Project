@@ -54,7 +54,7 @@ class Car extends Module{
   offRoadController.io.onRoad := roadCollision.io.onRoad
   offRoadController.io.frameUpdate := io.update
 
-  val angleControl = Module(new CarAngleController(3))
+  val angleControl = Module(new CarAngleController(1))
   angleControl.io.btnLeft := io.btnLeft
   angleControl.io.btnRight := io.btnRight
   angleControl.io.frameUpdate := io.update
