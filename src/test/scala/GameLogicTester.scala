@@ -12,7 +12,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 class GameLogicTester extends AnyFlatSpec with ChiselScalatestTester {
 
   "GameLogicTester" should "pass" in {
-    test(new GameLogic(16, 64)) { dut =>
+    test(new GameLogic(32, 64)) { dut =>
       println("Running the GameLogic Tester")
 
       dut.clock.setTimeout(0)

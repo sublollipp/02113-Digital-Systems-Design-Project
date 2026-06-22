@@ -198,12 +198,36 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
       aiStun := aiStun - 1.U
     }
 
+  val shellAnimCounter = RegInit(0.U(6.W))
+  val shellAnimToggle = RegInit(false.B)
+
+  when(updateFrame && shell.io.visible) {
+    when(shellAnimCounter === 29.U) {
+      shellAnimCounter := 0.U
+      shellAnimToggle := !shellAnimToggle
+    }.otherwise {
+      shellAnimCounter := shellAnimCounter + 1.U
+    }
+  }.elsewhen(!shell.io.visible) {
+    shellAnimCounter := 0.U
+    shellAnimToggle := false.B
+  }
+
+
   io.spriteXPosition(22) := shell.io.posX - cameraX
   io.spriteYPosition(22) := shell.io.posY - cameraY
-  spriteVisible(22) := shell.io.visible
+  spriteVisible(22) := shell.io.visible && !shellAnimToggle
 
   io.spriteFlipHorizontal(22) := false.B
   io.spriteFlipVertical(22) := false.B
+
+  io.spriteXPosition(24) := shell.io.posX - cameraX
+  io.spriteYPosition(24) := shell.io.posY - cameraY
+
+  spriteVisible(24) := shell.io.visible && shellAnimToggle
+
+  io.spriteFlipHorizontal(24) := false.B
+  io.spriteFlipVertical(24) := false.B
 
   startLight.io.update := updateFrame
 
@@ -636,13 +660,13 @@ mysteryBox.io.frameUpdate := updateFrame
 
 pocket.io.hitMysteryBox := mysteryBoxHitRising
 
-io.spriteXPosition(24) := 8.S
-io.spriteYPosition(24) := 8.S
+io.spriteXPosition(26) := 8.S
+io.spriteYPosition(26) := 8.S
 
-spriteVisible(24) := pocket.io.showShell
+spriteVisible(26) := pocket.io.showShell
 
-io.spriteFlipHorizontal(24) := false.B
-io.spriteFlipVertical(24) := false.B
+io.spriteFlipHorizontal(26) := false.B
+io.spriteFlipVertical(26) := false.B
 
 io.spriteXPosition(23) := 8.S
 io.spriteYPosition(23) := 8.S
