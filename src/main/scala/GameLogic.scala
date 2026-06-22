@@ -475,10 +475,11 @@ val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitb
                  (car.io.posY + carHeight > runningSprite.io.hitboxY)
 val runningHitPrev = RegNext(runningHit, false.B)
 val runningHitRising = runningHit && !runningHitPrev
+// Latch shell hit for 1 cycle so it bridges the shell deactivation gap
 val shellHitPending = RegInit(false.B)
 when(shellHitsRunningSprite) {
   shellHitPending := true.B
-}.elsewhen(updateFrame) {
+}.otherwise {
   shellHitPending := false.B
 }
 
@@ -496,7 +497,7 @@ val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.h
 val runningHit3Prev = RegNext(runningHit3, false.B)
 val runningHit3Rising = runningHit3 && !runningHit3Prev
 
-runningSprite.io.hit := runningHit || shellHitPending
+runningSprite.io.hit := runningHit || shellHitsRunningSprite || shellHitPending
 runningSprite2.io.hit := runningHit2
 runningSprite3.io.hit := runningHit3
 // Trigger car slow effect on running sprite hit
