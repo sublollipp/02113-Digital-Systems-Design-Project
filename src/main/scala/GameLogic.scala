@@ -202,7 +202,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val shellAnimToggle = RegInit(false.B)
 
   when(updateFrame && shell.io.visible) {
-    when(shellAnimCounter === 29.U) {
+    when(shellAnimCounter === 14.U) {
       shellAnimCounter := 0.U
       shellAnimToggle := !shellAnimToggle
     }.otherwise {
