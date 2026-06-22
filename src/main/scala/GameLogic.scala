@@ -76,7 +76,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val mysteryBox = Module(new MysteryBox)
 
-
   val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
 
   val aiSprite = WireDefault(aiUpSprite)
@@ -396,6 +395,117 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val idle :: game :: startSplash :: splashIdle :: done :: startSplashUpdateDone :: Nil = Enum(6)
   val stateReg = RegInit(startSplash)
+  /// Running Sprite Logic
+val runningSprite = Module(new RunningSprite)
+runningSprite.io.update := updateFrame
+
+val runningSprite2 = Module(new SecondrunningSprite)
+runningSprite2.io.update := updateFrame
+runningSprite2.io.hit := false.B
+
+val runningSprite3 = Module(new ThirdrunningSprite)
+runningSprite3.io.update := updateFrame
+
+// Shell hit detection against running sprite
+val shellSize = 32.S(12.W)
+
+val shellHitsRunningSprite =
+  shell.io.visible &&
+  (shell.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
+  (shell.io.posX + shellSize > runningSprite.io.hitboxX) &&
+  (shell.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
+  (shell.io.posY + shellSize > runningSprite.io.hitboxY)
+
+  shell.io.hitObstacle := shellHitsRunningSprite
+
+  // running sprite and hit-sprite wiring
+val carWidth = 32.S(12.W)
+val carHeight = 32.S(11.W)
+val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
+                 (car.io.posX + carWidth > runningSprite.io.hitboxX) &&
+                 (car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
+                 (car.io.posY + carHeight > runningSprite.io.hitboxY)
+val runningHitPrev = RegNext(runningHit, false.B)
+val runningHitRising = runningHit && !runningHitPrev
+
+val runningHit2 = (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
+                  (car.io.posX + carWidth > runningSprite2.io.hitboxX) &&
+                  (car.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
+                  (car.io.posY + carHeight > runningSprite2.io.hitboxY)
+val runningHit2Prev = RegNext(runningHit2, false.B)
+val runningHit2Rising = runningHit2 && !runningHit2Prev
+
+val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.hitboxWidth.asSInt) &&
+                  (car.io.posX + carWidth > runningSprite3.io.hitboxX) &&
+                  (car.io.posY < runningSprite3.io.hitboxY + runningSprite3.io.hitboxHeight.asSInt) &&
+                  (car.io.posY + carHeight > runningSprite3.io.hitboxY)
+val runningHit3Prev = RegNext(runningHit3, false.B)
+val runningHit3Rising = runningHit3 && !runningHit3Prev
+
+runningSprite.io.hit := runningHit || shellHitsRunningSprite
+runningSprite2.io.hit := runningHit2
+runningSprite3.io.hit := runningHit3
+// Trigger car slow effect on running sprite hit
+car.io.colBoost := runningHitRising || runningHit2Rising || runningHit3Rising
+car.io.boostFrames := 30.U
+car.io.boostSpeed := -10.S
+  car.io.shroomBoost := pocket.io.useShroom
+  when (pocket.io.useShroom) {
+    car.io.boostFrames := 90.U
+    car.io.boostSpeed := 600.S
+  }
+
+io.spriteXPosition(3) := runningSprite.io.posX - cameraX
+io.spriteYPosition(3) := runningSprite.io.posY - cameraY
+io.spriteFlipHorizontal(3) := runningSprite.io.flipH
+io.spriteFlipVertical(3) := runningSprite.io.flipV
+spriteVisible(3) := runningSprite.io.shownSprite(2)
+
+// slot 5 shows the hit version of the running sprite
+io.spriteXPosition(5) := runningSprite.io.posX - cameraX
+io.spriteYPosition(5) := runningSprite.io.posY - cameraY
+io.spriteFlipHorizontal(5) := runningSprite.io.flipH
+io.spriteFlipVertical(5) := runningSprite.io.flipV
+spriteVisible(5) := runningSprite.io.shownSprite(3)
+
+// slot 20 is the second running sprite
+io.spriteXPosition(20) := runningSprite2.io.posX - cameraX
+io.spriteYPosition(20) := runningSprite2.io.posY - cameraY
+io.spriteFlipHorizontal(20) := runningSprite2.io.flipH
+io.spriteFlipVertical(20) := runningSprite2.io.flipV
+spriteVisible(20) := runningSprite2.io.shownSprite(2)
+
+// slot 21 is the second running sprite hit version
+io.spriteXPosition(21) := runningSprite2.io.posX - cameraX
+io.spriteYPosition(21) := runningSprite2.io.posY - cameraY
+io.spriteFlipHorizontal(21) := runningSprite2.io.flipH
+io.spriteFlipVertical(21) := runningSprite2.io.flipV
+spriteVisible(21) := runningSprite2.io.shownSprite(3)
+
+// slot 25 is the third running sprite before it is hit
+io.spriteXPosition(25) := runningSprite3.io.posX - cameraX
+io.spriteYPosition(25) := runningSprite3.io.posY - cameraY
+io.spriteFlipHorizontal(25) := runningSprite3.io.flipH
+io.spriteFlipVertical(25) := runningSprite3.io.flipV
+spriteVisible(25) := runningSprite3.io.shownSprite(2)
+
+// slot 30 and 31 are the third running sprite alternates after hit
+io.spriteXPosition(30) := runningSprite3.io.posX - cameraX
+io.spriteYPosition(30) := runningSprite3.io.posY - cameraY
+io.spriteFlipHorizontal(30) := runningSprite3.io.flipH
+io.spriteFlipVertical(30) := runningSprite3.io.flipV
+spriteVisible(30) := runningSprite3.io.shownSprite(0)
+
+io.spriteXPosition(31) := runningSprite3.io.posX - cameraX
+io.spriteYPosition(31) := runningSprite3.io.posY - cameraY
+io.spriteFlipHorizontal(31) := runningSprite3.io.flipH
+io.spriteFlipVertical(31) := runningSprite3.io.flipV
+spriteVisible(31) := runningSprite3.io.shownSprite(1)
+
+when(carCollision.io.collision) {
+  crashReg := true.B
+}
+
 
   /////////
   // FSM //
@@ -479,103 +589,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   }
 }
 
-// running sprite and hit-sprite wiring
-val runningSprite = Module(new RunningSprite)
-runningSprite.io.update := updateFrame
-
-val runningSprite2 = Module(new SecondrunningSprite)
-runningSprite2.io.update := updateFrame
-runningSprite2.io.hit := false.B
-
-val runningSprite3 = Module(new ThirdrunningSprite)
-runningSprite3.io.update := updateFrame
-
-val carWidth = 32.S(12.W)
-val carHeight = 32.S(11.W)
-val runningHit = (car.io.posX < runningSprite.io.hitboxX + runningSprite.io.hitboxWidth.asSInt) &&
-                 (car.io.posX + carWidth > runningSprite.io.hitboxX) &&
-                 (car.io.posY < runningSprite.io.hitboxY + runningSprite.io.hitboxHeight.asSInt) &&
-                 (car.io.posY + carHeight > runningSprite.io.hitboxY)
-val runningHitPrev = RegNext(runningHit, false.B)
-val runningHitRising = runningHit && !runningHitPrev
-
-val runningHit2 = (car.io.posX < runningSprite2.io.hitboxX + runningSprite2.io.hitboxWidth.asSInt) &&
-                  (car.io.posX + carWidth > runningSprite2.io.hitboxX) &&
-                  (car.io.posY < runningSprite2.io.hitboxY + runningSprite2.io.hitboxHeight.asSInt) &&
-                  (car.io.posY + carHeight > runningSprite2.io.hitboxY)
-val runningHit2Prev = RegNext(runningHit2, false.B)
-val runningHit2Rising = runningHit2 && !runningHit2Prev
-
-val runningHit3 = (car.io.posX < runningSprite3.io.hitboxX + runningSprite3.io.hitboxWidth.asSInt) &&
-                  (car.io.posX + carWidth > runningSprite3.io.hitboxX) &&
-                  (car.io.posY < runningSprite3.io.hitboxY + runningSprite3.io.hitboxHeight.asSInt) &&
-                  (car.io.posY + carHeight > runningSprite3.io.hitboxY)
-val runningHit3Prev = RegNext(runningHit3, false.B)
-val runningHit3Rising = runningHit3 && !runningHit3Prev
-
-runningSprite.io.hit := runningHit
-runningSprite2.io.hit := runningHit2
-runningSprite3.io.hit := runningHit3
-// Trigger car slow effect on running sprite hit
-car.io.colBoost := runningHitRising || runningHit2Rising || runningHit3Rising
-car.io.boostFrames := 30.U
-car.io.boostSpeed := -10.S
-  car.io.shroomBoost := pocket.io.useShroom
-  when (pocket.io.useShroom) {
-    car.io.boostFrames := 90.U
-    car.io.boostSpeed := 600.S
-  }
-
-io.spriteXPosition(3) := runningSprite.io.posX - cameraX
-io.spriteYPosition(3) := runningSprite.io.posY - cameraY
-io.spriteFlipHorizontal(3) := runningSprite.io.flipH
-io.spriteFlipVertical(3) := runningSprite.io.flipV
-spriteVisible(3) := runningSprite.io.shownSprite(2)
-
-// slot 5 shows the hit version of the running sprite
-io.spriteXPosition(5) := runningSprite.io.posX - cameraX
-io.spriteYPosition(5) := runningSprite.io.posY - cameraY
-io.spriteFlipHorizontal(5) := runningSprite.io.flipH
-io.spriteFlipVertical(5) := runningSprite.io.flipV
-spriteVisible(5) := runningSprite.io.shownSprite(3)
-
-// slot 20 is the second running sprite
-io.spriteXPosition(20) := runningSprite2.io.posX - cameraX
-io.spriteYPosition(20) := runningSprite2.io.posY - cameraY
-io.spriteFlipHorizontal(20) := runningSprite2.io.flipH
-io.spriteFlipVertical(20) := runningSprite2.io.flipV
-spriteVisible(20) := runningSprite2.io.shownSprite(2)
-
-// slot 21 is the second running sprite hit version
-io.spriteXPosition(21) := runningSprite2.io.posX - cameraX
-io.spriteYPosition(21) := runningSprite2.io.posY - cameraY
-io.spriteFlipHorizontal(21) := runningSprite2.io.flipH
-io.spriteFlipVertical(21) := runningSprite2.io.flipV
-spriteVisible(21) := runningSprite2.io.shownSprite(3)
-
-// slot 25 is the third running sprite before it is hit
-io.spriteXPosition(25) := runningSprite3.io.posX - cameraX
-io.spriteYPosition(25) := runningSprite3.io.posY - cameraY
-io.spriteFlipHorizontal(25) := runningSprite3.io.flipH
-io.spriteFlipVertical(25) := runningSprite3.io.flipV
-spriteVisible(25) := runningSprite3.io.shownSprite(2)
-
-// slot 30 and 31 are the third running sprite alternates after hit
-io.spriteXPosition(30) := runningSprite3.io.posX - cameraX
-io.spriteYPosition(30) := runningSprite3.io.posY - cameraY
-io.spriteFlipHorizontal(30) := runningSprite3.io.flipH
-io.spriteFlipVertical(30) := runningSprite3.io.flipV
-spriteVisible(30) := runningSprite3.io.shownSprite(0)
-
-io.spriteXPosition(31) := runningSprite3.io.posX - cameraX
-io.spriteYPosition(31) := runningSprite3.io.posY - cameraY
-io.spriteFlipHorizontal(31) := runningSprite3.io.flipH
-io.spriteFlipVertical(31) := runningSprite3.io.flipV
-spriteVisible(31) := runningSprite3.io.shownSprite(1)
-
-when(carCollision.io.collision) {
-  crashReg := true.B
-}
 
 // Mystery Box
 

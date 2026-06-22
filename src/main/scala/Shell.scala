@@ -11,6 +11,8 @@ class Shell extends Module {
 
     val frameUpdate = Input(Bool())
 
+    val hitObstacle = Input(Bool())
+
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
     val visible = Output(Bool())
@@ -112,9 +114,9 @@ class Shell extends Module {
   io.hitPlayer := playerHit
   io.hitAi := aiHit
 
-  when(playerHit || aiHit) {
-    active := false.B
-  }
+ when(playerHit || aiHit || io.hitObstacle) {
+  active := false.B
+}
 
   io.posX := xPos
   io.posY := yPos
