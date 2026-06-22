@@ -29,14 +29,14 @@ class ThirdrunningSprite extends Module {
   val hitToggleCounter = RegInit(119.U(7.W))
   val hitSpriteToggle = RegInit(false.B)
 
-  when(io.update) {
-    when(io.hit && !hitReg && !hiddenReg) {
-      hitReg := true.B
-      hitboxGone := true.B
-      hitToggleCounter := 119.U
-      hitSpriteToggle := false.B
-    }
+  when(io.hit && !hitReg && !hiddenReg) {
+    hitReg := true.B
+    hitboxGone := true.B
+    hitToggleCounter := 119.U
+    hitSpriteToggle := false.B
+  }
 
+  when(io.update) {
     when(!hiddenReg) {
       when(hitReg) {
         when(hitToggleCounter === 0.U) {
