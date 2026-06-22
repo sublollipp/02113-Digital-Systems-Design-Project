@@ -417,8 +417,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteYPosition(0) := car.io.posY - cameraY
   io.spriteYPosition(1) := car.io.posY - cameraY
   io.spriteYPosition(2) := car.io.posY - cameraY
-  io.spriteYPosition(26) := car.io.posX - cameraX
-  io.spriteYPosition(27) := car.io.posX - cameraX
+  io.spriteYPosition(26) := car.io.posY - cameraY
+  io.spriteYPosition(27) := car.io.posY - cameraY
 
   spriteVisible(0) := car.io.shownSprite(0)
   spriteVisible(1) := car.io.shownSprite(1)
