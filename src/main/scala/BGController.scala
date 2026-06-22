@@ -9,6 +9,7 @@ class BGController extends Module {
     val backBufferWriteAddress = Output(UInt(11.W))
     val backBufferWriteEnable = Output(Bool())
     val bgUpdateDone = Output(Bool())
+    val doneAckn = Input(Bool())
   })
 
   val gameBackBufferMemory = Module(new Memory(log2Up(1300), 11, "memory_init/game_backbuffer_init.mem"))
@@ -23,8 +24,6 @@ class BGController extends Module {
   splashBackBufferMemory.io.dataWrite := 0.U
   gameBackBufferMemory.io.dataWrite := 0.U
 
-
-
   val showSplash = io.showSplash
   val showGame = io.showGame && !showSplash
 
@@ -35,19 +34,27 @@ class BGController extends Module {
 
   val state = RegInit(splash)
 
-  io.bgUpdateDone := false.B
+  val bgUpdateDone = RegInit(false.B)
+  io.bgUpdateDone := bgUpdateDone
+
   io.backBufferWriteEnable := false.B
   io.backBufferWriteData := 0.U
   io.backBufferWriteAddress := 0.U
 
   switch (state) {
     is (splash) {
+      when (io.doneAckn) {
+        bgUpdateDone := false.B
+      }
       when (showGame) {
         currentTile := 0.U
         state := goingToGame
       }
     }
     is (game) {
+      when (io.doneAckn) {
+        bgUpdateDone := false.B
+      }
       when (showSplash) {
         currentTile := 0.U
         state := goingToSplash
@@ -60,7 +67,7 @@ class BGController extends Module {
       }
       when (currentTile === 1199.U) {
         state := splash
-        io.bgUpdateDone := true.B
+        bgUpdateDone := true.B
         currentTile := 0.U
       }
       io.backBufferWriteAddress := currentTile
@@ -76,7 +83,7 @@ class BGController extends Module {
       }
       when (currentTile >= 1199.U) {
         state := game
-        io.bgUpdateDone := true.B
+        bgUpdateDone := true.B
         currentTile := 0.U
       }
       gameBackBufferMemory.io.enable := true.B

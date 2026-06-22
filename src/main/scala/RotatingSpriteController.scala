@@ -15,10 +15,10 @@ class RotatingSpriteController(steps: Array[Int] = Array(62, 0, 1, 6, 9, 14, 17,
   val upSprite :: diagSprite :: rightSprite :: diagUpSprite :: diagSideSprite :: Nil = Enum(5)
 
   val dir = WireDefault(uu)
-  val flipSpriteH = WireDefault(false.B)
-  val flipSpriteV = WireDefault(false.B)
+  val flipSpriteH = WireDefault(true.B)
+  val flipSpriteV = WireDefault(true.B)
   val sprite = WireDefault(upSprite)
-  val shownSprite = WireDefault(VecInit(true.B, false.B, false.B, false.B, false.B))
+  val shownSprite = WireDefault(VecInit(false.B, false.B, false.B, false.B, false.B))
 
   when ((steps(0).U <= angle || angle >= steps(1).U) && angle <= steps(2).U) {
     dir := rr
