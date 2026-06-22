@@ -708,15 +708,5 @@ io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
 io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 spriteVisible(14) := mysteryBox.io.shownSprite
-
-io.led(0) := winCondition.io.checkpointHit
-io.led(1) := winCondition.io.finishHit
-io.led(2) := winCondition.io.lap1
-io.led(3) := winCondition.io.lap2
-io.led(4) := winCondition.io.lap3
-io.led(5) := winCondition.io.gameWon
-io.led(6) := crashReg
-io.led(7) := lapDisplay.io.show3
-
 }
 
