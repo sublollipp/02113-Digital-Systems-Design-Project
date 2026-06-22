@@ -70,6 +70,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val firstInput = RegInit(false.B)
 
+  val onSplash = RegInit(true.B)
+
   when(io.btnU || io.btnD || io.btnL || io.btnR) {
     firstInput := true.B
   }
@@ -104,8 +106,14 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val camera = Module(new Camera)
   camera.io.carX := car.io.posX
   camera.io.carY := car.io.posY
-  cameraX := camera.io.camX
-  cameraY := camera.io.camY
+  when (onSplash) {
+    cameraX := 0.S
+    cameraY := 0.S
+  }.otherwise {
+    cameraX := camera.io.camX
+    cameraY := camera.io.camY
+  }
+
 
   // AI-car
 
@@ -371,17 +379,29 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(7) := aiCar.io.posX - cameraX
   io.spriteYPosition(7) := aiCar.io.posY - cameraY
 
+  io.spriteXPosition(28) := aiCar.io.posX - cameraX
+  io.spriteYPosition(28) := aiCar.io.posY - cameraY
+
+  io.spriteXPosition(29) := aiCar.io.posX - cameraX
+  io.spriteYPosition(29) := aiCar.io.posY - cameraY
+
   spriteVisible(4) := aiCar.io.spriteOH_UDR(0)
   spriteVisible(6) := aiCar.io.spriteOH_UDR(1)
   spriteVisible(7) := aiCar.io.spriteOH_UDR(2)
+  spriteVisible(28) := aiCar.io.spriteOH_UDR(3)
+  spriteVisible(29) := aiCar.io.spriteOH_UDR(4)
 
   io.spriteFlipHorizontal(4) := aiCar.io.flipH
   io.spriteFlipHorizontal(6) := aiCar.io.flipH
   io.spriteFlipHorizontal(7) := aiCar.io.flipH
+  io.spriteFlipHorizontal(28) := aiCar.io.flipH
+  io.spriteFlipHorizontal(29) := aiCar.io.flipH
 
   io.spriteFlipVertical(4) := aiCar.io.flipV
   io.spriteFlipVertical(6) := aiCar.io.flipV
   io.spriteFlipVertical(7) := aiCar.io.flipV
+  io.spriteFlipVertical(28) := aiCar.io.flipV
+  io.spriteFlipVertical(29) := aiCar.io.flipV
 
   // Viewbox
   io.viewBoxX := cameraX.asUInt
@@ -391,18 +411,22 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteXPosition(0) := car.io.posX - cameraX
   io.spriteXPosition(1) := car.io.posX - cameraX
   io.spriteXPosition(2) := car.io.posX - cameraX
+  io.spriteXPosition(8) := car.io.posX - cameraX
+  io.spriteXPosition(27) := car.io.posX - cameraX
 
   io.spriteYPosition(0) := car.io.posY - cameraY
   io.spriteYPosition(1) := car.io.posY - cameraY
   io.spriteYPosition(2) := car.io.posY - cameraY
+  io.spriteYPosition(8) := car.io.posY - cameraY
+  io.spriteYPosition(27) := car.io.posY - cameraY
 
   spriteVisible(0) := car.io.shownSprite(0)
   spriteVisible(1) := car.io.shownSprite(1)
   spriteVisible(2) := car.io.shownSprite(2)
+  spriteVisible(27) := car.io.shownSprite(3)
+  spriteVisible(8) := car.io.shownSprite(4)
 
   car.io.update := false.B
-
-  val onSplash = RegInit(true.B)
 
   val bgController = Module(new BGController)
   bgController.io.showGame := !onSplash
@@ -694,15 +718,5 @@ io.spriteYPosition(14) := mysteryBox.io.posY - cameraY
 io.spriteFlipHorizontal(14) := false.B
 io.spriteFlipVertical(14) := false.B
 spriteVisible(14) := mysteryBox.io.shownSprite
-
-io.led(0) := winCondition.io.checkpointHit
-io.led(1) := winCondition.io.finishHit
-io.led(2) := winCondition.io.lap1
-io.led(3) := winCondition.io.lap2
-io.led(4) := winCondition.io.lap3
-io.led(5) := winCondition.io.gameWon
-io.led(6) := crashReg
-io.led(7) := lapDisplay.io.show3
-
 }
 

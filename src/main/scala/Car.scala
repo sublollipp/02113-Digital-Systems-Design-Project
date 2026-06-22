@@ -16,7 +16,7 @@ class Car extends Module{
     val posY = Output(SInt(11.W))                                                                                                                                                                                                                                                                                         
     val flipH = Output(Bool())
     val flipV = Output(Bool())
-    val shownSprite = Output(Vec(3, Bool()))
+    val shownSprite = Output(Vec(5, Bool()))
     val boostFrames = Input(UInt(10.W))
     val boostSpeed = Input(SInt(11.W))
     val debugLed = Output(Bool())

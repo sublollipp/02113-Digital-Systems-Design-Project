@@ -10,7 +10,7 @@ class AiCar extends Module{
     val posY = Output(SInt(11.W))
     val flipH = Output(Bool())
     val flipV = Output(Bool())
-    val spriteOH_UDR = Output(Vec(3, Bool()))
+    val spriteOH_UDR = Output(Vec(5, Bool()))
   })
 
   val route = RegInit(0.U(2.W))
@@ -213,7 +213,7 @@ val checkpointY3 = VecInit(
   aiVel.io.speed := aiSpeed
   aiVel.io.frameUpdate := io.updateFrame
 
-  val spriteController = Module(new RotatingSpriteController(Array(63, 0, 1, 15, 17, 31, 33, 47, 49)))
+  val spriteController = Module(new RotatingSpriteController)
 
   val desiredAngleReg = RegInit(48.U(6.W))
 
