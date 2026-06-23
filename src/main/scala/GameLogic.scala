@@ -31,9 +31,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     val seg = Output(UInt(7.W))
     val an  = Output(UInt(4.W))
   })
-
-  // Sprites
-  val carUpSprite = 0
+  /*
+    val carUpSprite = 0
   val carUpRightSprite = 1
   val carRightSprite = 2
   val luigiSprite = 3
@@ -65,58 +64,81 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val yellowCarDownDownRightSprite = 29 // Er lige nu også bare en farvet cirkel
   val ladyDustEyesOpenSprite = 30
   val ladyDustEyesClosedSprite = 31
+   */
 
-
+  // Sprites
+  val blackBoxSprite = 10
+  val carUpSprite = 15
+  val carUpRightSprite = 16
+  val carRightSprite = 17
+  val luigiSprite = 28
+  val yellowCarUpSprite = 20
+  val luigiDeadSprite = 29
+  val yellowCarUpRightSprite = 21
+  val yellowCarRightSprite = 22
+  val carDownRightRightSprite = 18
+  val explosionSprite = 14
+  val numOneSprite = 3
+  val numTwoSprite = 4
+  val numThreeSpriteOne = 5
+  val mysteryBoxSprite = 31
+  val slashSprite = 6
+  val numThreeSpriteTwo = 7
+  val redLightSprite = 0
+  val yellowLightSprite = 1
+  val greenLightSprite = 2
+  val dmitriSprite = 30
+  val dmitriGone2HeavenSprite = 11
+  val greenShellFrontSprite = 12
+  val mushroomSprite = 8
+  val greenShellFrontSpriteTwo = 13
+  val ladySprite = 27
+  val greenShellDisplaySprite = 9
+  val carDownDownRightSprite = 19
+  val yellowCarDownRightRightSprite = 23
+  val yellowCarDownDownRightSprite = 24 // Er lige nu også bare en farvet cirkel
+  val ladyDustEyesOpenSprite = 26
+  val ladyDustEyesClosedSprite = 25
 
   io.led := Seq.fill(8)(false.B)
-
-  val spriteVisible = WireDefault(VecInit.fill(32)(false.B))
-
-  val hideAllSprites = WireDefault(false.B)
 
   io.spriteXPosition := Seq.fill(SpriteNumber)(0.S)
   io.spriteYPosition := Seq.fill(SpriteNumber)(0.S)
   io.spriteFlipHorizontal := Seq.fill(SpriteNumber)(false.B)
   io.spriteFlipVertical := Seq.fill(SpriteNumber)(false.B)
 
-  for (i <- 0 to 31) {
-    io.spriteVisible(i) := spriteVisible(i) && !hideAllSprites
-  }
-
   io.backBufferWriteData := 0.U
   io.backBufferWriteAddress := 0.U
   io.backBufferWriteEnable := false.B
 
+  val anyInput = io.btnC || io.btnU || io.btnD || io.btnL || io.btnR
+
+  val spriteVisible = WireDefault(VecInit.fill(32)(false.B))
+
+  val hideAllSprites = WireDefault(false.B)
+
+  for (i <- 0 to 31) {
+    io.spriteVisible(i) := spriteVisible(i) && !hideAllSprites
+  }
+
   io.frameUpdateDone := false.B
+
   val updateFrame = WireDefault(false.B)
   val updateRNG = WireDefault(false.B)
-
-
-  // Game Logic
 
   val car = Module(new Car)
 
   val pocket = Module(new Pocket)
-  pocket.io.useBtn := false.B
-  pocket.io.frameUpdate := false.B
-  pocket.io.carPosX := 0.S
-  pocket.io.carPosY := 0.S
-  pocket.io.carAngle := 0.U
-  pocket.io.hitMysteryBox := false.B
 
   val firstInput = RegInit(false.B)
 
   val onSplash = RegInit(true.B)
 
-  when(io.btnU || io.btnD || io.btnL || io.btnR) {
+  when(anyInput) {
     firstInput := true.B
   }
 
   val mysteryBox = Module(new MysteryBox)
-
-  val aiUpSprite :: aiDiagSprite :: aiRightSprite :: Nil = Enum(3)
-
-  val aiSprite = WireDefault(aiUpSprite)
 
   // AI car position
 
@@ -155,9 +177,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     cameraY := camera.io.camY
   }
 
-
-  // AI-car
-
   val aiCar = Module(new AiCar)
 
   val winCondition = Module(new WinCondition)
@@ -168,12 +187,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   )
 
   val shell = Module(new Shell)
-
-  val resetGame = Module(new ResetGame)
-
-  resetGame.io.btnC := io.btnC
-  resetGame.io.hasShell := pocket.io.showShell
-  resetGame.io.hasShroom := pocket.io.showShroom
 
   val playerHitPulse = shell.io.hitPlayer
 
@@ -204,13 +217,16 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val spawnOffsetY =
     ((sinValues(car.io.angleOut) * shellSpawnDistance) >> 6).asSInt
 
+  pocket.io.useBtn := false.B
+  pocket.io.frameUpdate := false.B
+  pocket.io.hitMysteryBox := false.B
+
   shell.io.startX := carCenterX + spawnOffsetX - 16.S
   shell.io.startY := carCenterY + spawnOffsetY - 16.S
 
   shell.io.startAngle := car.io.angleOut
   shell.io.frameUpdate := updateFrame
   pocket.io.shellOnScreen := shell.io.visible
-  pocket.io.resetGame := false.B
 
   shell.io.playerX := car.io.posX
   shell.io.playerY := car.io.posY
@@ -635,8 +651,6 @@ io.spriteYPosition(ladyDustEyesClosedSprite) := runningSprite3.io.posY - cameraY
 io.spriteFlipHorizontal(ladyDustEyesClosedSprite) := runningSprite3.io.flipH
 io.spriteFlipVertical(ladyDustEyesClosedSprite) := runningSprite3.io.flipV
 spriteVisible(ladyDustEyesClosedSprite) := runningSprite3.io.shownSprite(1)
-
-  val anyInput = io.btnC || io.btnU || io.btnD || io.btnL || io.btnR
 
 when(carCollision.io.collision) {
   crashReg := true.B
