@@ -31,74 +31,40 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     val seg = Output(UInt(7.W))
     val an  = Output(UInt(4.W))
   })
-  /*
-    val carUpSprite = 0
-  val carUpRightSprite = 1
-  val carRightSprite = 2
-  val luigiSprite = 3
-  val yellowCarUpSprite = 4
-  val luigiDeadSprite = 5
-  val yellowCarUpRightSprite = 6
-  val yellowCarRightSprite = 7
-  val carDownRightRightSprite = 8
-  // val carUpSprite = 9 (ubrugt pt.)
-  val explosionSprite = 10
-  val numOneSprite = 11
-  val numTwoSprite = 12
-  val numThreeSpriteOne = 13
-  val mysteryBoxSprite = 14
-  val slashSprite = 15
-  val numThreeSpriteTwo = 16
-  val redLightSprite = 17
-  val yellowLightSprite = 18
-  val greenLightSprite = 19
-  val dmitriSprite = 20
-  val dmitriGone2HeavenSprite = 21
-  val greenShellFrontSprite = 22
-  val mushroomSprite = 23
-  val greenShellFrontSpriteTwo = 24
-  val ladySprite = 25
-  val greenShellDisplaySprite = 26
-  val carDownDownRightSprite = 27
-  val yellowCarDownRightRightSprite = 28 // Er lige nu bare en farvet cirkel
-  val yellowCarDownDownRightSprite = 29 // Er lige nu også bare en farvet cirkel
-  val ladyDustEyesOpenSprite = 30
-  val ladyDustEyesClosedSprite = 31
-   */
 
   // Sprites
-  val blackBoxSprite = 10
-  val carUpSprite = 15
-  val carUpRightSprite = 16
-  val carRightSprite = 17
-  val luigiSprite = 28
-  val yellowCarUpSprite = 20
-  val luigiDeadSprite = 29
-  val yellowCarUpRightSprite = 21
-  val yellowCarRightSprite = 22
-  val carDownRightRightSprite = 18
-  val explosionSprite = 14
-  val numOneSprite = 3
-  val numTwoSprite = 4
-  val numThreeSpriteOne = 5
-  val mysteryBoxSprite = 31
-  val slashSprite = 6
-  val numThreeSpriteTwo = 7
-  val redLightSprite = 0
-  val yellowLightSprite = 1
-  val greenLightSprite = 2
-  val dmitriSprite = 30
-  val dmitriGone2HeavenSprite = 11
-  val greenShellFrontSprite = 12
-  val mushroomSprite = 8
-  val greenShellFrontSpriteTwo = 13
-  val ladySprite = 27
-  val greenShellDisplaySprite = 9
-  val carDownDownRightSprite = 19
-  val yellowCarDownRightRightSprite = 23
-  val yellowCarDownDownRightSprite = 24 // Er lige nu også bare en farvet cirkel
-  val ladyDustEyesOpenSprite = 26
-  val ladyDustEyesClosedSprite = 25
+  val blackBoxSprite = 10.U
+  val carUpSprite = 15.U
+  val carUpRightSprite = 16.U
+  val carRightSprite = 17.U
+  val luigiSprite = 28.U
+  val yellowCarUpSprite = 20.U
+  val luigiDeadSprite = 29.U
+  val yellowCarUpRightSprite = 21.U
+  val yellowCarRightSprite = 22.U
+  val carDownRightRightSprite = 18.U
+  val explosionSprite = 14.U
+  val numOneSprite = 3.U
+  val numTwoSprite = 4.U
+  val numThreeSpriteOne = 5.U
+  val mysteryBoxSprite = 31.U
+  val slashSprite = 6.U
+  val numThreeSpriteTwo = 7.U
+  val redLightSprite = 0.U
+  val yellowLightSprite = 1.U
+  val greenLightSprite = 2.U
+  val dmitriSprite = 30.U
+  val dmitriGone2HeavenSprite = 11.U
+  val greenShellFrontSprite = 12.U
+  val mushroomSprite = 8.U
+  val greenShellFrontSpriteTwo = 13.U
+  val ladySprite = 27.U
+  val greenShellDisplaySprite = 9.U
+  val carDownDownRightSprite = 19.U
+  val yellowCarDownRightRightSprite = 23.U
+  val yellowCarDownDownRightSprite = 24.U // Er lige nu også bare en farvet cirkel
+  val ladyDustEyesOpenSprite = 26.U
+  val ladyDustEyesClosedSprite = 25.U
 
   io.led := Seq.fill(8)(false.B)
 
@@ -111,7 +77,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.backBufferWriteAddress := 0.U
   io.backBufferWriteEnable := false.B
 
-  val anyInput = io.btnC || io.btnU || io.btnD || io.btnL || io.btnR
+  val anyInput = WireDefault(false.B)
+  anyInput := io.btnC || io.btnU || io.btnD || io.btnL || io.btnR
 
   val spriteVisible = WireDefault(VecInit.fill(32)(false.B))
 
@@ -217,7 +184,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val spawnOffsetY =
     ((sinValues(car.io.angleOut) * shellSpawnDistance) >> 6).asSInt
 
-  pocket.io.useBtn := false.B
   pocket.io.frameUpdate := false.B
   pocket.io.hitMysteryBox := false.B
 
@@ -794,6 +760,11 @@ spriteVisible(mushroomSprite) := pocket.io.showShroom
 
 io.spriteFlipHorizontal(mushroomSprite) := false.B
 io.spriteFlipVertical(mushroomSprite) := false.B
+
+  // The black box behind the item in the pocket
+  io.spriteXPosition(blackBoxSprite) := 8.S
+  io.spriteYPosition(blackBoxSprite) := 8.S
+  spriteVisible(blackBoxSprite) := true.B
 
 io.spriteXPosition(mysteryBoxSprite) := mysteryBox.io.posX - cameraX
 io.spriteYPosition(mysteryBoxSprite) := mysteryBox.io.posY - cameraY
