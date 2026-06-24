@@ -5,7 +5,7 @@
 <!-- Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.   -->
 
 <Project Product="Vivado" Version="7" Minor="71" Path="C:/Users/idax0/Documents/GitHub/02113-Digital-Systems-Design-Project/vivado/Basys3Game/Basys3Game.xpr">
-  <DefaultLaunch Dir="$PRUNDIR"/>
+  <DefaultLaunch Dir="C:/Users/idax0/Bioengineering"/>
   <Configuration>
     <Option Name="Id" Val="d8b043bec96e4bd1b23a03d9f815337d"/>
     <Option Name="Part" Val="xc7a35tcpg236-1"/>
@@ -494,7 +494,7 @@
         <StratHandle Name="Vivado Synthesis Defaults" Flow="Vivado Synthesis 2023"/>
         <Step Id="synth_design"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+      <GeneratedRun Dir="C:/Users/idax0/Bioengineering" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Synthesis Default Reports" Flow="Vivado Synthesis 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
@@ -512,7 +512,7 @@
         <Step Id="post_route_phys_opt_design"/>
         <Step Id="write_bitstream"/>
       </Strategy>
-      <GeneratedRun Dir="$PRUNDIR" File="gen_run.xml"/>
+      <GeneratedRun Dir="C:/Users/idax0/Bioengineering" File="gen_run.xml"/>
       <ReportStrategy Name="Vivado Implementation Default Reports" Flow="Vivado Implementation 2023"/>
       <Report Name="ROUTE_DESIGN.REPORT_METHODOLOGY" Enabled="1"/>
       <RQSFiles/>
