@@ -8,42 +8,42 @@ class RoadCollision extends Module {
     val onRoad = Output(Bool())
   })
 
-  // Vejen venstre del (lodret)
+  // Left part of the road (vertical)
   val road1 =
     io.x >= 54.S &&
     io.x <= 202.S &&
     io.y >= 118.S &&
     io.y <= 842.S
 
- // Vejen højre del (vandret)
+ // Upper part of the road (horizontal)
   val road2 =
     io.x >= 86.S &&
     io.x <= 1130.S &&
     io.y >= 86.S &&
     io.y <= 235.S
 
- // Vejen øverste del (lodret)
+ // Right part of the road (vertical)
   val road3 =
     io.x >= 982.S &&
     io.x <= 1130.S &&
     io.y >= 215.S &&
     io.y <= 532.S
 
- // Vejen nederste del (lodret)
+ // Lower part of the road (vertical)
   val road4 =
     io.x >= 822.S &&
     io.x <= 970.S &&
     io.y >= 406.S &&
     io.y <= 714.S
 
- // Vejen nederste del (vandret)
+ // Bottom part of the road (horizontal)
   val road5 =
     io.x >= 86.S &&
     io.x <= 970.S &&
     io.y >= 694.S &&
     io.y <= 842.S
 
- // Vejen mellem road3 og road4 del (vandret)
+ // Middle part of the road (horizontal)
   val road6 = 
     io.x >= 822.S &&
     io.x <= 1130.S &&
