@@ -3,8 +3,8 @@ import chisel3.util._
 
 class RNG(options: Int) extends Module {
   val io = IO(new Bundle {
-    val randomVal = Output(UInt(5.W))
     val frameUpdate = Input(Bool())
+    val randomVal = Output(UInt(5.W))
   })
 
   val randomReg = RegInit(0.U(log2Ceil(options).W))
