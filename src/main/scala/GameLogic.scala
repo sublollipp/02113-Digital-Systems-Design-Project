@@ -88,18 +88,16 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     io.spriteVisible(i) := spriteVisible(i) && !hideAllSprites
   }
 
-  io.frameUpdateDone := false.B
-
   val updateFrame = WireDefault(false.B)
   val updateRNG = WireDefault(false.B)
 
   val car = Module(new Car)
 
+  val aiCar = Module(new AiCar)
+
   val pocket = Module(new Pocket)
 
   val firstInput = RegInit(false.B)
-
-  val onSplash = RegInit(true.B)
 
   when(anyInput) {
     firstInput := true.B
@@ -107,13 +105,47 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val mysteryBox = Module(new MysteryBox)
 
+  val winCondition = Module(new WinCondition)
+  val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
+  )
+
+  val playerStun = RegInit(0.U(8.W))
+  val aiStun = RegInit(0.U(8.W))
+
+  val bgController = Module(new BGController)
+  val gameLoopFSM = Module(new GameLoopFSM)
+
+  bgController.io.showGame := gameLoopFSM.io.switchToGame
+  bgController.io.showSplash := gameLoopFSM.io.switchToSplash
+  bgController.io.doneAckn := gameLoopFSM.io.bgAckn
+  io.backBufferWriteData := bgController.io.backBufferWriteData
+  io.backBufferWriteAddress := bgController.io.backBufferWriteAddress
+  io.backBufferWriteEnable := bgController.io.backBufferWriteEnable
+
+  gameLoopFSM.io.anyInput := anyInput
+  gameLoopFSM.io.bgDone := bgController.io.bgUpdateDone
+  gameLoopFSM.io.winCondition := winCondition.io.gameWon
+  gameLoopFSM.io.startFrameUpdate := io.newFrame
+  gameLoopFSM.io.allUpdatesDone := car.io.updateDone
+
+  io.frameUpdateDone := gameLoopFSM.io.frameUpdateDone
+
+  hideAllSprites := gameLoopFSM.io.hideAllSprites
+
+  updateFrame := gameLoopFSM.io.frameUpdate
+  updateRNG := gameLoopFSM.io.RNGUpdate
+
+  car.io.update := playerStun === 0.U && gameLoopFSM.io.carUpdate && startLight.io.raceStarted
+  aiCar.io.updateFrame := aiStun === 0.U && gameLoopFSM.io.carUpdate && startLight.io.raceStarted
+
+  val resetAll = gameLoopFSM.io.resetAll || reset.asBool
+
   // AI car position
 
   car.io.btnLeft := io.btnL
   car.io.btnUp := io.btnU
   car.io.btnRight := io.btnR
   car.io.btnDown := io.btnD
-
 
   io.spriteFlipHorizontal(carUpSprite) := car.io.flipH
   io.spriteFlipHorizontal(carUpRightSprite) := car.io.flipH
@@ -136,7 +168,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val camera = Module(new Camera)
   camera.io.carX := car.io.posX
   camera.io.carY := car.io.posY
-  when (onSplash) {
+  when (gameLoopFSM.io.anchorCamera) {
     cameraX := 0.S
     cameraY := 0.S
   }.otherwise {
@@ -144,14 +176,9 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     cameraY := camera.io.camY
   }
 
-  val aiCar = Module(new AiCar)
 
-  val winCondition = Module(new WinCondition)
 
   val raceTimer = Module(new RaceTimer)
-
-  val startLight = Module(new RaceStartLight(redFrames = 120, yellowFrames = 120, greenFrames = 60)
-  )
 
   val shell = Module(new Shell)
 
@@ -184,7 +211,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val spawnOffsetY =
     ((sinValues(car.io.angleOut) * shellSpawnDistance) >> 6).asSInt
 
-  pocket.io.frameUpdate := false.B
+  pocket.io.frameUpdate := updateRNG
   pocket.io.hitMysteryBox := false.B
 
   shell.io.startX := carCenterX + spawnOffsetX - 16.S
@@ -200,8 +227,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   shell.io.aiX := aiCar.io.posX
   shell.io.aiY := aiCar.io.posY
 
-  val playerStun = RegInit(0.U(8.W))
-
     when(shell.io.hitPlayer) {
     playerStun := 120.U
   }
@@ -209,8 +234,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     when(updateFrame && playerStun =/= 0.U) {
     playerStun := playerStun - 1.U
   }
-
-  val aiStun = RegInit(0.U(8.W))
 
     when(shell.io.hitAi) {
       aiStun := 120.U
@@ -374,13 +397,16 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   crashX := (car.io.posX + aiCar.io.posX) >> 1
   crashY := (car.io.posY + aiCar.io.posY) >> 1
 
-
-  when(carCollision.io.collision && !crashReg) {
+  when(gameLoopFSM.io.resetAll) {
+    crashReg := false.B
+  }.elsewhen(carCollision.io.collision && !crashReg) {
     crashReg := true.B
 
     crashSpriteX := ((car.io.posX+ 16.S) + (aiCar.io.posX + 16.S)) >> 1
     crashSpriteY := ((car.io.posY + 16.S) + (aiCar.io.posY + 16.S)) >> 1
 }
+
+  gameLoopFSM.io.carsCrashed := crashReg
 
   io.spriteXPosition(explosionSprite) := crashSpriteX - 16.S - cameraX
   io.spriteYPosition(explosionSprite) := crashSpriteY - 16.S - cameraY
@@ -390,7 +416,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   spriteVisible(explosionSprite) := crashReg
 
-  aiCar.io.updateFrame := false.B
   aiCar.io.updateRNG := updateRNG
 
   io.spriteXPosition(yellowCarUpSprite) := aiCar.io.posX - cameraX
@@ -448,22 +473,6 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   spriteVisible(carRightSprite) := car.io.shownSprite(2)
   spriteVisible(carDownDownRightSprite) := car.io.shownSprite(3)
   spriteVisible(carDownRightRightSprite) := car.io.shownSprite(4)
-
-  car.io.update := false.B
-
-  val bgController = Module(new BGController)
-  bgController.io.showGame := !onSplash
-  bgController.io.showSplash := onSplash
-  bgController.io.doneAckn := false.B
-  io.backBufferWriteData := bgController.io.backBufferWriteData
-  io.backBufferWriteAddress := bgController.io.backBufferWriteAddress
-  io.backBufferWriteEnable := bgController.io.backBufferWriteEnable
-
-  val doneUpdatingBG = bgController.io.bgUpdateDone
-
-  val startupCounter = RegInit(0.U(4.W))
-  val startcountOver = RegInit(false.B)
-  val readyForStartup = RegInit(false.B)
 
   val idle :: game :: startSplash :: splashIdle :: done :: startSplashUpdateDone :: deadOrDone :: Nil = Enum(7)
   val stateReg = RegInit(startSplash)
@@ -622,116 +631,19 @@ when(carCollision.io.collision) {
   crashReg := true.B
 }
 
-  /////////
-  // FSM //
-  /////////
-  switch(stateReg) {
-    is(idle) {
-      when(io.newFrame) {
-        stateReg := game
-      }
-    }
-
-  is(game) {
-
-    pocket.io.frameUpdate := true.B
-
-    updateFrame := true.B
-    updateRNG := true.B
-
-    when(startLight.io.raceStarted) {
-      car.io.update := playerStun === 0.U
-      aiCar.io.updateFrame := aiStun === 0.U
-    }
-
-    when(crashReg || winCondition.io.gameWon) {
-      stateReg := deadOrDone
-      readyForStartup := false.B
-    }.otherwise {
-      stateReg := done
-    }
-  }
-
-    is(splashIdle) {
-      hideAllSprites := true.B
-      when(io.newFrame) {
-        stateReg := startSplash
-      }
-    }
-
-    is(startSplash) {
-      hideAllSprites := true.B
-      updateRNG := true.B
-      when (!readyForStartup) {
-        when(!startcountOver) {
-          startupCounter := startupCounter + 1.U
-          when(startupCounter === 10.U) {
-            startcountOver := true.B
-          }
-        }.otherwise { // Ignoring inputs held on power-on to prevent RNG manip
-          when(!anyInput) {
-            readyForStartup := true.B
-          }
-        }
-      }
-      when (anyInput && readyForStartup) {
-        onSplash := false.B
-      }
-      when (!onSplash && doneUpdatingBG) {
-        stateReg := idle
-        bgController.io.doneAckn := true.B
-        io.frameUpdateDone := true.B
-      }.otherwise {
-        stateReg := startSplashUpdateDone
-      }
-    }
-
-    is (startSplashUpdateDone) {
-      io.frameUpdateDone := true.B
-      stateReg := splashIdle
-    }
-
-  is(done) {
-    when (car.io.updateDone) {
-      io.frameUpdateDone := true.B
-      stateReg := idle
-    }
-  }
-    is (deadOrDone) {
-      car.io.update := false.B
-      aiCar.io.updateFrame := false.B
-      when(!onSplash) {
-        when(!anyInput) {
-          readyForStartup := true.B
-        }
-        when(readyForStartup && anyInput) {
-          readyForStartup := false.B
-          onSplash := true.B
-          runningSprite.reset := true.B
-          runningSprite2.reset := true.B
-          runningSprite3.reset := true.B
-          aiCar.reset := true.B
-          car.reset := true.B
-          pocket.reset := true.B
-          winCondition.reset := true.B
-          startLight.reset := true.B
-          shell.reset := true.B
-          raceTimer.reset := true.B
-          crashReg := false.B
-        }
-        // todo - refactor finish into multiple states
-      }.otherwise {
-        when(bgController.io.bgUpdateDone) {
-          bgController.io.doneAckn := true.B
-          stateReg := splashIdle
-        }
-      }
-    }
-}
+  runningSprite.reset := resetAll
+  runningSprite2.reset := resetAll
+  runningSprite3.reset := resetAll
+  aiCar.reset := resetAll
+  car.reset := resetAll
+  pocket.reset := resetAll
+  winCondition.reset := resetAll
+  startLight.reset := resetAll
+  shell.reset := resetAll
+  raceTimer.reset := resetAll
 
 
 // Mystery Box
-
 val mysteryBoxHit = (car.io.posX < mysteryBox.io.hitboxX + mysteryBox.io.hitboxWidth.asSInt) &&
                      (car.io.posX + carWidth > mysteryBox.io.hitboxX) &&
                      (car.io.posY < mysteryBox.io.hitboxY + mysteryBox.io.hitboxHeight.asSInt) &&

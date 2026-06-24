@@ -24,12 +24,15 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
 
   val state = RegInit(idle)
 
-    when(io.resetSpeed) {
+  when(io.resetSpeed) {
     speed := 0.S
     state := idle
   }
-  
+
   val clockDivCounter = RegInit(0.U(6.W))
+
+  val boostSpeedDelayed = RegNext(io.boostSpeed)
+  val boostFramesDelayed = RegNext(io.boostFrames)
 
   val boostFrameCount = RegInit(0.U(8.W))
   val boostSpeed = RegInit(0.S(11.W))
@@ -46,21 +49,17 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     is (idle) {
       boostLogicDone := true.B
       when (io.shroomBoost) {
-        state := boosting
+        state := boostInit
       }.elsewhen(io.colBoost) {
-        state := collided
+        state := colInit
       }.elsewhen(clockDivCounter === framesPerAcceleration.U) {
         state := accel
       }
       when(io.frameUpdate) {
         clockDivCounter := clockDivCounter + 1.U
       }
-      boostSpeed := io.boostSpeed
-      boostFrameCount := io.boostFrames
     }
     is (accel) {
-      boostSpeed := io.boostSpeed
-      boostFrameCount := io.boostFrames
       when (io.shroomBoost) {
         state := boosting
       }.elsewhen(io.colBoost) {
@@ -100,40 +99,42 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
       }
     }
     is (boostInit) {
-      boostSpeed := io.boostSpeed
-      boostFrameCount := io.boostFrames
+      boostSpeed := boostSpeedDelayed
+      boostFrameCount := boostFramesDelayed
       state := boosting
     }
     is (boosting) {
       speed := boostSpeed
-      boostLogicDone := true.B
       when(io.frameUpdate) {
         boostFrameCount := boostFrameCount - 1.U
-        when(io.shroomBoost) {
-          state := boostInit
-        }.elsewhen(boostFrameCount === 0.U) {
-          state := idle
-        }
+      }
+      when(io.shroomBoost) {
+        state := boostInit
+      }.elsewhen(boostFrameCount === 0.U) {
+        state := idle
+      }.otherwise {
+        boostLogicDone := true.B
       }
     }
     is (colInit) {
       debugLed := true.B
-      boostSpeed := io.boostSpeed
-      boostFrameCount := io.boostFrames
-      state := boosting
+      boostSpeed := boostSpeedDelayed
+      boostFrameCount := boostFramesDelayed
+      state := collided
     }
     is (collided) {
       speed := boostSpeed
-      boostLogicDone := true.B
       when(io.frameUpdate) {
         boostFrameCount := boostFrameCount - 1.U
-        when(io.shroomBoost) {
-          state := boostInit
-        }.elsewhen(io.colBoost) {
-          state := colInit
-        }.elsewhen(boostFrameCount === 0.U) {
-          state := idle
-        }
+      }
+      when(io.shroomBoost) {
+        state := boostInit
+      }.elsewhen(io.colBoost) {
+        state := colInit
+      }.elsewhen(boostFrameCount === 0.U) {
+        state := idle
+      }.otherwise {
+        boostLogicDone := true.B
       }
     }
   }
