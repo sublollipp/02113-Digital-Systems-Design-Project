@@ -5,10 +5,10 @@ class SevenSegmentDisplay extends Module {
 
   val io = IO(new Bundle {
 
-    val digit0 = Input(UInt(4.W)) // højre
+    val digit0 = Input(UInt(4.W)) 
     val digit1 = Input(UInt(4.W))
     val digit2 = Input(UInt(4.W))
-    val digit3 = Input(UInt(4.W)) // venstre
+    val digit3 = Input(UInt(4.W)) 
 
     val seg = Output(UInt(7.W))
     val an  = Output(UInt(4.W))

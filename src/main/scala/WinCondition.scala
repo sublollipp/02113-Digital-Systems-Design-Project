@@ -16,9 +16,7 @@ class WinCondition extends Module {
     val lap3 = Output(Bool())
   })
 
-  // -----------------------------
   // Zones
-  // -----------------------------
 
   val checkpointArea =
     io.carX >= 832.S &&
@@ -32,9 +30,7 @@ class WinCondition extends Module {
     io.carY >= 368.S &&
     io.carY <= 400.S
 
-  // -----------------------------
   // Edge detection
-  // -----------------------------
 
   val checkpointPrev = RegNext(checkpointArea, false.B)
   val finishPrev     = RegNext(finishLine, false.B)
@@ -42,9 +38,7 @@ class WinCondition extends Module {
   val checkpointEnter = checkpointArea && !checkpointPrev
   val finishEnter     = finishLine && !finishPrev
 
-  // -----------------------------
   // States
-  // -----------------------------
 
   val sArmRace :: sWaitCheckpoint :: Nil = Enum(2)
 
@@ -53,29 +47,22 @@ class WinCondition extends Module {
   val lapCounter = RegInit(0.U(3.W))
 
   switch(state) {
-
-    // Først skal spilleren passere målstregen én gang
-    // efter spawn før omgange kan tælles.
     is(sArmRace) {
       when(finishEnter) {
         state := sWaitCheckpoint
       }
     }
-
     is(sWaitCheckpoint) {
-
       when(checkpointEnter) {
         state := sArmRace
       }
-
       when(finishEnter && checkpointPrev) {
-        // safety
         state := sWaitCheckpoint
       }
     }
   }
 
-  // Tæl kun når checkpoint allerede er taget
+  // Only count a lap if the checkpoint has been taken before crossing the finish line
   val checkpointTaken = RegInit(false.B)
 
   when(checkpointEnter) {
@@ -89,11 +76,7 @@ class WinCondition extends Module {
       lapCounter := lapCounter + 1.U
     }
   }
-
-  // -----------------------------
-  // Outputs
-  // -----------------------------
-
+  
   io.gameWon := lapCounter >= 3.U
 
   io.checkpointHit := checkpointArea

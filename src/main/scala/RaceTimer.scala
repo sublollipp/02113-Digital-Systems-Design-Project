@@ -7,10 +7,10 @@ class RaceTimer(clockFreq: Int = 100000000) extends Module {
     val start = Input(Bool())
     val stop  = Input(Bool())
 
-    val digit0 = Output(UInt(4.W)) // sekunder 1'ere
-    val digit1 = Output(UInt(4.W)) // sekunder 10'ere
-    val digit2 = Output(UInt(4.W)) // minutter 1'ere
-    val digit3 = Output(UInt(4.W)) // minutter 10'ere
+    val digit0 = Output(UInt(4.W)) 
+    val digit1 = Output(UInt(4.W)) 
+    val digit2 = Output(UInt(4.W))
+    val digit3 = Output(UInt(4.W)) 
   })
 
   val running = RegInit(false.B)

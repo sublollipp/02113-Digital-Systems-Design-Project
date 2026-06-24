@@ -35,10 +35,10 @@ class Shell extends Module {
   val angleReg = RegInit(0.U(6.W))
   val anglePipe = RegNext(angleReg, 0.U)
 
-  // 60 FPS * 10 sekunder
+  // 60 FPS * 10 seconds
   val lifeCounter = RegInit(0.U(10.W))
 
-  // Immunitet lige efter spawn
+  // immunity counter to prevent immediate collision after shell spawning
   val armCounter = RegInit(0.U(4.W))
 
   when(io.spawn && !active) {

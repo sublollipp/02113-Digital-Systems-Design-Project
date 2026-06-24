@@ -221,7 +221,7 @@ val checkpointY3 = VecInit(
     desiredAngleReg := newDesiredRaw
   }
 
-  // History of last 3 requested angles (most recent at index 0)
+  // History of last 3 requested angles
   val angleHist = RegInit(VecInit(Seq.fill(3)(48.U(6.W))))
 
   // Shift history on frame updateFrame so we sample once per frame
@@ -257,9 +257,6 @@ val checkpointY3 = VecInit(
     racingOffset := (-20).S
   }
 
-  // Drej gradvist mod målet
-
-  // updateFrame aiAngle from votedAngle
   aiAngle := votedAngle
 
   // Determine raw desired angle based on direction to the target
@@ -287,7 +284,7 @@ val checkpointY3 = VecInit(
     }
   }
 
-  // Accelerér
+  // Acceleration and speed control
 
   when(io.updateFrame) {
     when(aiSpeed < 400.S) {
@@ -295,11 +292,11 @@ val checkpointY3 = VecInit(
     }
   }
 
-  // Flyt bilen
+  // Move the AI car
   aiX := aiVel.io.newXPos
   aiY := aiVel.io.newYPos
 
-  // Skift waypoint
+  // Change waypoint 
 
   when(
     (adjustedDx < 48.S && adjustedDx > (-48).S) &&

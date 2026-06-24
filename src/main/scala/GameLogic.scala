@@ -62,7 +62,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val greenShellDisplaySprite = 9.U
   val carDownDownRightSprite = 19.U
   val yellowCarDownRightRightSprite = 23.U
-  val yellowCarDownDownRightSprite = 24.U // Er lige nu også bare en farvet cirkel
+  val yellowCarDownDownRightSprite = 24.U 
   val ladyDustEyesOpenSprite = 26.U
   val ladyDustEyesClosedSprite = 25.U
 
@@ -307,7 +307,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(slashSprite) := false.B
   io.spriteFlipVertical(slashSprite) := false.B
 
-    // Fast 3-tal efter "/"
+    // Number 3 after the "/"
   io.spriteXPosition(numThreeSpriteTwo) := 600.S
   io.spriteYPosition(numThreeSpriteTwo) := 8.S
 
@@ -316,7 +316,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipHorizontal(numThreeSpriteTwo) := false.B
   io.spriteFlipVertical(numThreeSpriteTwo) := false.B
 
-    // Startlys - rød
+    // Traffic light sprites (Red)
 
   io.spriteXPosition(redLightSprite) := 304.S
   io.spriteYPosition(redLightSprite) := 20.S
@@ -329,7 +329,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipVertical(redLightSprite) := false.B
 
 
-  // Startlys - gul
+  // Traffic light sprites (Yellow)
 
   io.spriteXPosition(yellowLightSprite) := 304.S
   io.spriteYPosition(yellowLightSprite) := 20.S
@@ -342,7 +342,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   io.spriteFlipVertical(yellowLightSprite) := false.B
 
 
-  // Startlys - grøn
+  // Traffic light sprites (Green)
 
   io.spriteXPosition(greenLightSprite) := 304.S
   io.spriteYPosition(greenLightSprite) := 20.S
@@ -467,6 +467,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   val idle :: game :: startSplash :: splashIdle :: done :: startSplashUpdateDone :: deadOrDone :: Nil = Enum(7)
   val stateReg = RegInit(startSplash)
+  
   /// Running Sprite Logic
 val runningSprite = Module(new RunningSprite)
 runningSprite.io.update := updateFrame
@@ -621,10 +622,7 @@ spriteVisible(ladyDustEyesClosedSprite) := runningSprite3.io.shownSprite(1)
 when(carCollision.io.collision) {
   crashReg := true.B
 }
-
-  /////////
-  // FSM //
-  /////////
+  // FSM 
   switch(stateReg) {
     is(idle) {
       when(io.newFrame) {
