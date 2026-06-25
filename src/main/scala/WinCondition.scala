@@ -7,10 +7,9 @@ class WinCondition extends Module {
     val carY = Input(SInt(11.W))
 
     val gameWon = Output(Bool())
-
-    // Debug
     val checkpointHit = Output(Bool())
     val finishHit = Output(Bool())
+
     val lap1 = Output(Bool())
     val lap2 = Output(Bool())
     val lap3 = Output(Bool())
@@ -38,13 +37,18 @@ class WinCondition extends Module {
   val checkpointEnter = checkpointArea && !checkpointPrev
   val finishEnter     = finishLine && !finishPrev
 
-  // States
+  // State machine
 
   val sArmRace :: sWaitCheckpoint :: Nil = Enum(2)
 
   val state = RegInit(sArmRace)
 
+  // Registers
+
   val lapCounter = RegInit(0.U(3.W))
+  val checkpointTaken = RegInit(false.B)
+
+  // State transitions
 
   switch(state) {
     is(sArmRace) {
@@ -52,18 +56,19 @@ class WinCondition extends Module {
         state := sWaitCheckpoint
       }
     }
+
     is(sWaitCheckpoint) {
       when(checkpointEnter) {
         state := sArmRace
       }
+
       when(finishEnter && checkpointPrev) {
         state := sWaitCheckpoint
       }
     }
   }
 
-  // Only count a lap if the checkpoint has been taken before crossing the finish line
-  val checkpointTaken = RegInit(false.B)
+  // Lap counting
 
   when(checkpointEnter) {
     checkpointTaken := true.B
@@ -76,7 +81,9 @@ class WinCondition extends Module {
       lapCounter := lapCounter + 1.U
     }
   }
-  
+
+  // Outputs
+
   io.gameWon := lapCounter >= 3.U
 
   io.checkpointHit := checkpointArea

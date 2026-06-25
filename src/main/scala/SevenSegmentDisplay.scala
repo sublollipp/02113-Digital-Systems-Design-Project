@@ -4,23 +4,25 @@ import chisel3.util._
 class SevenSegmentDisplay extends Module {
 
   val io = IO(new Bundle {
-
-    val digit0 = Input(UInt(4.W)) 
+    val digit0 = Input(UInt(4.W))
     val digit1 = Input(UInt(4.W))
     val digit2 = Input(UInt(4.W))
-    val digit3 = Input(UInt(4.W)) 
+    val digit3 = Input(UInt(4.W))
 
     val seg = Output(UInt(7.W))
     val an  = Output(UInt(4.W))
   })
 
+  // Refresh counter
+
   val refreshCounter = RegInit(0.U(20.W))
   refreshCounter := refreshCounter + 1.U
 
-  val activeDigit = refreshCounter(19,18)
+  val activeDigit = refreshCounter(19, 18)
+
+  // Current digit
 
   val currentDigit = Wire(UInt(4.W))
-
   currentDigit := 0.U
 
   switch(activeDigit) {
@@ -30,6 +32,8 @@ class SevenSegmentDisplay extends Module {
     is(3.U) { currentDigit := io.digit3 }
   }
 
+  // Digit select (anodes)
+
   io.an := "b1111".U
 
   switch(activeDigit) {
@@ -38,6 +42,8 @@ class SevenSegmentDisplay extends Module {
     is(2.U) { io.an := "b1011".U }
     is(3.U) { io.an := "b0111".U }
   }
+
+  // Seven-segment decoder
 
   io.seg := MuxLookup(currentDigit, "b1111111".U, Seq(
     0.U -> "b1000000".U,

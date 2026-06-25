@@ -1,7 +1,7 @@
 import chisel3._
 import chisel3.util._
 
-class AiCar extends Module{
+class AiCar extends Module {
   val io = IO(new Bundle {
     val updateFrame = Input(Bool())
     val updateRNG = Input(Bool())
@@ -13,7 +13,11 @@ class AiCar extends Module{
     val spriteOH_UDR = Output(Vec(5, Bool()))
   })
 
+  // Registers
+
   val route = RegInit(0.U(2.W))
+
+  // Route data
 
   val checkpointX1 = VecInit(
     140.S, 140.S, 145.S, 150.S, 155.S, 160.S,

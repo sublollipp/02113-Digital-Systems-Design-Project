@@ -7,13 +7,23 @@ class RaceTimer(clockFreq: Int = 100000000) extends Module {
     val start = Input(Bool())
     val stop  = Input(Bool())
 
-    val digit0 = Output(UInt(4.W)) 
-    val digit1 = Output(UInt(4.W)) 
+    val digit0 = Output(UInt(4.W))
+    val digit1 = Output(UInt(4.W))
     val digit2 = Output(UInt(4.W))
-    val digit3 = Output(UInt(4.W)) 
+    val digit3 = Output(UInt(4.W))
   })
 
+  // Registers
+
   val running = RegInit(false.B)
+
+  val tickCounter =
+    RegInit(0.U(log2Ceil(clockFreq).W))
+
+  val seconds = RegInit(0.U(6.W))   // 0–59
+  val minutes = RegInit(0.U(7.W))
+
+  // Start / Stop control
 
   when(io.start) {
     running := true.B
@@ -23,11 +33,7 @@ class RaceTimer(clockFreq: Int = 100000000) extends Module {
     running := false.B
   }
 
-  val tickCounter =
-    RegInit(0.U(log2Ceil(clockFreq).W))
-
-  val seconds = RegInit(0.U(6.W))  // 0-59
-  val minutes = RegInit(0.U(7.W))
+  // Timer update
 
   when(running) {
 
@@ -47,15 +53,18 @@ class RaceTimer(clockFreq: Int = 100000000) extends Module {
     }
   }
 
+  // Digit conversion
+
   val secOnes = seconds % 10.U
   val secTens = seconds / 10.U
 
   val minOnes = minutes % 10.U
   val minTens = (minutes / 10.U) % 10.U
 
+  // Outputs
+
   io.digit0 := secOnes
   io.digit1 := secTens
-
   io.digit2 := minOnes
   io.digit3 := minTens
 }
