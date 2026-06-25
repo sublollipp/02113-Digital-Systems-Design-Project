@@ -22,45 +22,43 @@ class SecondrunningSprite extends Module {
   val xPosReg = RegInit(startX)
   val yPosReg = RegInit(864.S(11.W))
   val movingRight = RegInit(true.B)
-  val hitReg = RegInit(false.B)
-  val hitboxGone = RegInit(false.B)
-  val hiddenReg = RegInit(false.B)
+  val aliveMoving :: hitFalling :: hiddenDone :: Nil = Enum(3)
+  val stateReg = RegInit(aliveMoving)
 
-  when(io.hit && !hitReg && !hiddenReg) {
-    hitReg := true.B
-    hitboxGone := true.B
+  when(io.hit && stateReg === aliveMoving) {
+    stateReg := hitFalling
   }
 
   when(io.update) {
-    when(!hiddenReg) {
-      when(hitboxGone) {
-        when(yPosReg > (-32).S(11.W)) {
-          yPosReg := yPosReg - 1.S
+    when(stateReg === aliveMoving) {
+      when(movingRight) {
+        when(xPosReg < targetX) {
+          xPosReg := xPosReg + 1.S
         }.otherwise {
-          hiddenReg := true.B
+          movingRight := false.B
         }
       }.otherwise {
-        when(movingRight) {
-          when(xPosReg < targetX) {
-            xPosReg := xPosReg + 1.S
-          }.otherwise {
-            movingRight := false.B
-          }
+        when(xPosReg > startX) {
+          xPosReg := xPosReg - 1.S
         }.otherwise {
-          when(xPosReg > startX) {
-            xPosReg := xPosReg - 1.S
-          }.otherwise {
-            movingRight := true.B
-          }
+          movingRight := true.B
         }
+      }
+    }.elsewhen(stateReg === hitFalling) {
+      when(yPosReg > (-32).S(11.W)) {
+        yPosReg := yPosReg - 1.S
+      }.otherwise {
+        stateReg := hiddenDone
       }
     }
   }
 
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
-  val hitboxWidthValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W)) // If the hitbox is gone, set width to 0, otherwise 24
-  val hitboxHeightValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W)) // If the hitbox is gone, set height to 0, otherwise 24
+  val isHit = stateReg =/= aliveMoving
+  val isHidden = stateReg === hiddenDone
+  val hitboxWidthValue = Mux(isHit, 0.U(6.W), 24.U(6.W)) // If the hitbox is gone, set width to 0, otherwise 24
+  val hitboxHeightValue = Mux(isHit, 0.U(6.W), 24.U(6.W)) // If the hitbox is gone, set height to 0, otherwise 24
 
   io.posX := xPosReg
   io.posY := yPosReg
@@ -72,9 +70,9 @@ class SecondrunningSprite extends Module {
   io.flipH := !movingRight
   io.flipV := false.B
 
-  io.shownSprite := Mux(hiddenReg,
+  io.shownSprite := Mux(isHidden,
     VecInit(false.B, false.B, false.B, false.B),
-    Mux(hitReg,
+    Mux(isHit,
       VecInit(false.B, false.B, false.B, true.B),
       VecInit(false.B, false.B, true.B, false.B)
     )
