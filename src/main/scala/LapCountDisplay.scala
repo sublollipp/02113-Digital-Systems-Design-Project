@@ -12,16 +12,22 @@ class LapCounterDisplay extends Module {
     val show3 = Output(Bool())
   })
 
+  // Default outputs
+
   io.show1 := false.B
   io.show2 := false.B
   io.show3 := false.B
 
+  // Lap display
+
   when(!io.lap1) {
     // 1 / 3
     io.show1 := true.B
+
   }.elsewhen(!io.lap2) {
     // 2 / 3
     io.show2 := true.B
+
   }.otherwise {
     // 3 / 3
     io.show3 := true.B

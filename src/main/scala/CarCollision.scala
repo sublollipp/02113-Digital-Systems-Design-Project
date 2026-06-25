@@ -12,11 +12,15 @@ class CarCollision extends Module {
     val collision = Output(Bool())
   })
 
-    val carWidth  = 22.S(12.W)
-    val carHeight = 22.S(11.W)
-    val offset = 3.S
+  // Constants
 
-    io.collision :=
+  val carWidth  = 22.S(12.W)
+  val carHeight = 22.S(11.W)
+  val offset    = 3.S
+
+  // Collision detection
+
+  io.collision :=
     (io.carX + offset < io.aiX + offset + carWidth) &&
     (io.carX + offset + carWidth > io.aiX + offset) &&
     (io.carY + offset < io.aiY + offset + carHeight) &&

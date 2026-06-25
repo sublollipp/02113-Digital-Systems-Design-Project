@@ -10,8 +10,13 @@ class Shell extends Module {
     val startAngle = Input(UInt(6.W))
 
     val frameUpdate = Input(Bool())
-
     val hitObstacle = Input(Bool())
+
+    val playerX = Input(SInt(12.W))
+    val playerY = Input(SInt(11.W))
+
+    val aiX = Input(SInt(12.W))
+    val aiY = Input(SInt(11.W))
 
     val posX = Output(SInt(12.W))
     val posY = Output(SInt(11.W))
@@ -19,13 +24,9 @@ class Shell extends Module {
 
     val hitPlayer = Output(Bool())
     val hitAi = Output(Bool())
-
-    val playerX = Input(SInt(12.W))
-    val playerY = Input(SInt(11.W))
-
-    val aiX = Input(SInt(12.W))
-    val aiY = Input(SInt(11.W))
   })
+
+  // Registers
 
   val active = RegInit(false.B)
 
@@ -35,22 +36,18 @@ class Shell extends Module {
   val angleReg = RegInit(0.U(6.W))
   val anglePipe = RegNext(angleReg, 0.U)
 
-  // 60 FPS * 10 seconds
+  // 60 FPS × 10 seconds
   val lifeCounter = RegInit(0.U(10.W))
 
-  // immunity counter to prevent immediate collision after shell spawning
+  // Prevent immediate collision after spawning
   val armCounter = RegInit(0.U(4.W))
 
-  when(io.spawn && !active) {
-    active := true.B
-    xPos := io.startX
-    yPos := io.startY
-    angleReg := io.startAngle
-    lifeCounter := 600.U
-    armCounter := 4.U
-  }
+  // Constants
 
   val speed = 6.S
+  val shellSize = 32.S
+
+  // Lookup tables
 
   val sinValues = (0 until 64).map(i =>
     (Math.sin((3.14159 / 180) * i * 5.625) * 64).round.toInt.S(8.W)
@@ -63,6 +60,8 @@ class Shell extends Module {
   val sinTable = VecInit(sinValues)
   val cosTable = VecInit(cosValues)
 
+  // Movement
+
   val dx = ((cosTable(anglePipe) * speed) >> 6).asSInt
   val dy = ((sinTable(anglePipe) * speed) >> 6).asSInt
 
@@ -72,6 +71,19 @@ class Shell extends Module {
   val nextX = xPos + dxReg
   val nextY = yPos + dyReg
 
+  // Spawn
+
+  when(io.spawn && !active) {
+    active := true.B
+    xPos := io.startX
+    yPos := io.startY
+    angleReg := io.startAngle
+    lifeCounter := 600.U
+    armCounter := 4.U
+  }
+
+  // Update
+
   when(active && io.frameUpdate) {
 
     when(armCounter =/= 0.U) {
@@ -79,13 +91,13 @@ class Shell extends Module {
     }
 
     when(nextX < 0.S || nextX > 1248.S) {
-      angleReg := (32.U - angleReg)(5,0)
+      angleReg := (32.U - angleReg)(5, 0)
     }.otherwise {
       xPos := nextX
     }
 
     when(nextY < 0.S || nextY > 928.S) {
-      angleReg := (64.U - angleReg)(5,0)
+      angleReg := (64.U - angleReg)(5, 0)
     }.otherwise {
       yPos := nextY
     }
@@ -97,7 +109,7 @@ class Shell extends Module {
     }
   }
 
-  val shellSize = 32.S
+  // Collision detection
 
   val playerHit =
     active &&
@@ -115,14 +127,16 @@ class Shell extends Module {
     (yPos < io.aiY + shellSize) &&
     (yPos + shellSize > io.aiY)
 
-  io.hitPlayer := playerHit
-  io.hitAi := aiHit
+  when(playerHit || aiHit || io.hitObstacle) {
+    active := false.B
+  }
 
- when(playerHit || aiHit || io.hitObstacle) {
-  active := false.B
-}
+  // Outputs
 
   io.posX := xPos
   io.posY := yPos
   io.visible := active
+
+  io.hitPlayer := playerHit
+  io.hitAi := aiHit
 }

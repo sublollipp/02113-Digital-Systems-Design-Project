@@ -5,8 +5,11 @@ class RoadCollision extends Module {
   val io = IO(new Bundle {
     val x = Input(SInt(12.W))
     val y = Input(SInt(11.W))
+
     val onRoad = Output(Bool())
   })
+
+  // Road sections
 
   // Left part of the road (vertical)
   val road1 =
@@ -15,41 +18,42 @@ class RoadCollision extends Module {
     io.y >= 118.S &&
     io.y <= 842.S
 
- // Upper part of the road (horizontal)
+  // Upper part of the road (horizontal)
   val road2 =
     io.x >= 86.S &&
     io.x <= 1130.S &&
     io.y >= 86.S &&
     io.y <= 235.S
 
- // Right part of the road (vertical)
+  // Right part of the road (vertical)
   val road3 =
     io.x >= 982.S &&
     io.x <= 1130.S &&
     io.y >= 215.S &&
     io.y <= 532.S
 
- // Lower part of the road (vertical)
+  // Lower part of the road (vertical)
   val road4 =
     io.x >= 822.S &&
     io.x <= 970.S &&
     io.y >= 406.S &&
     io.y <= 714.S
 
- // Bottom part of the road (horizontal)
+  // Bottom part of the road (horizontal)
   val road5 =
     io.x >= 86.S &&
     io.x <= 970.S &&
     io.y >= 694.S &&
     io.y <= 842.S
 
- // Middle part of the road (horizontal)
-  val road6 = 
+  // Middle part of the road (horizontal)
+  val road6 =
     io.x >= 822.S &&
     io.x <= 1130.S &&
     io.y >= 406.S &&
     io.y <= 586.S
 
+  // Output
 
   io.onRoad :=
     road1 ||
