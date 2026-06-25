@@ -8,10 +8,5 @@ class Lake extends Module {
     val inLake = Output(Bool())
   })
 
-
-  val withinX = io.x >= 240.S && io.x <= 368.S
-  val belowBottom = io.y <= 500.S
-  val aboveTopEdge = (io.y * 3.S) >= (io.x + 800.S)
-
-  io.inLake := withinX && belowBottom && aboveTopEdge
+  io.inLake := io.x >= 240.S && io.x <= 368.S && io.y >= 378.S && io.y <= 494.S
 }
