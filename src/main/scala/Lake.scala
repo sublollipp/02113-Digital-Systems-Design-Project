@@ -8,9 +8,10 @@ class Lake extends Module {
     val inLake = Output(Bool())
   })
 
-  val withinX = io.x >= 288.S && io.x <= 384.S
-  val belowBottom = io.y <= 480.S
-  val aboveTopEdge = (io.y * 3.S) >= (io.x + 768.S)
+  // Expanded by ~16 px so a 32x32 car collides when any side touches the lake wall.
+  val withinX = io.x >= 272.S && io.x <= 400.S
+  val belowBottom = io.y <= 496.S
+  val aboveTopEdge = (io.y * 3.S) >= (io.x + 704.S)
 
   io.inLake := withinX && belowBottom && aboveTopEdge
 }
