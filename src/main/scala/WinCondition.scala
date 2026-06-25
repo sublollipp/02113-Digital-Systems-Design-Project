@@ -56,7 +56,7 @@ class WinCondition extends Module {
         state := sWaitCheckpoint
       }
     }
-
+  
     is(sWaitCheckpoint) {
       when(checkpointEnter) {
         state := sArmRace
