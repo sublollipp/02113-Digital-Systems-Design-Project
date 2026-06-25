@@ -23,43 +23,37 @@ class ThirdrunningSprite extends Module {
   val xPosReg = RegInit(startX)
   val yPosReg = RegInit(startY)
   val movingDown = RegInit(true.B)
-  val hitReg = RegInit(false.B)
-  val hitboxGone = RegInit(false.B)
-  val hiddenReg = RegInit(false.B)
+  val aliveMoving :: hitBlinking :: Nil = Enum(2)
+  val stateReg = RegInit(aliveMoving)
   val hitToggleCounter = RegInit(119.U(7.W))
   val hitSpriteToggle = RegInit(false.B)
 
-  when(io.hit && !hitReg && !hiddenReg) {
-    hitReg := true.B
-    hitboxGone := true.B
+  when(io.hit && stateReg === aliveMoving) {
+    stateReg := hitBlinking
     hitToggleCounter := 119.U
     hitSpriteToggle := false.B
   }
 
   when(io.update) {
-    when(!hiddenReg) {
-      when(hitReg) {
-        when(hitToggleCounter === 0.U) {
-          hitSpriteToggle := ~hitSpriteToggle
-          hitToggleCounter := 119.U
-        }.otherwise {
-          hitToggleCounter := hitToggleCounter - 1.U
-        }
+    when(stateReg === hitBlinking) {
+      when(hitToggleCounter === 0.U) {
+        hitSpriteToggle := ~hitSpriteToggle
+        hitToggleCounter := 119.U
+      }.otherwise {
+        hitToggleCounter := hitToggleCounter - 1.U
       }
-
-      when(!hitReg) {
-        when(movingDown) {
-          when(yPosReg < targetY) {
-            yPosReg := yPosReg + 1.S
-          }.otherwise {
-            movingDown := false.B
-          }
+    }.otherwise {
+      when(movingDown) {
+        when(yPosReg < targetY) {
+          yPosReg := yPosReg + 1.S
         }.otherwise {
-          when(yPosReg > startY) {
-            yPosReg := yPosReg - 1.S
-          }.otherwise {
-            movingDown := true.B
-          }
+          movingDown := false.B
+        }
+      }.otherwise {
+        when(yPosReg > startY) {
+          yPosReg := yPosReg - 1.S
+        }.otherwise {
+          movingDown := true.B
         }
       }
     }
@@ -67,8 +61,9 @@ class ThirdrunningSprite extends Module {
 
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
-  val hitboxWidthValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W)) // If the hitbox is gone, set width to 0, otherwise 24
-  val hitboxHeightValue = Mux(hitboxGone, 0.U(6.W), 24.U(6.W)) // If the hitbox is gone, set height to 0, otherwise 24
+  val isHit = stateReg === hitBlinking
+  val hitboxWidthValue = Mux(isHit, 0.U(6.W), 18.U(6.W)) // Shrink right edge by 6 px while active
+  val hitboxHeightValue = Mux(isHit, 0.U(6.W), 18.U(6.W)) // Shrink bottom edge by 6 px while active
 
   io.posX := xPosReg
   io.posY := yPosReg
@@ -80,14 +75,11 @@ class ThirdrunningSprite extends Module {
   io.flipH := false.B
   io.flipV := false.B
 
-  io.shownSprite := Mux(hiddenReg,
-    VecInit(false.B, false.B, false.B, false.B),
-    Mux(hitReg,
-      Mux(hitSpriteToggle,
-        VecInit(false.B, true.B, false.B, false.B),
-        VecInit(true.B, false.B, false.B, false.B)
-      ),
-      VecInit(false.B, false.B, true.B, false.B)
-    )
+  io.shownSprite := Mux(isHit,
+    Mux(hitSpriteToggle,
+      VecInit(false.B, true.B, false.B, false.B),
+      VecInit(true.B, false.B, false.B, false.B)
+    ),
+    VecInit(false.B, false.B, true.B, false.B)
   )
 }
