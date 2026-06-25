@@ -61,9 +61,9 @@ class CarSpeedController(framesPerAcceleration: Int, accelerationMultiplier: Int
     }
     is (accel) {
       when (io.shroomBoost) {
-        state := boosting
+        state := boostInit
       }.elsewhen(io.colBoost) {
-        state := collided
+        state := colInit
       }.otherwise {
         state := idle
       }

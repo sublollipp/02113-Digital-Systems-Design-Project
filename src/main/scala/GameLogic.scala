@@ -284,7 +284,7 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     val carCollision = Module(new CarCollision)
 
   raceTimer.io.start := firstInput && startLight.io.raceStarted
-  raceTimer.io.stop := winCondition.io.gameWon || carCollision.io.collision
+  raceTimer.io.stop := winCondition.io.gameWon || carCollision.io.collision || lake.io.inLake
 
   val display = Module(new SevenSegmentDisplay)
 
@@ -410,8 +410,8 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
     crashSpriteY := ((car.io.posY + 16.S) + (aiCar.io.posY + 16.S)) >> 1
 }.elsewhen(lake.io.inLake && !crashReg) {
     crashReg := true.B
-    crashSpriteX := car.io.posX >> 1
-    crashSpriteY := car.io.posY >> 1
+    crashSpriteX := car.io.posX + 16.S
+    crashSpriteY := car.io.posY + 16.S
   }
 
   gameLoopFSM.io.carsCrashed := crashReg
