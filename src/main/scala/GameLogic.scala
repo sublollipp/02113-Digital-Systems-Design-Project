@@ -115,6 +115,10 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
   val bgController = Module(new BGController)
   val gameLoopFSM = Module(new GameLoopFSM)
 
+  val lake = Module(new Lake)
+  lake.io.x := car.io.posX
+  lake.io.y := car.io.posY
+
   bgController.io.showGame := gameLoopFSM.io.switchToGame
   bgController.io.showSplash := gameLoopFSM.io.switchToSplash
   bgController.io.doneAckn := gameLoopFSM.io.bgAckn
@@ -399,12 +403,16 @@ class GameLogic(SpriteNumber: Int, BackTileNumber: Int) extends Module {
 
   when(gameLoopFSM.io.resetAll) {
     crashReg := false.B
-  }.elsewhen(carCollision.io.collision && !crashReg) {
+  }.elsewhen((carCollision.io.collision) && !crashReg) {
     crashReg := true.B
 
     crashSpriteX := ((car.io.posX+ 16.S) + (aiCar.io.posX + 16.S)) >> 1
     crashSpriteY := ((car.io.posY + 16.S) + (aiCar.io.posY + 16.S)) >> 1
-}
+}.elsewhen(lake.io.inLake && !crashReg) {
+    crashReg := true.B
+    crashSpriteX := car.io.posX >> 1
+    crashSpriteY := car.io.posY >> 1
+  }
 
   gameLoopFSM.io.carsCrashed := crashReg
 
