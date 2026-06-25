@@ -22,18 +22,15 @@ class RunningSprite extends Module {
   val xPosReg = RegInit(200.S(12.W))
   val yPosReg = RegInit(170.S(11.W))
   val movingRight = RegInit(true.B)
-  val hitReg = RegInit(false.B)
-  val hitboxGone = RegInit(false.B)
+  val aliveMoving :: hitStopped :: Nil = Enum(2)
+  val stateReg = RegInit(aliveMoving)
 
-  when(io.hit && !hitReg) {
-    hitReg := true.B
-    hitboxGone := true.B
+  when(io.hit && stateReg === aliveMoving) {
+    stateReg := hitStopped
   }
 
-  val stopped = hitReg
-
   when(io.update) {
-    when(!stopped) {
+    when(stateReg === aliveMoving) {
       when(movingRight) {
         when(xPosReg < targetX) {
           xPosReg := xPosReg + 1.S
@@ -52,8 +49,9 @@ class RunningSprite extends Module {
 
   val hitboxOffsetX = 4.S(12.W)
   val hitboxOffsetY = 4.S(11.W)
-  val hitboxWidthValue = Mux(hitboxGone, 0.U(6.W), 21.U(6.W))
-  val hitboxHeightValue = Mux(hitboxGone, 0.U(6.W), 21.U(6.W))
+  val isHit = stateReg === hitStopped
+  val hitboxWidthValue = Mux(isHit, 0.U(6.W), 21.U(6.W))
+  val hitboxHeightValue = Mux(isHit, 0.U(6.W), 21.U(6.W))
 
   io.posX := xPosReg
   io.posY := yPosReg
@@ -65,7 +63,7 @@ class RunningSprite extends Module {
   io.flipH := !movingRight
   io.flipV := false.B
 
-  io.shownSprite := Mux(hitReg,
+  io.shownSprite := Mux(isHit,
     VecInit(false.B, false.B, false.B, true.B),
     VecInit(false.B, false.B, true.B, false.B)
   )

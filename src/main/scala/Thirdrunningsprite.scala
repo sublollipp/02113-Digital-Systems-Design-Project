@@ -19,13 +19,10 @@ class ThirdrunningSprite extends Module {
   val startX = 992.S(12.W)
   val startY = 256.S(11.W)
   val targetY = 384.S(11.W)
-  val crossRoadTargetX = 1184.S(12.W)
 
   val xPosReg = RegInit(startX)
   val yPosReg = RegInit(startY)
   val movingDown = RegInit(true.B)
-  val crossingRoad = RegInit(false.B)
-  val completedUsualRoute = RegInit(false.B)
   val hitReg = RegInit(false.B)
   val hitboxGone = RegInit(false.B)
   val hiddenReg = RegInit(false.B)
@@ -51,27 +48,17 @@ class ThirdrunningSprite extends Module {
       }
 
       when(!hitReg) {
-        when(crossingRoad) {
-          when(xPosReg < crossRoadTargetX) {
-            xPosReg := xPosReg + 1.S
-          }
-        }.elsewhen(movingDown) {
+        when(movingDown) {
           when(yPosReg < targetY) {
             yPosReg := yPosReg + 1.S
           }.otherwise {
-            when(completedUsualRoute) {
-              movingDown := false.B
-              crossingRoad := true.B
-            }.otherwise {
-              movingDown := false.B
-            }
+            movingDown := false.B
           }
         }.otherwise {
           when(yPosReg > startY) {
             yPosReg := yPosReg - 1.S
           }.otherwise {
             movingDown := true.B
-            completedUsualRoute := true.B
           }
         }
       }
