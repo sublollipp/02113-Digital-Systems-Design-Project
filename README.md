@@ -1,6 +1,10 @@
-# 02113 Digital Systems Design Project - Group xy
+# 02113 Digital Systems Design Project - Group 10
 This project was made by Ida Sofie Mechlenborg Bang Olsson, Frederik Vive Petersen, Fabian Rude Hertz Kofoed og Elliot Roland Itenov during the three week period of June.
 ## How to run the Game
-We don't know yet.
+You must have scala, chisel, AMD vivado and a Basys3 FPGa board to run the game. Download the project and make an sbt project from the build.sbt file, open a terminal in the project directory and run "sbt run". Then open vivado/Basys3Game/Basys3Game.xpr in vivado, and run synthesis, implementation, and generate a bitstream, and load that game onto a Basys3 FPGA. Connect the FPGA to a display using a VGA connector.
 ## How to run tests
-We don't know yet.
+The project does not contain any pass/fail tests. However, tests were written for the purpose of waveform analysis and analysis via printed results. GameLogicTester simulates some inputs being pressed in the very beginning of the game, where waveform analysis was used during the game's development to analyse all the different components, always proving useful when something wasn't working. RNGTester simulates 10.000 random player inputs and outputs the amount of times each option in the 5-output RNG module was picked, helping in determining whether there was any significant bias in the RNG module. GISD tester was made for waveform analysis of the GameInputStartupDelay module when it wasn't working (which has since been fixed thanks to the waveform analysis).
+
+To run all of these tests, sun 'sbt test' in the terminal. To run just one (with waveforms generated), run 'sbt "testOnly *testName* -- -DwriteVcd=1"'. The resulting VCD files can be found in the test_run_dir folder and opened in a waveform illustrator program like surfer or GTKWave.
+
+Warning: The GameLogicTester was written for early versions of the game, and with the splash screen implemented, it takes an obscene amount of time to run. Thus, running sbt test is discouraged and one should instead use 'sbt "testOnly *testName*"' to run GISDTester and RNGTester.
