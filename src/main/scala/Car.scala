@@ -43,16 +43,11 @@ class Car extends Module{
   io.debugLed := speedControl.io.debugLed
 
   val roadCollision = Module(new RoadCollision)
-  val offRoadController = Module(new OffRoadSpeedController)
 
   speedControl.io.offRoad := !roadCollision.io.onRoad
 
   roadCollision.io.x := xPosReg
   roadCollision.io.y := yPosReg
-
-  offRoadController.io.speedIn := speedControl.io.speed
-  offRoadController.io.onRoad := roadCollision.io.onRoad
-  offRoadController.io.frameUpdate := io.update
 
   val angleControl = Module(new CarAngleController(3))
   angleControl.io.btnLeft := io.btnLeft
